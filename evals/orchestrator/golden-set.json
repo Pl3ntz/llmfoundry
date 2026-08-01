@@ -48,7 +48,7 @@
       "prompt": "melhora meu chatbot que ta ruim",
       "expectedRoute": "interview",
       "expectedGates": { "interviewMe": true },
-      "why": "vago demais — precisa discutir antes"
+      "why": "vago demais: precisa discutir antes"
     },
     {
       "id": "RS-7",
@@ -56,7 +56,7 @@
       "prompt": "implementa a tela de login com autenticacao JWT no projeto",
       "expectedRoute": "build",
       "expectedGates": { "interviewMe": false, "spec": true },
-      "why": "implementacao — segue ai-dev-process"
+      "why": "implementacao: segue ai-dev-process"
     },
     {
       "id": "RS-8",
@@ -96,7 +96,7 @@
       "prompt": "cria um endpoint novo E revisa a seguranca do app",
       "expectedRoute": "build+security",
       "expectedGates": { "scopeSplit": true, "interviewMe": true },
-      "why": "multi-goal — deve splitar"
+      "why": "multi-goal: deve splitar"
     }
   ]
 }

@@ -19,12 +19,15 @@ How the kit fits together.
 │   │  ai-evals-runner    │◄────►│  encode→consolidate  │    │
 │   │  llm-security-      │ feed │  →retrieve→reconsol. │    │
 │   │  reviewer           │ recall│                     │    │
+│   │  reverse-engineer   │      │                      │    │
 │   └─────────────────────┘      └──────────────────────┘    │
 │              │                                             │
 │   ┌──────────▼──────────┐      ┌──────────────────────┐    │
-│   │      SKILLS (18)    │      │   PLUGINS (gates)    │    │
-│   │  standards/process/ │      │  gates.ts            │    │
-│   │  ai-core/advanced   │      │  memory.ts           │    │
+│   │      SKILLS (29)    │      │   PLUGINS (gates)    │    │
+│   │  process / ai-core  │      │  gates.ts            │    │
+│   │  advanced / RE      │      │  memory.ts           │    │
+│   │  human-voice /      │      │  voice-guard.ts      │    │
+│   │  anti-delirium      │      │  verify-guard.ts     │    │
 │   └─────────────────────┘      └──────────────────────┘    │
 │              │                                             │
 │   ┌──────────▼──────────────────────────────────────────┐  │
@@ -47,7 +50,9 @@ from the orchestrator. Reports findings; never acts alone.
 
 ### Skills
 Methodology packages the model loads on demand. `ai-engineering-standards` is
-transversal (all inherit it). `ai-orchestration` is the routing protocol.
+transversal (all inherit it). `human-voice` and `anti-delirium` are the two disciplines
+every agent follows. `ai-orchestration` is the routing protocol. Reverse engineering has
+its own cluster (re-binary-analysis through re-firmware-analysis).
 
 ### Memory (`scripts/memory/foundry_memory.py`)
 SQLite + FTS5 + optional semantic embeddings (fastembed/ONNX). Living loop:
@@ -58,12 +63,10 @@ SQLite + FTS5 + optional semantic embeddings (fastembed/ONNX). Living loop:
 
 Privacy: 100% local, never versioned, blocks secret/PII patterns.
 
-### Plugins
-- `gates.ts`: test-gate, review-gate, egress-guard, env-guard (refuse bad actions)
-- `memory.ts`: capture hooks + recall injection
-
 ### Evals
-Golden-set + rubric for deep-researcher. Regression gate before prompt changes ship.
+Golden-sets + rubric + baseline. `scripts/eval-runner.py` runs 32 deterministic checks
+(engine, routing, plugins, K=5 stability) in CI on every push. Regression gate before
+anything ships.
 
 ## Data flow (one request)
 

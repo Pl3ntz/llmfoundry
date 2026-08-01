@@ -150,7 +150,7 @@ def routing_checks():
 
 def plugin_checks():
     results = []
-    for plugin in ["gates.ts", "memory.ts", "voice-guard.ts"]:
+    for plugin in ["gates.ts", "memory.ts", "voice-guard.ts", "verify-guard.ts"]:
         path = os.path.join(ROOT, "plugins", plugin)
         out = os.path.join(tempfile.gettempdir(), "llmfoundry-plugin-check")
         try:
@@ -162,15 +162,74 @@ def plugin_checks():
 
 
 # ----------------------------------------------------------------------------
+# Stability checks (K=5) — deterministic, no model, no Chrome.
+
+K_RUNS = 5
+
+
+def stability_checks():
+    """Run critical engine operations K times and assert identical results.
+
+    Mirrors Quarterdeck's stability harness (measure where output fluctuates) but for
+    the deterministic engine: an operation must return the same result every run.
+    No model, no sessions, no MCPs, so it is safe to run anywhere.
+    """
+    results = []
+    import importlib.util
+
+    with tempfile.TemporaryDirectory() as tmp:
+        spec = importlib.util.spec_from_file_location("foundry_memory", MEMORY_MODULE)
+        m = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(m)
+        m.DB_DIR = os.path.join(tmp, ".local", "share", "llmfoundry", "memory")
+        m.DB_PATH = os.path.join(m.DB_DIR, "memory.db")
+        m.VEC_PATH = os.path.join(m.DB_DIR, "vectors.npz")
+        m.PROJECTS_DIR = os.path.join(m.DB_DIR, "projects")
+        m.EMBED_CACHE = os.path.join(tmp, ".cache")
+
+        # K runs of reinforcement accumulate deterministically: after K calls the
+        # count is exactly K (not random, not dropped). This is the stability claim.
+        for _ in range(K_RUNS):
+            m.remember_fact("stable", "static", "stack: fastapi")
+        row = m._conn().execute(
+            "SELECT reinforced_count FROM memory_facts WHERE fact_text='stack: fastapi'"
+        ).fetchone()
+        results.append(
+            (f"fact reinforcement accumulates deterministically (K={K_RUNS} → {row['reinforced_count']})",
+             row["reinforced_count"] == K_RUNS)
+        )
+
+        # K runs of privacy block must all reject.
+        blocked = all(
+            m.remember(f"chave sk-abc123456789012345678901234567890 run {i}", "stable") is None
+            for i in range(K_RUNS)
+        )
+        results.append((f"privacy block stable across K={K_RUNS}", blocked))
+
+        # K runs of recall shape must be consistent (findings + gotchas keys).
+        shapes = []
+        for _ in range(K_RUNS):
+            r = m.recall(container="stable")
+            shapes.append(sorted(r.keys()))
+        results.append((f"recall shape stable across K={K_RUNS}", all(s == shapes[0] for s in shapes)))
+
+        # K runs of stats must produce the same count.
+        counts = [m.stats("stable")["facts"] for _ in range(K_RUNS)]
+        results.append((f"stats stable across K={K_RUNS}", len(set(counts)) == 1))
+
+    return results
+
+
+# ----------------------------------------------------------------------------
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--suite", choices=["engine", "routing", "plugins", "all"], default="all")
+    ap.add_argument("--suite", choices=["engine", "routing", "plugins", "stability", "all"], default="all")
     ap.add_argument("--baseline", action="store_true", help="print current state")
     args = ap.parse_args()
 
     results = []
-    suites = ["engine", "routing", "plugins"] if args.suite == "all" else [args.suite]
+    suites = ["engine", "routing", "plugins", "stability"] if args.suite == "all" else [args.suite]
 
     for s in suites:
         if s == "engine":
@@ -179,6 +238,8 @@ def main():
             results += routing_checks()
         elif s == "plugins":
             results += plugin_checks()
+        elif s == "stability":
+            results += stability_checks()
 
     passed = sum(1 for _, ok in results if ok)
     failed = [(name, ok) for name, ok in results if not ok]

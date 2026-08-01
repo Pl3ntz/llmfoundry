@@ -20,8 +20,9 @@
   <a href="https://github.com/Pl3ntz/llmfoundry/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-lightgrey.svg"></a>
   <a href="docs/MODEL-POLICY.md"><img alt="Model" src="https://img.shields.io/badge/model-DeepSeek_V4_Pro-2ea44f.svg"></a>
   <a href=".github/workflows/ci.yml"><img alt="CI" src="https://github.com/Pl3ntz/llmfoundry/actions/workflows/ci.yml/badge.svg"></a>
-  <a href="evals/baseline.json"><img alt="Tests" src="https://img.shields.io/badge/tests-27%2F27-2ea44f.svg"></a>
+  <a href="evals/baseline.json"><img alt="Tests" src="https://img.shields.io/badge/tests-32%2F32-2ea44f.svg"></a>
   <a href="skills/anti-delirium/"><img alt="Anti-delirium" src="https://img.shields.io/badge/discipline-anti--delirium-2ea44f.svg"></a>
+  <a href="skills/human-voice/"><img alt="Human voice" src="https://img.shields.io/badge/discipline-human--voice-2ea44f.svg"></a>
 </p>
 
 <p align="center">
@@ -46,6 +47,34 @@ a **living memory** that learns and feeds itself, and **gates** that block bad o
 > Looking for: AI agents, RAG pipeline, prompt engineering, LLM evals, MCP servers,
 > DeepSeek coding, AI engineering best practices, agent skills for opencode? You're in the right place.
 
+## See it in action
+
+You send a rough idea. The orchestrator turns it into a plan, verifies instead of guessing,
+and produces work you can trust. This is how it actually feels:
+
+```text
+You:  "quero um agente que busca docs atualizadas de libs e responde com fontes"
+
+Orch: Antes de desenhar, preciso de uma decisão. Formato?
+      A) CLI  B) chatbot web  C) API  D) MCP server dentro do opencode
+
+You:  "D"
+
+Orch: Perfeito. MCP server. Vou especificar:
+      SPEC: tech-docs-agent, escopo, criterio de pronto, fora de escopo.
+      Delegando para ai-architect com contexto completo...
+
+      [ai-architect] entrega o design com trade-offs
+      [llm-security-reviewer] revisa prompt injection / exfiltration
+      [deep-researcher] valida as fontes citadas
+
+Orch: 3 agents rodaram em paralelo. Contradições resolvidas.
+      Aqui esta o plano final, aprovado para implementar.
+```
+
+**And every claim in that flow was verified, not guessed.** That is the LLMFoundry difference:
+a team that reasons, delegates, checks its own work, and writes like a human.
+
 ## Why LLMFoundry
 
 Four disciplines that make it different:
@@ -69,16 +98,38 @@ cd llmfoundry
 ./scripts/install.sh
 ```
 
-The installer:
-- symlinks `agents/`, `commands/`, `plugins/` into `~/.config/opencode/`
-- registers `skills/` via `skills.paths` (does not touch existing skills)
-- installs Python deps for the memory engine (fastembed for semantic search)
-- configures all gates + memory + voice + verify plugins
+That is it. Three commands and the kit is live in opencode.
 
-Then restart opencode. The orchestrator becomes your default agent.
+The installer, in one pass:
+- symlinks `agents/` and `commands/` into `~/.config/opencode/`
+- registers `skills/` via `skills.paths`, so your existing skills stay untouched
+- installs Python deps for the memory engine (fastembed for semantic search)
+- registers the gates, memory, voice, and verify plugins in your opencode config
+
+Restart opencode. The orchestrator becomes your default agent, and you are working with
+a team instead of a single model.
+
+```text
+What you had:    one generic agent, prompt by prompt
+What you get:    an orchestrator + 5 specialists + a memory that learns + gates that protect
+```
 
 > Requires: opencode, python3, DeepSeek V4 (Go plan or API key).
-> See [docs/INSTALL.md](docs/INSTALL.md).
+> Full guide in [docs/INSTALL.md](docs/INSTALL.md).
+
+## The team
+
+```
+You ──→ AI Orchestrator (the Captain) ──→ specialist subagents
+              │
+              ├─ deep-researcher      (deep research with correlation + anti-injection)
+              ├─ ai-architect         (LLM system design with trade-offs)
+              ├─ ai-evals-runner      (prove it works)
+              ├─ llm-security-reviewer(security before shipping)
+              └─ reverse-engineer     (binary, firmware, malware analysis)
+              │
+              └─ Living Memory (SQLite + embeddings, self-feeding)
+```
 
 ---
 
@@ -103,7 +154,7 @@ prompt → **delegates** with full context → **synthesizes** results and prese
 
 ## Skill Catalog
 
-20 skills in 4 categories. All follow the transversal standards.
+29 skills in 5 categories. All follow the transversal standards.
 
 ### Dev Process (transversal, inherited by all)
 | Skill | Use when |
@@ -140,6 +191,16 @@ prompt → **delegates** with full context → **synthesizes** results and prese
 | `source-driven-development` | Grounding decisions in official docs |
 | `debugging-and-error-recovery` | 5-step debugging |
 
+### Reverse Engineering
+| Skill | Use when |
+|-------|----------|
+| `re-binary-analysis` | Identify format, arch, packing |
+| `re-decompilation` | Recover logic from disassembly (radare2/Ghidra) |
+| `re-algorithm-recovery` | Reconstruct crypto/checksums/serials with proof |
+| `re-dynamic-analysis` | Confirm behavior under controlled execution |
+| `re-malware-analysis` | Malware triage, IOC extraction, safe detonation |
+| `re-firmware-analysis` | Extract and analyze device firmware |
+
 Full catalog: [SKILLS.md](SKILLS.md)
 
 ---
@@ -153,10 +214,11 @@ Full catalog: [SKILLS.md](SKILLS.md)
 | [ai-architect](agents/ai-architect.md) | subagent | LLM system architecture with trade-offs |
 | [ai-evals-runner](agents/ai-evals-runner.md) | subagent | Build and run evals |
 | [llm-security-reviewer](agents/llm-security-reviewer.md) | subagent | Security review of LLM apps |
+| [reverse-engineer](agents/reverse-engineer.md) | subagent | Binary, firmware, malware analysis with precision |
 
 ## Commands
 
-`/ai-spec` · `/ai-build` · `/ai-evals` · `/ai-review` · `/ai-research` · `/ai-memory`
+`/ai-spec` · `/ai-build` · `/ai-evals` · `/ai-review` · `/ai-research` · `/ai-memory` · `/ai-re`
 
 ## Plugins
 
@@ -192,9 +254,9 @@ Routing rule: **reasoning to PRO, mechanical to FLASH**. Mode rule: **ambiguity 
 
 ```
 llmfoundry/
-├── agents/          # 5 agents (orchestrator + 4 specialists)
-├── commands/        # 6 slash commands
-├── skills/          # 20 skills (4 categories)
+├── agents/          # 6 agents (orchestrator + 5 specialists)
+├── commands/        # 7 slash commands
+├── skills/          # 29 skills (5 categories)
 ├── plugins/         # gates, memory, voice-guard, verify-guard
 ├── evals/           # golden-sets, rubric, baseline
 ├── docs/            # architecture, model policy, memory spec, RE spec
@@ -209,9 +271,10 @@ llmfoundry/
 
 ## Testing (regression gate)
 
-The kit tests itself. `scripts/eval-runner.py` runs 27 deterministic checks (no model):
-engine unit tests, routing golden-set validation, scorer cases, plugin compile checks.
-A GitHub Actions CI runs them on every push/PR. Baseline: [evals/baseline.json](evals/baseline.json).
+The kit tests itself. `scripts/eval-runner.py` runs 32 deterministic checks, no model
+calls: engine unit tests, routing golden-set validation, scorer cases, plugin compile
+checks, and K=5 stability checks. A GitHub Actions CI runs them on every push/PR, so a
+regression is caught before it ships. Baseline: [evals/baseline.json](evals/baseline.json).
 
 ```bash
 python3 scripts/eval-runner.py          # full suite
@@ -228,7 +291,7 @@ python3 scripts/eval-runner.py --baseline  # show the number to beat
 | [docs/MODEL-POLICY.md](docs/MODEL-POLICY.md) | Why DeepSeek, PRO/FLASH + BUILD/PLAN routing |
 | [docs/MEMORY-SPEC.md](docs/MEMORY-SPEC.md) | Memory architecture, living loop, privacy |
 | [docs/INSTALL.md](docs/INSTALL.md) | Full install/uninstall guide |
-| [docs/REVERSE-ENGINEERING-SPEC.md](docs/REVERSE-ENGINEERING-SPEC.md) | Planned RE specialist |
+| [docs/REVERSE-ENGINEERING-SPEC.md](docs/REVERSE-ENGINEERING-SPEC.md) | Reverse engineering specialist design |
 | [SKILLS.md](SKILLS.md) | Skill catalog |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to add skills/agents/commands/evals |
 
@@ -241,11 +304,11 @@ python3 scripts/eval-runner.py --baseline  # show the number to beat
 - [x] Semantic memory (local embeddings)
 - [x] Gates as real commit blockers
 - [x] Routing eval (golden-set + deterministic scorer, validated manually)
-- [x] Regression CI (27 checks on every push)
+- [x] Regression CI (32 checks on every push)
 - [x] Human-voice + anti-delirium disciplines
 - [x] PRO/FLASH + BUILD/PLAN routing policies
-- [ ] Agent stability baselines (K=5 runs)
-- [ ] Reverse engineering specialist (see [SPEC](docs/REVERSE-ENGINEERING-SPEC.md))
+- [x] Stability checks (K=5, deterministic engine)
+- [x] Reverse engineering specialist (6 skills + agent + command)
 
 > Routing is validated manually, one question at a time, to avoid batch sessions
 > touching the user's Chrome. Batch automation of model-routing tests was removed.

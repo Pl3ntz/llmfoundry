@@ -38,6 +38,16 @@
 | [source-driven-development](skills/source-driven-development/) | Grounding decisions in official docs |
 | [debugging-and-error-recovery](skills/debugging-and-error-recovery/) | 5-step debugging: reproduce→localize→reduce→fix→guard |
 
+### Reverse Engineering
+| Skill | Use when |
+|-------|----------|
+| [re-binary-analysis](skills/re-binary-analysis/) | Identify format, arch, packing before deeper work |
+| [re-decompilation](skills/re-decompilation/) | Recover logic from disassembly (radare2/Ghidra) |
+| [re-algorithm-recovery](skills/re-algorithm-recovery/) | Reconstruct crypto, checksums, serial logic with proof |
+| [re-dynamic-analysis](skills/re-dynamic-analysis/) | Confirm behavior under controlled execution |
+| [re-malware-analysis](skills/re-malware-analysis/) | Malware triage, IOC extraction, safe detonation |
+| [re-firmware-analysis](skills/re-firmware-analysis/) | Extract and analyze device firmware |
+
 ## Agents
 
 | Agent | Use when |
@@ -47,6 +57,7 @@
 | [ai-architect](agents/ai-architect.md) | Designing LLM system architecture |
 | [ai-evals-runner](agents/ai-evals-runner.md) | Building and running evals |
 | [llm-security-reviewer](agents/llm-security-reviewer.md) | Security review before shipping |
+| [reverse-engineer](agents/reverse-engineer.md) | Binary, firmware, and malware analysis with precision |
 
 ## Orchestration
 
