@@ -1,4 +1,4 @@
-# Model Policy — Why DeepSeek
+# Model Policy: Why DeepSeek
 
 LLMFoundry is built around the **DeepSeek family**. This is a deliberate, measured cost
 decision.
@@ -14,7 +14,7 @@ Compared to the most expensive option in the Go plan:
 
 | Model | Out $/MTok | Requests/mo | vs DeepSeek Flash |
 |-------|-----------|-------------|-------------------|
-| **DeepSeek V4 Flash** | $0.28 | 158,150 | — |
+| **DeepSeek V4 Flash** | $0.28 | 158,150 |, |
 | **DeepSeek V4 Pro** | $0.87 | 17,150 | 11x cheaper than kimi-k3 |
 | Kimi K3 | $15.00 | 490 | **53x more expensive** |
 | GLM-5.2 | $4.40 | 4,300 | 15x more expensive |
@@ -28,10 +28,10 @@ Compared to the most expensive option in the Go plan:
 
 ## Rules for agents
 
-1. Every agent/command uses `opencode-go/*` — never `opencode/` (Zen) to avoid spending
+1. Every agent/command uses `opencode-go/*`, never `opencode/` (Zen) to avoid spending
    Zen balance, never expensive models (kimi/grok/glm) unless explicitly requested.
 2. `small_model` (flash) for evals, reformulation, and mechanical tasks.
-3. Parametric memory is stale — versions/APIs must be live-verified.
+3. Parametric memory is stale, versions/APIs must be live-verified.
 
 ## Routing: PRO vs FLASH (explicit policy)
 
@@ -58,7 +58,7 @@ The cost discipline lives in *which* model a task routes to. Flash is 3x cheaper
 ### Rules the orchestrator MUST follow
 
 1. **Direct lookups never spend PRO.** A "what is X / syntax / version" question is
-   answered with FLASH or the small_model — routing to deep-researcher for a fact is
+   answered with FLASH or the small_model, routing to deep-researcher for a fact is
    wasteful (and the routing table already forbids it).
 2. **Delegation is already priced.** Subagent frontmatter fixes the model: deep-researcher,
    ai-architect, llm-security-reviewer = PRO; ai-evals-runner = FLASH. Do not override up.
@@ -104,7 +104,7 @@ both mandatory. **Model = cost, mode = risk.**
 ### The rule
 
 **Ambiguity or stakes → PLAN first. Clear + approved → BUILD.**
-Never BUILD something you don't understand. Never PLAN something already decided — that's
+Never BUILD something you don't understand. Never PLAN something already decided, that's
 ceremony (the same anti-ceremony rule as the SPEC triage).
 
 ### Interaction with model routing

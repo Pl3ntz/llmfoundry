@@ -23,7 +23,7 @@ git commit -m "feat: ..."
 
 1. Create `skills/<name>/SKILL.md`
 2. Frontmatter: `name` (lowercase-kebab, matches folder) + `description` (what + when to use)
-3. Body: workflow the agent follows — steps, verification gate, anti-rationalization
+3. Body: workflow the agent follows, steps, verification gate, anti-rationalization
 4. Keep `SKILL.md` < 500 lines; put long references in `references/`
 5. Add it to `SKILLS.md`
 
@@ -59,5 +59,5 @@ python3 -c "import json,glob;[json.load(open(f)) for f in glob.glob('evals/**/*.
 ## Rules
 
 - Model IDs are always `opencode-go/*` (never `opencode/` Zen, never expensive models).
-- No secrets, PII, or business rules in any versioned file — memory is local-only.
+- No secrets, PII, or business rules in any versioned file, memory is local-only.
 - Conventional commits: `feat:|fix:|refactor:|docs:|test:|chore:|perf:|ci:`.

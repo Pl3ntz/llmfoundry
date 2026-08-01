@@ -1,18 +1,18 @@
 <!--
-  LLMFoundry — AI engineering kit for DeepSeek.
+  LLMFoundry: AI engineering kit for DeepSeek.
   Keywords for search: AI engineering, LLM agents, RAG, MCP, prompt engineering,
   LLM evals, DeepSeek, opencode, AI agents toolkit, agent skills, quality gates,
   anti-delirium, human voice, orchestrator.
 -->
 <p align="center">
-  <img src="assets/logo.svg" alt="LLMFoundry — AI engineering kit for DeepSeek" width="480">
+  <img src="assets/logo.svg" alt="LLMFoundry: AI engineering kit for DeepSeek" width="480">
 </p>
 
 <h1 align="center">LLMFoundry</h1>
 
 <p align="center">
   <strong>The AI engineering kit for DeepSeek.</strong><br>
-  Build LLM apps — agents, RAG, evals, MCP — with production discipline.
+  Build LLM apps, agents, RAG, evals, MCP, with production discipline.
 </p>
 
 <p align="center">
@@ -50,13 +50,13 @@ a **living memory** that learns and feeds itself, and **gates** that block bad o
 
 Four disciplines that make it different:
 
-1. **Cost discipline** — DeepSeek only (V4 Pro/Flash). 35-322x more requests per dollar
+1. **Cost discipline**, DeepSeek only (V4 Pro/Flash). 35-322x more requests per dollar
    than kimi-k3 on the same plan. Explicit PRO vs FLASH routing.
-2. **Mode discipline** — PLAN before BUILD when there's ambiguity or stakes. Never build
+2. **Mode discipline**, PLAN before BUILD when there's ambiguity or stakes. Never build
    what you don't understand.
-3. **Anti-delirium** — every claim has concrete proof (`file:line`, command output, URL)
+3. **Anti-delirium**, every claim has concrete proof (`file:line`, command output, URL)
    or an honest `[UNVERIFIED]` marker. No hallucination, ever.
-4. **Human voice** — output never reads like AI-generated text. No dashes, no AI vocabulary,
+4. **Human voice**, output never reads like AI-generated text. No dashes, no AI vocabulary,
    no template structure.
 
 ---
@@ -108,12 +108,12 @@ prompt → **delegates** with full context → **synthesizes** results and prese
 ### Dev Process (transversal, inherited by all)
 | Skill | Use when |
 |-------|----------|
-| `ai-engineering-standards` | Start of every task — tone, evidence, anti-fabrication |
-| `ai-dev-process` | Writing code — SPEC, worktree, TDD, atomic commit |
+| `ai-engineering-standards` | Start of every task, tone, evidence, anti-fabrication |
+| `ai-dev-process` | Writing code: SPEC, worktree, TDD, atomic commit |
 | `interview-me` | Request is underspecified or high-stakes |
 | `ai-orchestration` | Routing, delegation protocol, fan-in synthesis |
-| `human-voice` | Write in a natural human voice — never looks AI-generated |
-| `anti-delirium` | Prove it or don't say it — evidence or confidence marker on every claim |
+| `human-voice` | Write in a natural human voice, never looks AI-generated |
+| `anti-delirium` | Prove it or don't say it, evidence or confidence marker on every claim |
 
 ### AI Core
 | Skill | Use when |
@@ -133,7 +133,7 @@ prompt → **delegates** with full context → **synthesizes** results and prese
 | Skill | Use when |
 |-------|----------|
 | `ai-research` | Deep research with correlation |
-| `doubt-driven-development` | High-stakes review — CLAIM/EXTRACT/DOUBT/RECONCILE |
+| `doubt-driven-development` | High-stakes review: CLAIM/EXTRACT/DOUBT/RECONCILE |
 | `source-driven-development` | Grounding decisions in official docs |
 | `debugging-and-error-recovery` | 5-step debugging |
 
@@ -145,7 +145,7 @@ Full catalog: [SKILLS.md](SKILLS.md)
 
 | Agent | Mode | Role |
 |-------|------|------|
-| [ai-orchestrator](agents/ai-orchestrator.md) | primary (default) | The Captain — interprets, discusses, delegates, synthesizes |
+| [ai-orchestrator](agents/ai-orchestrator.md) | primary (default) | The Captain, interprets, discusses, delegates, synthesizes |
 | [deep-researcher](agents/deep-researcher.md) | subagent | Deep research with correlation + anti-injection |
 | [ai-architect](agents/ai-architect.md) | subagent | LLM system architecture with trade-offs |
 | [ai-evals-runner](agents/ai-evals-runner.md) | subagent | Build and run evals |
@@ -253,17 +253,17 @@ SPEC → TDD → worktree → atomic commit.
 
 ## FAQ
 
-**Do I need to pay for expensive models?** No — the kit is built for DeepSeek
+**Do I need to pay for expensive models?** No, the kit is built for DeepSeek
 (V4 Pro/Flash), which is 35-322x more requests per dollar than kimi-k3.
 
 **Is my code/memory sent anywhere?** No. Memory is 100% local (SQLite + local embeddings),
 never versioned. See [docs/MEMORY-SPEC.md](docs/MEMORY-SPEC.md).
 
-**Does it work alongside my existing opencode setup?** Yes — the installer uses
+**Does it work alongside my existing opencode setup?** Yes, the installer uses
 `skills.paths` and per-file symlinks, coexisting with existing skills/agents.
 
 **Is it only for opencode?** Built for opencode, but skills follow the Agent Skills open
-standard (agentskills.io) — portable to Claude Code, Codex, Cursor, etc.
+standard (agentskills.io), portable to Claude Code, Codex, Cursor, etc.
 
 **How does it prevent hallucination?** Every claim must have proof or a confidence marker
 (`anti-delirium` skill + `verify-guard` plugin). The orchestrator verifies before asserting.

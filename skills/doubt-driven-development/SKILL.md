@@ -1,6 +1,6 @@
 ---
 name: doubt-driven-development
-description: Adversarial review of in-flight decisions with fresh context — CLAIM, EXTRACT, DOUBT, RECONCILE. Use for high-stakes work, unfamiliar code, or when a confident output is cheaper to verify now than debug later.
+description: Adversarial review of in-flight decisions with fresh context, CLAIM, EXTRACT, DOUBT, RECONCILE. Use for high-stakes work, unfamiliar code, or when a confident output is cheaper to verify now than debug later.
 ---
 
 # Doubt-Driven Development
@@ -19,7 +19,7 @@ catch confident mistakes before they ship.
 
 ```
 CLAIM    → what did we assert? (the decision, stated cleanly)
-EXTRACT  → what is it grounded in? (code, doc, data — find the actual evidence)
+EXTRACT  → what is it grounded in? (code, doc, data, find the actual evidence)
 DOUBT    → attack the claim: what would make it wrong?
 RECONCILE → resolve: keep, fix, or abandon with a written reason
 ```
@@ -29,7 +29,7 @@ State the decision as a falsifiable claim. "The migration is safe" → "The migr
 because the new index is used by all queries that were using the old one."
 
 ### 2. EXTRACT
-Go to the ground truth. Read the actual code/config/data. Not the summary — the source.
+Go to the ground truth. Read the actual code/config/data. Not the summary, the source.
 
 ### 3. DOUBT
 Attack systematically:
@@ -37,7 +37,7 @@ Attack systematically:
 - **Edge cases**: empty input, null, boundary, concurrency, error path
 - **Reverse test**: what would prove this WRONG? Run it.
 - **Unfamiliarity check**: did we assume something about a library/API we haven't verified?
-- **The reviewer's question**: "would a staff engineer approve this?" — if unsure, no.
+- **The reviewer's question**: "would a staff engineer approve this?", if unsure, no.
 
 ### 4. RECONCILE
 - Claim holds → record the evidence, proceed

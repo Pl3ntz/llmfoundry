@@ -1,9 +1,9 @@
 ---
 name: ai-research
-description: Deep multi-source web research with CORRELATION — cross-reference sources, detect cross-source patterns, contradictions, and convergences, then synthesize confidence-scored intelligence. Use for thorough research, landscape analysis, comparisons, and OSINT-style recon on public entities.
+description: Deep multi-source web research with CORRELATION, cross-reference sources, detect cross-source patterns, contradictions, and convergences, then synthesize confidence-scored intelligence. Use for thorough research, landscape analysis, comparisons, and OSINT-style recon on public entities.
 ---
 
-# AI Research — Deep Research with Correlation
+# AI Research: Deep Research with Correlation
 
 Deep multi-source research whose core value is **correlation**: connecting findings across
 sources, detecting patterns that surface only when sources are cross-referenced, and
@@ -14,22 +14,22 @@ separating genuine convergence from echo chains. Collection is a means; correlat
 - Landscape / comparison / trade-off research ("which X is production-ready in 2026")
 - Investigative / OSINT on organizations and infrastructure (passive only)
 - Any question where a single source is not enough and contradiction matters
-- Single-fact lookups: do NOT run this protocol — answer directly with rigor
+- Single-fact lookups: do NOT run this protocol, answer directly with rigor
 
 ## Correlation-first mindset (the upgrade)
 
 After collecting, do the correlation pass before synthesizing:
 
-1. **Cluster sources by claim** — which independent sources agree on what?
-2. **Cross-source pattern detection** — does a claim appear in sources from DIFFERENT
+1. **Cluster sources by claim**, which independent sources agree on what?
+2. **Cross-source pattern detection**, does a claim appear in sources from DIFFERENT
    origins (press, docs, community, vendor)? That's convergence.
-3. **Trace echo chains** — do many "sources" share one origin (same wire, same vendor, same
+3. **Trace echo chains**, do many "sources" share one origin (same wire, same vendor, same
    blog)? Collapse them: N republications = 1 effective source.
-4. **Detect divergence** — where do sources disagree, and WHY (vendor bias, date, context)?
-5. **Correlate across dimensions** — connect the dots: vendor claims vs community reports vs
+4. **Detect divergence**, where do sources disagree, and WHY (vendor bias, date, context)?
+5. **Correlate across dimensions**, connect the dots: vendor claims vs community reports vs
    benchmark data vs official docs. A pattern across dimensions is stronger than across
    copies of the same dimension.
-6. **Confidence from correlation** — HIGH requires ≥3 sources from ≥3 distinct
+6. **Confidence from correlation**, HIGH requires ≥3 sources from ≥3 distinct
    ORGANIZATIONS agreeing, with ≥1 primary. That IS the correlation test.
 
 ## 6-phase protocol
@@ -62,11 +62,11 @@ QUALITY: [strong | ok | weak]  (quality of the source, not confidence)
 - Stub/paywall/consent-wall (<500 chars real text) → UNRETRIEVABLE, no card
 
 ### Phase 4: EVALUATE + CORRELATE (the core)
-1. Gap analysis — sub-questions with zero coverage
-2. **Correlation pass** — apply the 6 correlation steps above
-3. **Independence check** — collapse same-org and same-origin republications
-4. Contradiction detection — report both sides, weigh which is stronger and why
-5. Bias flags — vendor-sponsored benchmark = 1 source, name the vendor
+1. Gap analysis, sub-questions with zero coverage
+2. **Correlation pass**, apply the 6 correlation steps above
+3. **Independence check**, collapse same-org and same-origin republications
+4. Contradiction detection, report both sides, weigh which is stronger and why
+5. Bias flags, vendor-sponsored benchmark = 1 source, name the vendor
 
 ### Phase 5: ITERATE (sufficiency gate)
 STOP → SYNTHESIZE when every foundational sub-question has ≥3 independent sources, or
@@ -99,7 +99,7 @@ API, model ID, or "latest" needs a live search with the current year. Cache as s
 - [HIGH|MEDIUM|LOW] [title] ([N independent sources]) [1,3]: [1-sentence summary] ⚠[date if >6mo]
 
 ### CORRELATIONS
-- [cross-source pattern observed] — [which sources/orgs converge, which diverge, what that means]
+- [cross-source pattern observed], [which sources/orgs converge, which diverge, what that means]
 
 ### CONTRADICTIONS (if any)
 - [Source A says X] vs [Source B says Y]: [which is stronger and why]
@@ -117,7 +117,7 @@ API, model ID, or "latest" needs a live search with the current year. Cache as s
 ```
 
 Invariants: exact `###` headers (7). Every URL cited appears in SOURCES. Body <800 tokens
-(excluding SOURCES). No preamble. NO fabricated URLs — only URLs seen this session.
+(excluding SOURCES). No preamble. NO fabricated URLs, only URLs seen this session.
 
 ## OSINT (passive, organizations only)
 

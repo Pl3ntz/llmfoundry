@@ -1,6 +1,6 @@
 ---
 name: ai-llm-app-security
-description: Defensive security for LLM applications — prompt injection defense, data exfiltration, SSRF via LLM tools, abuse control, and OWASP LLM Top 10. Use when building or reviewing LLM apps. Complements the offense skill hunt-llm-ai.
+description: Defensive security for LLM applications, prompt injection defense, data exfiltration, SSRF via LLM tools, abuse control, and OWASP LLM Top 10. Use when building or reviewing LLM apps. Complements the offense skill hunt-llm-ai.
 ---
 
 # AI LLM App Security

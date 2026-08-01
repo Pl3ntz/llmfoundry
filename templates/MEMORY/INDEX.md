@@ -1,8 +1,8 @@
-# INDEX — template
+# INDEX: template
 
 Summary + stats. COPY locally, never commit real stats.
 
-> TEMPLATE — contains zero real data.
+> TEMPLATE: contains zero real data.
 
 - **Project:** <project>
 - **Last updated:** <date>

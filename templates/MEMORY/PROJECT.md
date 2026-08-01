@@ -1,10 +1,10 @@
-# PROJECT — template
+# PROJECT: template
 
 Local memory per project. COPY this file to your local memory layer
 (`~/.local/share/llmfoundry/memory/<project>/`). NEVER commit real content.
 Fill with placeholders only, sanitized.
 
-> TEMPLATE — contains zero real data.
+> TEMPLATE: contains zero real data.
 
 ## Stack
 - **Language:** <language>

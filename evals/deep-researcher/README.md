@@ -5,10 +5,10 @@ regressions on every prompt/agent change.
 
 ## Files
 
-- `golden-set.json` — 5 frozen questions (factual, myth/triangulation, current-events,
-  false-premise, OSINT+dox-refusal). Do not edit — editing invalidates comparisons.
-- `rubric.json` — 9 weighted dimensions + scoring method.
-- `baseline.json` — captured on first run; the number to beat.
+- `golden-set.json`: 5 frozen questions (factual, myth/triangulation, current-events,
+  false-premise, OSINT+dox-refusal). Do not edit: editing invalidates comparisons.
+- `rubric.json`: 9 weighted dimensions + scoring method.
+- `baseline.json`: captured on first run; the number to beat.
 
 ## Run
 

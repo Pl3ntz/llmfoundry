@@ -3,15 +3,15 @@
 17 skills organized in 3 categories. All skills follow the transversal standards
 (`ai-engineering-standards`) and the mandatory dev process (`ai-dev-process`).
 
-## Category A — Dev Process (transversal, inherited by all)
+## Category A: Dev Process (transversal, inherited by all)
 
 | Skill | Use when |
 |-------|----------|
-| [ai-engineering-standards](skills/ai-engineering-standards/) | Start of every task — tone, evidence discipline, anti-fabrication, output contract |
-| [ai-dev-process](skills/ai-dev-process/) | Writing any code — SPEC, worktree, TDD, verify, atomic commit |
+| [ai-engineering-standards](skills/ai-engineering-standards/) | Start of every task, tone, evidence discipline, anti-fabrication, output contract |
+| [ai-dev-process](skills/ai-dev-process/) | Writing any code: SPEC, worktree, TDD, verify, atomic commit |
 | [interview-me](skills/interview-me/) | Request is underspecified or high-stakes |
 
-## Category B — AI Core
+## Category B: AI Core
 
 | Skill | Use when |
 |-------|----------|
@@ -26,12 +26,12 @@
 | [ai-llm-app-security](skills/ai-llm-app-security/) | Defensive LLM security (OWASP LLM Top 10) |
 | [ai-llm-observability](skills/ai-llm-observability/) | Tracing, cost/token tracking |
 
-## Category C — AI Advanced
+## Category C: AI Advanced
 
 | Skill | Use when |
 |-------|----------|
-| [ai-research](skills/ai-research/) | Deep research with correlation — multi-source, confidence-scored |
-| [doubt-driven-development](skills/doubt-driven-development/) | High-stakes review — CLAIM/EXTRACT/DOUBT/RECONCILE |
+| [ai-research](skills/ai-research/) | Deep research with correlation, multi-source, confidence-scored |
+| [doubt-driven-development](skills/doubt-driven-development/) | High-stakes review: CLAIM/EXTRACT/DOUBT/RECONCILE |
 | [source-driven-development](skills/source-driven-development/) | Grounding decisions in official docs |
 | [debugging-and-error-recovery](skills/debugging-and-error-recovery/) | 5-step debugging: reproduce→localize→reduce→fix→guard |
 
@@ -39,7 +39,7 @@
 
 | Agent | Use when |
 |-------|----------|
-| [ai-orchestrator](agents/ai-orchestrator.md) | **Default.** The Captain — interprets, discusses, delegates, synthesizes |
+| [ai-orchestrator](agents/ai-orchestrator.md) | **Default.** The Captain, interprets, discusses, delegates, synthesizes |
 | [deep-researcher](agents/deep-researcher.md) | Deep research with correlation |
 | [ai-architect](agents/ai-architect.md) | Designing LLM system architecture |
 | [ai-evals-runner](agents/ai-evals-runner.md) | Building and running evals |
@@ -50,8 +50,8 @@
 | Skill | Use when |
 |-------|----------|
 | [ai-orchestration](skills/ai-orchestration/) | Routing, delegation protocol, fan-in synthesis |
-| [human-voice](skills/human-voice/) | Write in a natural human voice — never looks AI-generated |
-| [anti-delirium](skills/anti-delirium/) | Prove it or don't say it — evidence or confidence marker on every claim |
+| [human-voice](skills/human-voice/) | Write in a natural human voice, never looks AI-generated |
+| [anti-delirium](skills/anti-delirium/) | Prove it or don't say it, evidence or confidence marker on every claim |
 
 ## Commands
 
@@ -59,5 +59,5 @@
 
 ## Eval harness
 
-- [deep-researcher](evals/deep-researcher/) — golden set + rubric (factual, myth,
+- [deep-researcher](evals/deep-researcher/), golden set + rubric (factual, myth,
   current-events, false-premise, OSINT). Run before changing the research agent.

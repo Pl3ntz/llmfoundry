@@ -1,4 +1,4 @@
-# Reverse Engineering Specialist — SPEC
+# Reverse Engineering Specialist: SPEC
 
 **Status:** Rascunho para implementação futura
 **Autor:** vplentz
@@ -17,10 +17,10 @@ recuperação de algoritmos e identificação de vulnerabilidades.
 ## Por que
 
 O usuário trabalha com security e tem o `apk-redteam-pipeline` (Android/APK apenas). Falta
-um especialista para **análise de binários em geral** — firmware, executáveis, malware,
-libraries — com precisão de nível profissional (como o deep-researcher é para pesquisa).
+um especialista para **análise de binários em geral**, firmware, executáveis, malware,
+libraries, com precisão de nível profissional (como o deep-researcher é para pesquisa).
 
-## Escopo — Skills
+## Escopo: Skills
 
 | # | Skill | Descrição |
 |---|-------|-----------|
@@ -31,28 +31,28 @@ libraries — com precisão de nível profissional (como o deep-researcher é pa
 | 5 | `re-malware-analysis` | Triage de malware: YARA, comportamento, IOC extraction, detonation segura, anti-analysis bypass |
 | 6 | `re-firmware-analysis` | Extração de firmware, filesystem (binwalk), kernel modules, U-Boot, updater logic |
 
-## Escopo — Agente
+## Escopo: Agente
 
 `agents/reverse-engineer.md` (subagent)
 
 ```
-description: Reverse engineering specialist — binary analysis, decompilation,
+description: Reverse engineering specialist, binary analysis, decompilation,
   algorithm recovery, dynamic analysis, malware/firmware triage with maximum precision.
 model: opencode-go/deepseek-v4-pro
 mode: subagent
 ```
 
 **Método (precisão primeiro):**
-1. **INTAKE** — identificar formato/arquitetura antes de qualquer análise
-2. **STATIC** — sections, symbols, strings, imports → hipótese de função
-3. **DECOMPILE** — descompilar com r2/Ghidra, renomear, reconstruir lógica
-4. **DYNAMIC** (opcional) — confirmar comportamento sob execução controlada
-5. **SYNTHESIZE** — relatório: funções mapeadas, algoritmos recuperados, vulns, confidence
+1. **INTAKE**, identificar formato/arquitetura antes de qualquer análise
+2. **STATIC**, sections, symbols, strings, imports → hipótese de função
+3. **DECOMPILE**, descompilar com r2/Ghidra, renomear, reconstruir lógica
+4. **DYNAMIC** (opcional), confirmar comportamento sob execução controlada
+5. **SYNTHESIZE**, relatório: funções mapeadas, algoritmos recuperados, vulns, confidence
 
 **Output contract:**
 ```
 ### FINDINGS (ordenado por severidade)
-- [severity] [descrição] — endereço/símbolo — [evidência, ex. hexdump/decompiled excerpt]
+- [severity] [descrição], endereço/símbolo, [evidência, ex. hexdump/decompiled excerpt]
 
 ### RECOVERED LOGIC
 - [algoritmo/função recuperada com explicação]
@@ -61,7 +61,7 @@ mode: subagent
 - [tipo + endereço + impacto]
 
 ### UNVERIFIED
-- [o que não pôde ser confirmado — nunca inventar]
+- [o que não pôde ser confirmado, nunca inventar]
 
 ### NEXT STEP
 ```
@@ -83,7 +83,7 @@ mode: subagent
 
 ## Fora de escopo
 
-- Não duplicar `apk-redteam-pipeline` (Android/APK) — cross-ref a ele
+- Não duplicar `apk-redteam-pipeline` (Android/APK), cross-ref a ele
 - Não fazer engenharia reversa ofensiva de produtos de terceiros sem autorização (ética)
 - Não incluir técnicas de evasão para evitar detecção em sistemas alheios
 
@@ -93,7 +93,7 @@ mode: subagent
 2. `re-decompilation` produz lógica recuperada verificável (address + evidence)
 3. `re-algorithm-recovery` detecta crypto/checksum real (não "parece AES")
 4. `re-dynamic-analysis` confirma comportamento sob execução controlada
-5. Output nunca inventa endereço/símbolo — tudo aponta para evidência
+5. Output nunca inventa endereço/símbolo, tudo aponta para evidência
 6. Degrada graciosamente com apenas radare2 disponível
 7. Eval harness com 1 binário golden de teste
 
@@ -103,7 +103,7 @@ mode: subagent
 |-----------|-------|
 | `agents/reverse-engineer.md` | Especialista RE (subagent) |
 | `skills/re-*` (6) | Metodologias |
-| `commands/ai-re.md` | `/ai-re <arquivo>` — análise de binário |
+| `commands/ai-re.md` | `/ai-re <arquivo>`, análise de binário |
 | `evals/reverse-engineer/` | golden binário + rubric |
 | Orquestrador | Roteia "analisa esse binário/firmware" → reverse-engineer |
 | Memória | Findings de RE alimentam o loop (gotchas de análise) |

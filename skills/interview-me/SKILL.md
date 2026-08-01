@@ -21,12 +21,12 @@ Ask ONE question. Wait for the answer. Then ask the next. Never batch all questi
 
 ### Question order
 
-1. **Outcome** — "What should be true when this is done?"
-2. **Constraint** — "What must NOT change or break?"
-3. **Scope** — "What is explicitly out of scope?"
-4. **Users** — "Who uses this, and what do they need that they don't say?"
-5. **Risk** — "What happens if this fails? What's the blast radius?"
-6. **Measure** — "How do we know it worked? What's the metric?"
+1. **Outcome**, "What should be true when this is done?"
+2. **Constraint**, "What must NOT change or break?"
+3. **Scope**, "What is explicitly out of scope?"
+4. **Users**, "Who uses this, and what do they need that they don't say?"
+5. **Risk**, "What happens if this fails? What's the blast radius?"
+6. **Measure**, "How do we know it worked? What's the metric?"
 
 ### Confidence check
 

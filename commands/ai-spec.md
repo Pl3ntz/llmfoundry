@@ -1,5 +1,5 @@
 ---
-description: Write a SPEC before starting work — objective, scope, out-of-scope, done criteria
+description: Write a SPEC before starting work, objective, scope, out-of-scope, done criteria
 model: opencode-go/deepseek-v4-pro
 agent: build
 ---

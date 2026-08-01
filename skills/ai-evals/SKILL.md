@@ -1,6 +1,6 @@
 ---
 name: ai-evals
-description: Build and run evaluations for LLM prompts, agents, and RAG — golden sets, assertions, regression gates, and CI integration. Use before changing any prompt or agent, and to prevent regressions.
+description: Build and run evaluations for LLM prompts, agents, and RAG, golden sets, assertions, regression gates, and CI integration. Use before changing any prompt or agent, and to prevent regressions.
 ---
 
 # AI Evals
@@ -10,10 +10,10 @@ run continuously, track regressions with every change.
 
 ## Principles
 
-1. **Golden set first** — fixed inputs + expected outputs, frozen (versioned).
-2. **Assert, don't judge** — deterministic assertions over LLM-as-judge wherever possible.
-3. **Regression gate** — a prompt/agent change that fails the golden set does not ship.
-4. **Pass@k** — reliability under sampling, not one lucky run.
+1. **Golden set first**, fixed inputs + expected outputs, frozen (versioned).
+2. **Assert, don't judge**, deterministic assertions over LLM-as-judge wherever possible.
+3. **Regression gate**, a prompt/agent change that fails the golden set does not ship.
+4. **Pass@k**, reliability under sampling, not one lucky run.
 
 ## Golden set structure
 
@@ -34,16 +34,16 @@ run continuously, track regressions with every change.
 | Capability | Can it do something new? |
 | Regression | Does it still do what it used to? |
 | Robustness | Adversarial inputs, edge cases, false premises |
-| Stability | Same input K times — where does output fluctuate? |
+| Stability | Same input K times, where does output fluctuate? |
 
 ## Assertions
 
-- **Exact match** — normalized answer equals key (factual items)
-- **Contains / not-contains** — presence of required elements, absence of banned ones
-- **Schema valid** — output parses, required fields present
-- **URL liveness** — cited URLs resolve (research)
-- **Fabrication kill-check** — banned specifics absent (false-premise items)
-- **Contract lint** — required headers, length budget, zero preamble
+- **Exact match**, normalized answer equals key (factual items)
+- **Contains / not-contains**, presence of required elements, absence of banned ones
+- **Schema valid**, output parses, required fields present
+- **URL liveness**, cited URLs resolve (research)
+- **Fabrication kill-check**, banned specifics absent (false-premise items)
+- **Contract lint**, required headers, length budget, zero preamble
 
 ## Regression flow
 

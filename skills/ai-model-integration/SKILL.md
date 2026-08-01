@@ -1,6 +1,6 @@
 ---
 name: ai-model-integration
-description: Integrate LLM providers (OpenAI, Anthropic, Google, DeepSeek, OpenAI-compatible) — SDKs, streaming, structured output, retries, and fallbacks. Use when wiring models into an app.
+description: Integrate LLM providers (OpenAI, Anthropic, Google, DeepSeek, OpenAI-compatible), SDKs, streaming, structured output, retries, and fallbacks. Use when wiring models into an app.
 ---
 
 # AI Model Integration
@@ -13,8 +13,8 @@ graceful fallback.
 - **DeepSeek native** (V4 Pro/Flash): cheapest, 1M context, thinking mode, tool calls,
   JSON output. Base URL `https://api.deepseek.com` (OpenAI-compatible).
 - **OpenAI-compatible** (DeepSeek, OpenRouter, local): `@ai-sdk/openai-compatible`.
-- **Anthropic**: `@ai-sdk/anthropic` — Messages API, `tool_use` blocks.
-- **Google**: `@ai-sdk/google` — Gemini format.
+- **Anthropic**: `@ai-sdk/anthropic`, Messages API, `tool_use` blocks.
+- **Google**: `@ai-sdk/google`, Gemini format.
 - Rule: match the SDK to the endpoint's real format. OpenAI-compatible providers with a
   `/v1/responses` endpoint need `@ai-sdk/openai`, not `openai-compatible`.
 

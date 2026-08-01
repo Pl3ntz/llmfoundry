@@ -40,7 +40,7 @@ Write these separately, don't mush them together.
 2. Run against a fixed input
 3. Diagnose failures: over-generation? wrong format? hallucination? refusals?
 4. Fix ONE thing per iteration. Re-test the SAME cases
-5. Track a prompt version — change prompts through the `ai-evals` flow, not ad hoc
+5. Track a prompt version, change prompts through the `ai-evals` flow, not ad hoc
 
 ## Structured output patterns
 
@@ -48,7 +48,7 @@ Write these separately, don't mush them together.
 { "type": "json_schema", "schema": { "name": "result", "strict": true, "schema": { "type": "object", "properties": { "answer": { "type": "string" }, "confidence": { "type": "number" } }, "required": ["answer", "confidence"], "additionalProperties": false } } }
 ```
 
-If the provider supports structured output, use it — never parse prose.
+If the provider supports structured output, use it, never parse prose.
 
 ## Tool description template
 

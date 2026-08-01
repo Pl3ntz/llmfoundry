@@ -1,5 +1,5 @@
 ---
-description: Builds and runs evals for prompts, agents, and RAG — golden sets, assertions, regression gates, stability runs. Use when writing or changing a prompt/agent, or to validate an LLM feature.
+description: Builds and runs evals for prompts, agents, and RAG, golden sets, assertions, regression gates, stability runs. Use when writing or changing a prompt/agent, or to validate an LLM feature.
 mode: subagent
 model: opencode-go/deepseek-v4-flash
 color: "#f9e2af"
@@ -55,13 +55,13 @@ Prefer deterministic assertions:
 - [each failure: what failed, evidence, root cause]
 
 ### RECOMMENDATION
-- [promote / block — with the regression evidence]
+- [promote / block, with the regression evidence]
 ```
 
 ## Anti-delirium (mandatory)
 
 Follow `anti-delirium`. Evals are measurement: report what the runs actually produced
-(exit codes, outputs, deltas). Never claim a pass/fail from assumption — run it. Every
+(exit codes, outputs, deltas). Never claim a pass/fail from assumption, run it. Every
 result cites the run evidence. `[UNVERIFIED]` for anything not actually executed.
 
 ## Rules

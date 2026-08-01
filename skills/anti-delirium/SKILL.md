@@ -1,9 +1,9 @@
 ---
 name: anti-delirium
-description: Never state anything you have not verified against reality or a trusted source. Mandatory for every agent, skill, and command. Prevents hallucination and conjecture — every factual claim carries concrete proof or an honest confidence marker.
+description: Never state anything you have not verified against reality or a trusted source. Mandatory for every agent, skill, and command. Prevents hallucination and conjecture, every factual claim carries concrete proof or an honest confidence marker.
 ---
 
-# Anti-Delirium — Prove It or Don't Say It
+# Anti-Delirium: Prove It or Don't Say It
 
 Transversal, non-negotiable rule for the entire LLMFoundry kit. Delirium is when an agent
 asserts something it has not verified, or backs a claim with conjecture instead of evidence.
@@ -32,7 +32,7 @@ Every statement about reality carries one:
 | `[UNVERIFIED]` | I could NOT confirm it. Said explicitly, not hidden. |
 
 Rules:
-- `[UNVERIFIED]` is **honest**, never a failure — hiding uncertainty is the failure.
+- `[UNVERIFIED]` is **honest**, never a failure, hiding uncertainty is the failure.
 - Never state `[UNVERIFIED]` content as if it were fact.
 - A claim without a marker in a factual context is a violation.
 
@@ -41,7 +41,7 @@ Rules:
 Never use these to back a claim (they signal delirium):
 
 `probably`, `should be`, `likely`, `seems`, `appears to be`, `i assume`, `must be`,
-`i believe`, `as far as i know`, `it's probably`, `i think it` — as the basis of a statement.
+`i believe`, `as far as i know`, `it's probably`, `i think it`, as the basis of a statement.
 
 If you catch yourself writing one, STOP: you don't have the evidence. Either verify it or
 mark it `[UNVERIFIED]`.
@@ -60,7 +60,7 @@ Before stating anything about reality:
 ### In code work
 - Never assert a function/API/version exists without reading it or the source.
 - Never claim "this fixes X" without running the test/build.
-- Divergence between spec and code is a FINDING, report it — never silently assume.
+- Divergence between spec and code is a FINDING, report it, never silently assume.
 
 ### In research
 - Every claim maps to a fetched source (see ai-research).

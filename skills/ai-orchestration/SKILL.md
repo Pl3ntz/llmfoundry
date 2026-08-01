@@ -1,6 +1,6 @@
 ---
 name: ai-orchestration
-description: Orchestration protocol for the AI Engineering Orchestrator — routing table, delegation protocol, context preamble, and fan-in synthesis. Use when deciding which subagent to delegate to, composing delegation prompts, or merging multi-agent results.
+description: Orchestration protocol for the AI Engineering Orchestrator, routing table, delegation protocol, context preamble, and fan-in synthesis. Use when deciding which subagent to delegate to, composing delegation prompts, or merging multi-agent results.
 ---
 
 # AI Orchestration
@@ -12,7 +12,7 @@ and synthesizing multi-agent results.
 
 | Request | Route to | Not |
 |---------|----------|-----|
-| deep multi-source research, comparisons, landscape, OSINT (orgs) | `deep-researcher` | yourself — it runs the correlation protocol |
+| deep multi-source research, comparisons, landscape, OSINT (orgs) | `deep-researcher` | yourself, it runs the correlation protocol |
 | LLM system architecture (agents, RAG, MCP) design | `ai-architect` | immediate code |
 | build/run evals for prompt/agent/feature | `ai-evals-runner` | guessing it works |
 | security review of LLM app before ship | `llm-security-reviewer` | shipping without review |
@@ -32,14 +32,14 @@ Every delegated task MUST carry all four parts. A spawn without context is a fai
 
 ```
 ## Objective
-[1 sentence — what the agent must accomplish]
+[1 sentence, what the agent must accomplish]
 
 ## Context
 - project / stack / relevant files / constraints
 - past memory recall (---foundry-memory---) if relevant
 
 ## Output contract
-[exact format, sections, length — from ai-engineering-standards]
+[exact format, sections, length, from ai-engineering-standards]
 
 ## Boundaries
 [what is OUT of scope, what NOT to touch, what NOT to decide]

@@ -6,7 +6,7 @@ description: Ground every framework, library, and API decision in official docum
 # Source-Driven Development
 
 Ground every technical decision in official, verifiable sources. DeepSeek's parametric
-memory of APIs and versions is stale — never trust it for specifics.
+memory of APIs and versions is stale, never trust it for specifics.
 
 ## When to use
 

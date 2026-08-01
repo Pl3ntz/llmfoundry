@@ -1,6 +1,6 @@
 ---
 name: ai-llm-observability
-description: Observability for LLM applications — structured logging, tracing, token/cost tracking, and RED metrics. Use when instrumenting or debugging LLM apps and agents.
+description: Observability for LLM applications, structured logging, tracing, token/cost tracking, and RED metrics. Use when instrumenting or debugging LLM apps and agents.
 ---
 
 # AI LLM Observability
@@ -37,7 +37,7 @@ Log the failure AND the degradation path (fallback used), don't swallow it.
 
 - Compute cost per request from token counts × model price table.
 - Aggregate per session, per feature, per model. Alert on spikes.
-- Track cached reads separately (cheap) — they dominate DeepSeek usage patterns.
+- Track cached reads separately (cheap), they dominate DeepSeek usage patterns.
 
 ## RED metrics
 
@@ -52,7 +52,7 @@ Plus: token rate, cost rate, fallback rate, timeout rate.
 ## Alerting (symptom-based)
 
 - Alert on symptoms: error-rate spike, p95 latency breach, cost spike, fallback storm.
-- Not on "model changed" — that's a cause, not a symptom.
+- Not on "model changed", that's a cause, not a symptom.
 
 ## Anti-patterns
 

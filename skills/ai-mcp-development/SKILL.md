@@ -1,6 +1,6 @@
 ---
 name: ai-mcp-development
-description: Build Model Context Protocol (MCP) servers and clients — stdio/HTTP transport, tools, resources, prompts, and auth. Use when creating or integrating MCP servers for agents.
+description: Build Model Context Protocol (MCP) servers and clients, stdio/HTTP transport, tools, resources, prompts, and auth. Use when creating or integrating MCP servers for agents.
 ---
 
 # AI MCP Development
@@ -14,14 +14,14 @@ Agent ←→ MCP client ←→ MCP server (tools, resources, prompts)
 ```
 
 Three primitives:
-- **Tools** — actions the agent calls (do things)
-- **Resources** — data the agent reads (context)
-- **Prompts** — reusable interaction templates
+- **Tools**, actions the agent calls (do things)
+- **Resources**, data the agent reads (context)
+- **Prompts**, reusable interaction templates
 
 ## Server setup
 
-- **stdio transport** — subprocess, for local tools. Command + args.
-- **HTTP/SSE transport** — remote, for shared services. URL + optional auth.
+- **stdio transport**, subprocess, for local tools. Command + args.
+- **HTTP/SSE transport**, remote, for shared services. URL + optional auth.
 - SDKs: official MCP SDKs per language (TypeScript, Python, etc.).
 
 ```ts
@@ -45,9 +45,9 @@ await server.connect(new StdioServerTransport());
 
 - **One tool = one clear action.** Narrow beats broad.
 - **Name = verb + noun** (`search_docs`, `create_ticket`, not `process`).
-- **Description = purpose + when + returns** — this is the agent's contract.
+- **Description = purpose + when + returns**, this is the agent's contract.
 - **Input schema explicit** (zod/json-schema), optional fields optional.
-- **Return structured data**, not prose — agents parse it.
+- **Return structured data**, not prose, agents parse it.
 - Return errors as structured results, not thrown exceptions where the agent must guess.
 
 ## Resources

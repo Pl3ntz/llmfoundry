@@ -1,8 +1,8 @@
-# DECISIONS — template
+# DECISIONS: template
 
 Light ADRs. COPY locally, never commit real decisions.
 
-> TEMPLATE — contains zero real data.
+> TEMPLATE: contains zero real data.
 
 | Date | Decision | Why | Alternatives |
 |------|----------|-----|--------------|

@@ -1,12 +1,12 @@
 ---
 name: debugging-and-error-recovery
-description: Systematic 5-step debugging — reproduce, localize, reduce, fix, guard. Use when tests fail, builds break, behavior is unexpected, or a production issue arises.
+description: Systematic 5-step debugging, reproduce, localize, reduce, fix, guard. Use when tests fail, builds break, behavior is unexpected, or a production issue arises.
 ---
 
 # Debugging and Error Recovery
 
 Five-step triage. Stop-the-line rule: when something breaks, fix the root cause before
-moving on — don't paper over it.
+moving on, don't paper over it.
 
 ## The 5 steps
 
@@ -18,7 +18,7 @@ moving on — don't paper over it.
 ### 2. LOCALIZE
 - Find the smallest scope: which function, which call, which condition.
 - Bisect: binary search the code/data/commits to isolate the change that broke it.
-- Read the actual code path — don't reason from the symptom.
+- Read the actual code path, don't reason from the symptom.
 - Check the boundary: is it the input, the code, or the environment?
 
 ### 3. REDUCE
@@ -49,7 +49,7 @@ Deferred "I'll fix it later" becomes a recurring cost.
 | Build/type error | Fix at the source, don't suppress |
 | Test failure | Reproduce → was it the code or the test? |
 | Runtime crash | Reproduce with the exact input, fix root cause |
-| Flaky/timing | Find the race — often shared state or timing assumption |
+| Flaky/timing | Find the race, often shared state or timing assumption |
 | Environment | Check versions, config, env vars before code |
 | Production issue | Reproduce from logs, reduce, fix, guard with alerting |
 

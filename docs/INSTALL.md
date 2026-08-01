@@ -23,7 +23,7 @@ What it does:
    existing security skills)
 4. **plugins/** → gates.ts + memory.ts registered in `opencode.json`
 5. **Python deps** → `pip install -r requirements.txt` (fastembed/numpy for semantic
-   memory). Never fails the install — memory runs lexical-only without it.
+   memory). Never fails the install, memory runs lexical-only without it.
 
 Restart opencode. `ai-orchestrator` becomes the default agent.
 

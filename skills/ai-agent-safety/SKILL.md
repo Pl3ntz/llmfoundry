@@ -1,6 +1,6 @@
 ---
 name: ai-agent-safety
-description: Safety controls for AI agents — sandboxing, tool permissions, allowlists, input/output boundaries, and fail-closed defaults. Use when building agents that execute code, access data, or act on the world.
+description: Safety controls for AI agents, sandboxing, tool permissions, allowlists, input/output boundaries, and fail-closed defaults. Use when building agents that execute code, access data, or act on the world.
 ---
 
 # AI Agent Safety
@@ -9,11 +9,11 @@ Keep agents inside their intended boundaries with fail-closed defaults.
 
 ## Principles
 
-1. **Least privilege** — the agent gets only the tools and data the task needs.
-2. **Fail closed** — on doubt or error, deny, don't proceed.
-3. **Boundaries as mechanisms, not instructions** — a prompt asking an agent to "be careful"
+1. **Least privilege**, the agent gets only the tools and data the task needs.
+2. **Fail closed**, on doubt or error, deny, don't proceed.
+3. **Boundaries as mechanisms, not instructions**, a prompt asking an agent to "be careful"
    is not a control. Enforce with permissions, sandboxes, allowlists.
-4. **Assume prompt injection** — any untrusted input can try to redirect the agent.
+4. **Assume prompt injection**, any untrusted input can try to redirect the agent.
 
 ## Tool permissions
 

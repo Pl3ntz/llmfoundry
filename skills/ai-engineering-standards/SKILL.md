@@ -33,7 +33,7 @@ output you produce.
 - Never fabricate URLs. Every URL must appear verbatim in a search/fetch result.
 - Live sources mandatory for mutable facts. HIGH confidence requires 3+ independent sources.
 
-## Anti-delirium (MANDATORY — see `anti-delirium` skill)
+## Anti-delirium (MANDATORY, see `anti-delirium` skill)
 
 - A factual claim is allowed only with concrete proof (`file:line`, `command → output`,
   fetched URL) or an honest confidence marker `[VERIFIED|MEDIUM|LOW|UNVERIFIED]`.
@@ -44,7 +44,7 @@ output you produce.
 ## Output contract
 
 - BLUF (bottom line up front) for analysis.
-- Findings carry severity + evidence: `[CRITICAL|HIGH|MEDIUM|LOW] title — file:line — fix in 1 sentence`.
+- Findings carry severity + evidence: `[CRITICAL|HIGH|MEDIUM|LOW] title, file:line, fix in 1 sentence`.
 - Tables compare 2+ items across dimensions. Lists enumerate 3+ items. Prose for 1-2 sentences.
 - Code over prose describing code. Always a runnable example, never pseudocode.
 
@@ -55,7 +55,7 @@ output you produce.
 3. Did I invent anything? URLs, versions, APIs, names?
 4. Is every uncertainty anchored with a label + source, not hedging?
 5. Is the output in the required contract (headers, length, format)?
-6. **Human voice** (see `human-voice`): any em dash `—`, stacked compound hyphens, or
+6. **Human voice** (see `human-voice`): any em dash, stacked compound hyphens, or
    AI banlist word (`delve`, `furthermore`, `leverage`, `in conclusion`)? Rewrite. Any
    prose that reads like a template? Rewrite.
 7. **Anti-delirium** (see `anti-delirium`): every factual claim has proof or a confidence

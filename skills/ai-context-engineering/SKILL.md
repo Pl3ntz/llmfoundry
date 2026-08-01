@@ -1,6 +1,6 @@
 ---
 name: ai-context-engineering
-description: Manage LLM context windows — packing, pruning, compaction, summarization, and context budgets. Use when building prompts, agents, or any app with a context limit.
+description: Manage LLM context windows, packing, pruning, compaction, summarization, and context budgets. Use when building prompts, agents, or any app with a context limit.
 ---
 
 # AI Context Engineering
@@ -15,10 +15,10 @@ Feed models the right information at the right time, within the context budget.
 
 ## Packing patterns
 
-- **Progressive disclosure** — put the 100-token summary in context; load details on demand.
-- **Recency weighting** — recent + goal + constraints always in context; history can be summarized.
-- **Retrieval-in-context** — pull relevant chunks (see `ai-rag-pipeline`), don't dump everything.
-- **Structured packing** — headers, delimiters, one topic per block. Models navigate structure.
+- **Progressive disclosure**, put the 100-token summary in context; load details on demand.
+- **Recency weighting**, recent + goal + constraints always in context; history can be summarized.
+- **Retrieval-in-context**, pull relevant chunks (see `ai-rag-pipeline`), don't dump everything.
+- **Structured packing**, headers, delimiters, one topic per block. Models navigate structure.
 
 ## Pruning
 

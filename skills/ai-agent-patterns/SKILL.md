@@ -1,6 +1,6 @@
 ---
 name: ai-agent-patterns
-description: Architecture patterns for AI agents — tool-use loops, context management, subagents, agentic workflows, and failure handling. Use when designing or building agentic systems.
+description: Architecture patterns for AI agents, tool-use loops, context management, subagents, agentic workflows, and failure handling. Use when designing or building agentic systems.
 ---
 
 # AI Agent Patterns
@@ -33,7 +33,7 @@ Every agent needs: a loop bound, a stop condition, and a failure path.
 ## Context management
 
 - Give the agent only what it needs (see `ai-context-engineering`).
-- Streaming/scratchpad for long tasks — don't accumulate everything in context.
+- Streaming/scratchpad for long tasks, don't accumulate everything in context.
 - Summarize intermediate results, keep the goal and constraints in context.
 - Know the context budget and stay under it.
 

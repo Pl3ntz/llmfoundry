@@ -1,8 +1,8 @@
-# GOTCHAS — template
+# GOTCHAS: template
 
 Recurring patterns with fixes. COPY locally, never commit real gotchas.
 
-> TEMPLATE — contains zero real data.
+> TEMPLATE: contains zero real data.
 
 | Pattern | Fix | Count |
 |---------|-----|-------|

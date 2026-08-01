@@ -1,8 +1,8 @@
-# FINDINGS — template
+# FINDINGS: template
 
 Agent findings, open/resolved. COPY locally, never commit real findings.
 
-> TEMPLATE — contains zero real data.
+> TEMPLATE: contains zero real data.
 
 | Severity | Finding | Status | Evidence |
 |----------|---------|--------|----------|
