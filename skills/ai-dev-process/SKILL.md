@@ -14,9 +14,14 @@ Mandatory workflow for every task that writes code. Do not skip steps.
 2. WORKTREE   → git worktree add for the feature
 3. TDD        → tests first (red) → implement (green) → refactor
 4. VERIFY     → typecheck + lint + full test suite
-5. COMMIT     → atomic commit, conventional message
-6. MERGE      → merge worktree back
+5. COMMIT     → atomic commit, conventional message (see git-workflow)
+6. REVIEW     → self-review + code-review on the diff (see code-review)
+7. PR         → small, described, CI green (see pull-request)
+8. MERGE      → merge worktree back
 ```
+
+For git practices, PR creation, and effective review, load `git-workflow`,
+`pull-request`, and `code-review` respectively. They are part of this process.
 
 ## 1. SPEC first
 

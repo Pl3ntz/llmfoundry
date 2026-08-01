@@ -10,6 +10,9 @@
 | [ai-engineering-standards](skills/ai-engineering-standards/) | Start of every task, tone, evidence discipline, anti-fabrication, output contract |
 | [ai-dev-process](skills/ai-dev-process/) | Writing any code: SPEC, worktree, TDD, verify, atomic commit |
 | [interview-me](skills/interview-me/) | Request is underspecified or high-stakes |
+| [git-workflow](skills/git-workflow/) | Committing, branching, merging, resolving conflicts |
+| [pull-request](skills/pull-request/) | Creating and updating effective PRs |
+| [code-review](skills/code-review/) | Extremely effective review, five-axis method, before merge |
 
 ## Category B: AI Core
 

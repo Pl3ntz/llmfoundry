@@ -1,9 +1,8 @@
 import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 
 /**
- * LLMFoundry gates — execution guards ported from Quarterdeck's philosophy:
- * enforcement lives outside the model. Rules the model merely reads are guidance;
- * these hooks are controls.
+ * LLMFoundry gates — execution guards. Enforcement lives outside the model.
+ * Rules the model merely reads are guidance; these hooks are controls.
  *
  * Gates (block by throwing — the documented veto mechanism):
  * - test-gate:  blocks `git commit` when the full test suite has not run this session

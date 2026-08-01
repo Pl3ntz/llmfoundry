@@ -12,35 +12,36 @@
 
 Sistema de memória unificada de aprendizado contínuo para o LLMFoundry. Captura
 estruturada de conhecimento das sessões (erros resolvidos, decisões, padrões recorrentes,
-achados de agentes), com busca, confiança, reforço e promoção, portando o que o
-`local-mind` acerta e corrigindo suas limitações.
+achados de agentes), com busca, confiança, reforço e promoção, formando um loop vivo que
+a própria estrutura alimenta e consome.
 
 ## Por que
 
-O usuário tem o `local-mind` (Claude Code), 1853 memórias, 995 fatos de perfil, 385
-gotchas, 205 findings de agentes. A ideia é comprovada. Mas tem limitações que queremos
-corrigir na versão LLMFoundry (focada em opencode + DeepSeek + engenharia de IA).
+Um agente sem memória recomeça do zero em cada sessão. A memória do LLMFoundry guarda o
+que foi aprendido, reaproveita decisões, evita repetir erros e acelera o trabalho. Tudo
+100% local, nunca versionado, focado em opencode + DeepSeek + engenharia de IA.
 
-### O que o local-mind acerta (manter)
+### Recursos
 
 | Recurso | Detalhe |
 |---------|---------|
 | FTS5 full-text search | busca lexical com stemming porter |
+| Embeddings locais (semântico) | busca por intenção, não só tokens |
 | Confiança + reforço | fatos ganham peso ao serem re-confirmados |
 | Severidade/status em findings | memória acionável, não só texto |
 | Container por projeto | isolamento por contexto |
 | Recorrência com promoção | gotchas viram regras (3+ ocorrências) |
 | Captura por hook | automática, não manual |
 
-### O que o local-mind erra (corrigir)
+### Decisões de design
 
-| Limitação | Correção LLMFoundry |
+| Decisão | Razão |
 |-----------|---------------------|
-| `recall_log` vazio, captura sem uso medível | Recall com confirmação de ação |
+| `recall_log` com confirmação de ação | captura sem uso medível é ruído |
 | Só busca lexical, sem correlação semântica | Embeddings (v2) sobre a camada estruturada |
 | `session_turn` é tudo, volume de ruído (1848) | **Captura estruturada**: só eventos com sinal |
 | Sem expiração/decay | Decay temporal + arquivamento |
-| Sem promoção automática medível | Promotion gate com critérios explícitos (matriz do Quarterdeck) |
+| Sem promoção automática medível | Promotion gate com critérios explícitos |
 | Banco proprietário, difícil de versionar/compartilhar | Camada curada em markdown git-versionável |
 
 ---
@@ -77,7 +78,7 @@ vazar regra de negócio ou dado pessoal em um repo compartilhado. Por isso a cam
 é local e o repo carrega só templates sanitizados.
 
 **Por que não só arquivos:**
-- O local-mind provou que query estruturada (severidade, status, contagem, confiança) vale.
+- Query estruturada (severidade, status, contagem, confiança) vale mais que texto solto.
 - SQLite é local, sem servidor, sem infra, igual ao setup.
 
 ---
@@ -129,8 +130,8 @@ estrutura LLMFoundry alimenta e consome, como memória humana.
 2. **Todo skill transversal** (ai-engineering-standards, ai-dev-process) consulta decisões
    e gotchas relevantes ao contexto.
 3. **Commands** (`/ai-*`) registram decisões e leem histórico.
-4. **O recall é observável**, `recall_log` prova que a memória foi consumida e agida.
-   Isso corrige o gap do local-mind (recall_log = 0).
+4. **O recall é observável**, `recall_log` prova que a memória foi consumida e agida,
+   não apenas capturada.
 5. **A memória alimenta o prompt** (retrieve), nunca o contrário: prompt não vira memória
    bruta; memória é sempre consolidação estruturada.
 
@@ -161,7 +162,7 @@ memory_fts: FTS5 (conteúdo)
 memory_facts, fatos de perfil com confidence + reinforced_count
 gotchas, padrões com hash + count + samples + promoted
 findings, achados de agentes (severity, status, acted_on)
-recall_log, recall com acted_on (corrige o gap do local-mind)
+recall_log, recall com acted_on (prova que foi consumido e agido)
 session_metrics, métricas por sessão
 ```
 
@@ -179,7 +180,7 @@ CAPTURA (hook/comando)
 > Promoção escreve na camada local (`~/.local/share/llmfoundry/memory/<projeto>/`), nunca
 > no repo. O repo mantém só `templates/MEMORY/` com exemplos vazios e placeholders.
 
-**Promotion Criteria Matrix** (do Quarterdeck, mantido):
+**Promotion Criteria Matrix:**
 Recorrência ≥3 sessões · Consistência (mesma solução) · Impacto (preveniu erro/ganhou tempo) ·
 Estabilidade (sistema não mudou) · Clareza (1-2 frases, ≤200 chars).
 
@@ -223,7 +224,7 @@ e placeholders**, para o usuário copiar para a camada local. Nenhum conteúdo r
 ## Critérios de sucesso
 
 1. Captura automática de erros resolvidos e achados de agentes (hook)
-2. `recall_log` com `acted_on` populado, gap do local-mind corrigido
+2. `recall_log` com `acted_on` populado, memória comprovadamente consumida e agida
 3. Promoção exige 5 critérios; nada auto-promove sem a matriz
 4. Camada curada em markdown **100% local**, repo contém só templates vazios
 5. Busca FTS5 + filtros (tipo, severidade, projeto)

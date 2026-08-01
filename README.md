@@ -114,6 +114,9 @@ prompt → **delegates** with full context → **synthesizes** results and prese
 | `ai-orchestration` | Routing, delegation protocol, fan-in synthesis |
 | `human-voice` | Write in a natural human voice, never looks AI-generated |
 | `anti-delirium` | Prove it or don't say it, evidence or confidence marker on every claim |
+| `git-workflow` | Committing, branching, merging, resolving conflicts |
+| `pull-request` | Creating and updating effective PRs |
+| `code-review` | Extremely effective review, five-axis method, before merge |
 
 ### AI Core
 | Skill | Use when |
