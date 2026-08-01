@@ -9,7 +9,13 @@ node_modules/
 
 # Memory (local-only, NEVER versioned)
 .llmfoundry/
+**/.llmfoundry/
 memory/
+**/memory/
 *.db
 *.db-*
+*.db-journal
 templates/MEMORY/*.real.*
+
+# templates/MEMORY is versioned (sanitized placeholders) — re-include
+!templates/MEMORY/
