@@ -53,23 +53,23 @@ You send a rough idea. The orchestrator turns it into a plan, verifies instead o
 and produces work you can trust. This is how it actually feels:
 
 ```text
-You:  "quero um agente que busca docs atualizadas de libs e responde com fontes"
+You:  "I want an agent that pulls fresh docs for libraries and answers with sources"
 
-Orch: Antes de desenhar, preciso de uma decisão. Formato?
-      A) CLI  B) chatbot web  C) API  D) MCP server dentro do opencode
+Orch: Before I design this, I need one decision. What interface?
+      A) CLI   B) web chatbot   C) API   D) MCP server inside opencode
 
 You:  "D"
 
-Orch: Perfeito. MCP server. Vou especificar:
-      SPEC: tech-docs-agent, escopo, criterio de pronto, fora de escopo.
-      Delegando para ai-architect com contexto completo...
+Orch: Good, an MCP server. Let me specify:
+      SPEC: tech-docs-agent, scope, done criteria, out of scope.
+      Delegating to ai-architect with full context...
 
-      [ai-architect] entrega o design com trade-offs
-      [llm-security-reviewer] revisa prompt injection / exfiltration
-      [deep-researcher] valida as fontes citadas
+      [ai-architect] returns a design with trade-offs
+      [llm-security-reviewer] reviews prompt injection and exfiltration
+      [deep-researcher] validates the cited sources
 
-Orch: 3 agents rodaram em paralelo. Contradições resolvidas.
-      Aqui esta o plano final, aprovado para implementar.
+Orch: 3 agents ran in parallel. Contradictions resolved.
+      Here is the final plan, approved to implement.
 ```
 
 **And every claim in that flow was verified, not guessed.** That is the LLMFoundry difference:
@@ -127,21 +127,6 @@ You ──→ AI Orchestrator (the Captain) ──→ specialist subagents
               ├─ ai-evals-runner      (prove it works)
               ├─ llm-security-reviewer(security before shipping)
               └─ reverse-engineer     (binary, firmware, malware analysis)
-              │
-              └─ Living Memory (SQLite + embeddings, self-feeding)
-```
-
----
-
-## The team
-
-```
-You ──→ AI Orchestrator (the Captain) ──→ specialist subagents
-              │
-              ├─ deep-researcher      (deep research with correlation + anti-injection)
-              ├─ ai-architect         (LLM system design with trade-offs)
-              ├─ ai-evals-runner      (prove it works)
-              └─ llm-security-reviewer(security before shipping)
               │
               └─ Living Memory (SQLite + embeddings, self-feeding)
 ```

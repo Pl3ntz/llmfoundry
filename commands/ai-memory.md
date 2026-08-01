@@ -21,10 +21,10 @@ The memory CLI is at `scripts/memory/foundry_memory.py`. Commands:
 - `decay`, apply temporal decay
 
 Interpret the request:
-- "lembra/anota X" → `remember`
-- "o que sabemos sobre X" → `search`
-- "o que lembra?" → `recall`
-- "stats/estatisticas" → `stats`
-- "promove gotchas" → `promote`
+- "remember/note X" → `remember`
+- "what do we know about X" → `search`
+- "what do you recall?" → `recall`
+- "stats/statistics" → `stats`
+- "promote gotchas" → `promote`
 
 Run the appropriate command via bash and report the output. Memory is local-only.

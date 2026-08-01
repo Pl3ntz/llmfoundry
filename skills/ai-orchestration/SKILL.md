@@ -21,10 +21,10 @@ and synthesizing multi-agent results.
 | multi-agent parallel work | route each, then synthesize | one giant prompt |
 
 Symptom-driven routes (when the request names a problem, not a role):
-- "pesquisa/compare/landscape" → deep-researcher
-- "arquitetura/design/agentes/RAG/MCP" → ai-architect
-- "eval/regressão/prompt mudou" → ai-evals-runner
-- "revisa segurança/LLM app/injeção" → llm-security-reviewer
+- "research/compare/landscape" → deep-researcher
+- "architecture/design/agents/RAG/MCP" → ai-architect
+- "eval/regression/prompt changed" → ai-evals-runner
+- "security review/LLM app/injection" → llm-security-reviewer
 
 ## Delegation protocol (every spawn)
 

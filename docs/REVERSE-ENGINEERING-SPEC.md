@@ -1,37 +1,36 @@
 # Reverse Engineering Specialist: SPEC
 
-**Status:** Rascunho para implementação futura
-**Autor:** vplentz
-**Data:** 2026-08-01
-**Complexidade:** Complexo
-**Fase:** Após concluir os itens atuais do roadmap (gates, routing eval, baselines, CI)
+**Status:** Implemented
+**Author:** vplentz
+**Date:** 2026-08-01
+**Complexity:** Complex
 
 ---
 
-## O que
+## What
 
-Criar um **agente especialista em engenharia reversa** no LLMFoundry, com skills dedicadas,
-focado em **máxima precisão** de análise de binários (ELF/PE/Mach-O), extração de lógica,
-recuperação de algoritmos e identificação de vulnerabilidades.
+A **reverse engineering specialist agent** in LLMFoundry, with dedicated skills, focused
+on **maximum precision** for binary analysis (ELF/PE/Mach-O), logic extraction, algorithm
+recovery, and vulnerability identification.
 
-## Por que
+## Why
 
-O usuário trabalha com security e tem o `apk-redteam-pipeline` (Android/APK apenas). Falta
-um especialista para **análise de binários em geral**, firmware, executáveis, malware,
-libraries, com precisão de nível profissional (como o deep-researcher é para pesquisa).
+The user works in security and has an Android/APK pipeline. What was missing is a general
+binary specialist for firmware, executables, malware, and libraries, at a professional
+level of precision (the way the deep-researcher is for research).
 
-## Escopo: Skills
+## Scope: Skills
 
-| # | Skill | Descrição |
+| # | Skill | Description |
 |---|-------|-----------|
-| 1 | `re-binary-analysis` | Identificar formato (ELF/PE/Mach-O), arquitetura, sections, imports/exports, strings, entropia, packing detection |
-| 2 | `re-decompilation` | Uso de radare2/Ghidra: analysis, disassembly, decompilation, renaming, tipos, xrefs |
-| 3 | `re-algorithm-recovery` | Recuperar lógica: crypto (detectar AES/RSA/hash), checksums, serial/algoritmos custom, deobfuscation |
-| 4 | `re-dynamic-analysis` | Execução controlada: gdb/radare2 debug, tracing (strace/ltrace), Frida hooking, sandbox |
-| 5 | `re-malware-analysis` | Triage de malware: YARA, comportamento, IOC extraction, detonation segura, anti-analysis bypass |
-| 6 | `re-firmware-analysis` | Extração de firmware, filesystem (binwalk), kernel modules, U-Boot, updater logic |
+| 1 | `re-binary-analysis` | Identify format (ELF/PE/Mach-O), architecture, sections, imports/exports, strings, entropy, packing detection |
+| 2 | `re-decompilation` | radare2/Ghidra workflow: analysis, disassembly, decompilation, renaming, types, xrefs |
+| 3 | `re-algorithm-recovery` | Recover logic: crypto (detect AES/RSA/hash), checksums, serial/custom algorithms, deobfuscation |
+| 4 | `re-dynamic-analysis` | Controlled execution: gdb/radare2 debug, tracing (strace/ltrace), Frida hooking, sandbox |
+| 5 | `re-malware-analysis` | Malware triage: YARA, behavior, IOC extraction, safe detonation, anti-analysis bypass |
+| 6 | `re-firmware-analysis` | Firmware extraction, filesystem (binwalk), kernel modules, U-Boot, updater logic |
 
-## Escopo: Agente
+## Scope: Agent
 
 `agents/reverse-engineer.md` (subagent)
 
@@ -42,79 +41,79 @@ model: opencode-go/deepseek-v4-pro
 mode: subagent
 ```
 
-**Método (precisão primeiro):**
-1. **INTAKE**, identificar formato/arquitetura antes de qualquer análise
-2. **STATIC**, sections, symbols, strings, imports → hipótese de função
-3. **DECOMPILE**, descompilar com r2/Ghidra, renomear, reconstruir lógica
-4. **DYNAMIC** (opcional), confirmar comportamento sob execução controlada
-5. **SYNTHESIZE**, relatório: funções mapeadas, algoritmos recuperados, vulns, confidence
+**Method (precision first):**
+1. **INTAKE**, identify format/architecture before any analysis
+2. **STATIC**, sections, symbols, strings, imports → function hypothesis
+3. **DECOMPILE**, decompile with r2/Ghidra, rename, reconstruct logic
+4. **DYNAMIC** (optional), confirm behavior under controlled execution
+5. **SYNTHESIZE**, report: mapped functions, recovered algorithms, vulns, confidence
 
 **Output contract:**
 ```
-### FINDINGS (ordenado por severidade)
-- [severity] [descrição], endereço/símbolo, [evidência, ex. hexdump/decompiled excerpt]
+### FINDINGS (ordered by severity)
+- [severity] [description] at [address/symbol], evidence: [hexdump/decompiled excerpt]
 
 ### RECOVERED LOGIC
-- [algoritmo/função recuperada com explicação]
+- [recovered algorithm/function with explanation]
 
-### VULNERABILITIES (se aplicável)
-- [tipo + endereço + impacto]
+### VULNERABILITIES (if any)
+- [type + address + impact]
 
 ### UNVERIFIED
-- [o que não pôde ser confirmado, nunca inventar]
+- [what could not be confirmed, never invented]
 
 ### NEXT STEP
 ```
 
-## Dependências de ferramentas
+## Tool dependencies
 
-| Ferramenta | Estado | Necessário para |
+| Tool | Status | Needed for |
 |-----------|--------|-----------------|
-| radare2 (`r2`) | ✅ instalado | static + dynamic analysis |
-| objdump/strings/file/nm | ✅ instalado | análise inicial |
-| Ghidra | ❌ instalar | decompilação de precisão |
-| readelf | ❌ instalar (binutils) | ELF headers detalhados |
-| gdb / lldb | ❌ instalar | debugging |
-| capstone + pyelftools + r2pipe | ❌ pip | análise programática |
-| binwalk | ❌ instalar | firmware |
+| radare2 (`r2`) | installed | static + dynamic analysis |
+| objdump/strings/file/nm | installed | initial analysis |
+| Ghidra | install | precision decompilation |
+| readelf | install (binutils) | detailed ELF headers |
+| gdb / lldb | install | debugging |
+| capstone + pyelftools + r2pipe | pip install | programmatic analysis |
+| binwalk | install | firmware |
 
-> Skills devem degradar graciosamente quando uma ferramenta falta (como o deep-researcher
-> degrada sem fastembed): radare2 é suficiente para o núcleo; Ghidra é upgrade de precisão.
+> Skills degrade gracefully when a tool is missing (like deep-researcher without
+> fastembed): radare2 is enough for the core, Ghidra is a precision upgrade.
 
-## Fora de escopo
+## Out of scope
 
-- Não duplicar `apk-redteam-pipeline` (Android/APK), cross-ref a ele
-- Não fazer engenharia reversa ofensiva de produtos de terceiros sem autorização (ética)
-- Não incluir técnicas de evasão para evitar detecção em sistemas alheios
+- Do not duplicate the APK/Android pipeline, cross-reference it instead
+- No offensive reverse engineering of third-party products without authorization (ethics)
+- No evasion techniques meant to avoid detection on other people's systems
 
-## Critérios de sucesso
+## Success criteria
 
-1. `re-binary-analysis` identifica formato/arquitetura com precisão em binários reais
-2. `re-decompilation` produz lógica recuperada verificável (address + evidence)
-3. `re-algorithm-recovery` detecta crypto/checksum real (não "parece AES")
-4. `re-dynamic-analysis` confirma comportamento sob execução controlada
-5. Output nunca inventa endereço/símbolo, tudo aponta para evidência
-6. Degrada graciosamente com apenas radare2 disponível
-7. Eval harness com 1 binário golden de teste
+1. `re-binary-analysis` identifies format/architecture accurately on real binaries
+2. `re-decompilation` produces verifiable recovered logic (address + evidence)
+3. `re-algorithm-recovery` detects real crypto/checksum (not "looks like AES")
+4. `re-dynamic-analysis` confirms behavior under controlled execution
+5. Output never invents an address/symbol, everything points to evidence
+6. Degrades gracefully with only radare2 available
+7. Eval harness with one golden test binary
 
-## Integração com o kit
+## Kit integration
 
-| Componente | Papel |
+| Component | Role |
 |-----------|-------|
-| `agents/reverse-engineer.md` | Especialista RE (subagent) |
-| `skills/re-*` (6) | Metodologias |
-| `commands/ai-re.md` | `/ai-re <arquivo>`, análise de binário |
-| `evals/reverse-engineer/` | golden binário + rubric |
-| Orquestrador | Roteia "analisa esse binário/firmware" → reverse-engineer |
-| Memória | Findings de RE alimentam o loop (gotchas de análise) |
+| `agents/reverse-engineer.md` | RE specialist (subagent) |
+| `skills/re-*` (6) | methodologies |
+| `commands/ai-re.md` | `/ai-re <file>`, binary analysis |
+| `evals/reverse-engineer/` | golden binary + rubric |
+| Orchestrator | routes "analyze this binary/firmware" → reverse-engineer |
+| Memory | RE findings feed the loop (analysis gotchas) |
 
 ---
 
-## Plano de implementação
+## Implementation plan
 
-1. Instalar ferramentas: Ghidra, readelf (binutils), gdb, binwalk; pip: capstone, pyelftools, r2pipe
-2. Criar as 6 skills `re-*`
-3. Criar `agents/reverse-engineer.md` + `commands/ai-re.md`
-4. Registrar no orquestrador (routing table) + SKILLS.md
-5. Eval: compilar um binário golden de teste com crypto+logic conhecida → validar precisão
+1. Install tools: Ghidra, readelf (binutils), gdb, binwalk; pip: capstone, pyelftools, r2pipe
+2. Create the 6 `re-*` skills
+3. Create `agents/reverse-engineer.md` + `commands/ai-re.md`
+4. Register in the orchestrator (routing table) + SKILLS.md
+5. Eval: compile a golden test binary with known crypto+logic → validate precision
 6. Commit + push

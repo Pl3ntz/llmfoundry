@@ -5,98 +5,98 @@
     {
       "id": "RS-1",
       "type": "research",
-      "prompt": "o que os especialistas estao dizendo sobre agentes de IA em 2026? quero um panorama",
+      "prompt": "what are experts saying about AI agents in 2026? give me a landscape overview",
       "expectedRoute": "deep-researcher",
       "expectedGates": { "interviewMe": false },
-      "why": "pesquisa profunda multi-fonte / panorama"
+      "why": "deep multi-source research / landscape"
     },
     {
       "id": "RS-2",
       "type": "architecture",
-      "prompt": "quero criar um agente que usa RAG com minha base de docs, como desenhar?",
+      "prompt": "I want to build an agent that uses RAG over my docs, how should I design it?",
       "expectedRoute": "ai-architect",
       "expectedGates": { "interviewMe": true },
-      "why": "design de arquitetura LLM, ambiguo"
+      "why": "LLM architecture design, ambiguous"
     },
     {
       "id": "RS-3",
       "type": "evals",
-      "prompt": "meu prompt mudou, como saber se ficou melhor ou pior?",
+      "prompt": "my prompt changed, how do I know if it got better or worse?",
       "expectedRoute": "ai-evals-runner",
       "expectedGates": { "interviewMe": false },
-      "why": "regressao de prompt exige evals"
+      "why": "prompt regression needs evals"
     },
     {
       "id": "RS-4",
       "type": "security",
-      "prompt": "vou subir meu app de LLM em producao, preciso garantir que nao tem prompt injection",
+      "prompt": "I'm shipping my LLM app to production, I need to make sure there's no prompt injection",
       "expectedRoute": "llm-security-reviewer",
       "expectedGates": { "interviewMe": true },
-      "why": "revisao de seguranca de LLM app"
+      "why": "LLM app security review"
     },
     {
       "id": "RS-5",
       "type": "lookup",
-      "prompt": "qual a sintaxe do structured output da OpenAI?",
+      "prompt": "what is the OpenAI structured output syntax?",
       "expectedRoute": "direct",
       "expectedGates": { "interviewMe": false },
-      "why": "lookup de fato, nao delegar a deep-researcher"
+      "why": "single-fact lookup, do not delegate to deep-researcher"
     },
     {
       "id": "RS-6",
       "type": "ambiguous",
-      "prompt": "melhora meu chatbot que ta ruim",
+      "prompt": "my chatbot is bad, improve it",
       "expectedRoute": "interview",
       "expectedGates": { "interviewMe": true },
-      "why": "vago demais: precisa discutir antes"
+      "why": "too vague, must discuss before acting"
     },
     {
       "id": "RS-7",
       "type": "implementation",
-      "prompt": "implementa a tela de login com autenticacao JWT no projeto",
+      "prompt": "implement the login screen with JWT authentication in the project",
       "expectedRoute": "build",
       "expectedGates": { "interviewMe": false, "spec": true },
-      "why": "implementacao: segue ai-dev-process"
+      "why": "implementation, follows ai-dev-process"
     },
     {
       "id": "RS-8",
       "type": "research",
-      "prompt": "compara Neo4j vs Memgraph vs FalkorDB para grafos em producao 2026",
+      "prompt": "compare Neo4j vs Memgraph vs FalkorDB for graph databases in production 2026",
       "expectedRoute": "deep-researcher",
       "expectedGates": { "interviewMe": false },
-      "why": "comparacao multi-fonte"
+      "why": "multi-source comparison"
     },
     {
       "id": "RS-9",
       "type": "security",
-      "prompt": "tem CVE na minha stack de LLM? quais?",
+      "prompt": "are there CVEs in my LLM stack? which ones?",
       "expectedRoute": "llm-security-reviewer",
       "expectedGates": { "interviewMe": false },
-      "why": "vulnerabilidade em app de LLM"
+      "why": "vulnerability in LLM app"
     },
     {
       "id": "RS-10",
       "type": "architecture",
-      "prompt": "nossa RAG esta lenta e retornando irrelevante, o que fazer?",
+      "prompt": "our RAG is slow and returning irrelevant results, what do we do?",
       "expectedRoute": "ai-architect",
       "expectedGates": { "interviewMe": true },
-      "why": "problema de design de RAG, precisa diagnosticar"
+      "why": "RAG design problem, needs diagnosis"
     },
     {
       "id": "RS-11",
       "type": "lookup",
-      "prompt": "qual a versao atual do react?",
+      "prompt": "what is the current version of React?",
       "expectedRoute": "direct",
       "expectedGates": { "interviewMe": false },
-      "why": "single fact, nao delegar"
+      "why": "single fact, do not delegate"
     },
     {
       "id": "RS-12",
       "type": "multi-goal",
-      "prompt": "cria um endpoint novo E revisa a seguranca do app",
+      "prompt": "create a new endpoint AND review the security of the app",
       "expectedRoute": "build+security",
       "expectedGates": { "scopeSplit": true, "interviewMe": true },
-      "why": "multi-goal: deve splitar"
+      "why": "multi-goal, must split scope"
     }
   ]
 }
