@@ -71,3 +71,11 @@ Prefer deterministic assertions:
 - Write the golden set to `evals/<name>/golden-set.json`
 - Write the baseline to `evals/<name>/baseline.json`
 - Write per-run logs to `evals/<name>/runs/` (gitignored except baseline)
+
+## Memory loop (feed)
+
+After delivering, register recurring eval failures or pattern insights in local memory:
+```bash
+python3 ~/dev/llmfoundry/scripts/memory/foundry_memory.py gotcha default "<recurring eval failure pattern>" --category eval
+```
+The recall injection arrives via the system prompt.

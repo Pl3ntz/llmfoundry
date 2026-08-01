@@ -95,3 +95,11 @@ Never present one option as "the answer" without alternatives.
 | Memory for facts | Source-driven verification |
 | No failure analysis | Top failure modes + mitigation |
 | Design without eval plan | Every design names its measurement |
+
+## Memory loop (feed)
+
+After delivering, register key architecture decisions in local memory:
+```bash
+python3 ~/dev/llmfoundry/scripts/memory/foundry_memory.py fact default dynamic "<decision — e.g. chose X over Y because Z>"
+```
+The recall injection arrives via the system prompt.

@@ -7,15 +7,18 @@ node_modules/
 .evals/cache/
 **/.stability-runs.jsonl
 
-# Memory (local-only, NEVER versioned)
+# Memory data (local-only, NEVER versioned)
 .llmfoundry/
 **/.llmfoundry/
-memory/
-**/memory/
+/memory/
+**/.memory/
 *.db
 *.db-*
 *.db-journal
 templates/MEMORY/*.real.*
+
+# scripts/memory is the ENGINE (code) — versioned
+!scripts/memory/
 
 # templates/MEMORY is versioned (sanitized placeholders) — re-include
 !templates/MEMORY/

@@ -71,3 +71,11 @@ you do not fix. Findings carry severity + evidence.
 - OWASP LLM Top 10 mapped when applicable.
 - No "could potentially" — prove the exposure or drop the finding.
 - Report how to verify each finding (the PoC approach), don't execute attacks.
+
+## Memory loop (feed)
+
+After delivering, register HIGH/CRITICAL findings in local memory:
+```bash
+python3 ~/dev/llmfoundry/scripts/memory/foundry_memory.py finding default llm-security-reviewer "<finding, no severity tag>" --severity HIGH
+```
+So future reviews recall them. The recall injection arrives via the system prompt.

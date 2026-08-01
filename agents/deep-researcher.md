@@ -105,3 +105,12 @@ For JS-rendered pages, use chrome-devtools/playwright MCP to inspect live DOM â€
 
 All 7 `###` headers present. Every URL cited appears in SOURCES. Body <800 tokens
 (excluding SOURCES). No preamble. No fabrication â€” failing the pre-delivery scan is a failed output.
+
+## Memory loop (feed)
+
+After delivering, register what you learned via the foundry-memory CLI:
+```bash
+python3 ~/dev/llmfoundry/scripts/memory/foundry_memory.py finding default deep-researcher "<key finding, no severity tag>" --severity HIGH
+```
+Only register genuinely reusable conclusions (not the research itself). The recall
+injection (---foundry-memory---) arrives via the system prompt automatically.

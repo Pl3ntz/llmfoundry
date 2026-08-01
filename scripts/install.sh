@@ -54,13 +54,14 @@ if skills_path not in paths:
 else:
     print(f"  skills.paths already present: {skills_path}")
 
-plugin_path = os.path.join(repo_dir, "plugins", "gates.ts")
-plugins = cfg.setdefault("plugin", [])
-if plugin_path not in plugins:
-    plugins.append(plugin_path)
-    print(f"  added plugin: {plugin_path}")
-else:
-    print(f"  plugin already present: {plugin_path}")
+for plugin_name in ("gates.ts", "memory.ts"):
+    plugin_path = os.path.join(repo_dir, "plugins", plugin_name)
+    plugins = cfg.setdefault("plugin", [])
+    if plugin_path not in plugins:
+        plugins.append(plugin_path)
+        print(f"  added plugin: {plugin_path}")
+    else:
+        print(f"  plugin already present: {plugin_path}")
 
 with open(config_path, "w") as f:
     json.dump(cfg, f, indent=2, ensure_ascii=False)
