@@ -21,7 +21,7 @@ What it does:
 2. **commands/** → per-file symlinks into `~/.config/opencode/commands/`
 3. **skills/** → registered via `skills.paths` in `opencode.json` (does NOT touch
    existing security skills)
-4. **plugins/** → gates.ts + memory.ts registered in `opencode.json`
+4. **plugins/** → gates.ts, memory.ts, voice-guard.ts, verify-guard.ts registered in `opencode.json`
 5. **Python deps** → `pip install -r requirements.txt` (fastembed/numpy for semantic
    memory). Never fails the install, memory runs lexical-only without it.
 
