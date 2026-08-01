@@ -18,6 +18,16 @@ CONFIG_FILE="$CONFIG_DIR/opencode.json"
 
 echo "=== LLMFoundry install ==="
 
+# 0. Python deps (memory engine + optional semantic search). Never fails the install.
+echo "[deps]"
+if command -v python3 >/dev/null 2>&1; then
+  python3 -m pip install -q -r "$REPO_DIR/requirements.txt" 2>/dev/null \
+    && echo "  python deps OK (fastembed/numpy for semantic memory)" \
+    || echo "  python deps skipped (memory will run lexical-only)"
+else
+  echo "  python3 not found (memory engine requires it)"
+fi
+
 # 1. Link agents (per-file, preserve existing)
 echo "[agents]"
 mkdir -p "$CONFIG_DIR/agents"

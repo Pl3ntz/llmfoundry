@@ -39,10 +39,17 @@
 
 | Agent | Use when |
 |-------|----------|
+| [ai-orchestrator](agents/ai-orchestrator.md) | **Default.** The Captain — interprets, discusses, delegates, synthesizes |
 | [deep-researcher](agents/deep-researcher.md) | Deep research with correlation |
 | [ai-architect](agents/ai-architect.md) | Designing LLM system architecture |
 | [ai-evals-runner](agents/ai-evals-runner.md) | Building and running evals |
 | [llm-security-reviewer](agents/llm-security-reviewer.md) | Security review before shipping |
+
+## Orchestration
+
+| Skill | Use when |
+|-------|----------|
+| [ai-orchestration](skills/ai-orchestration/) | Routing, delegation protocol, fan-in synthesis |
 
 ## Commands
 

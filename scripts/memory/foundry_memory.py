@@ -19,6 +19,39 @@ from datetime import datetime, timedelta, timezone
 DB_DIR = os.path.join(os.environ.get("HOME", os.path.expanduser("~")), ".local", "share", "llmfoundry", "memory")
 DB_PATH = os.path.join(DB_DIR, "memory.db")
 PROJECTS_DIR = os.path.join(DB_DIR, "projects")
+EMBED_CACHE = os.path.join(os.environ.get("HOME", os.path.expanduser("~")), ".cache", "fastembed")
+
+# Optional semantic layer (local ONNX embeddings via fastembed). Falls back to
+# lexical-only (FTS5) if fastembed is not installed — graceful degradation.
+EMBED_MODEL = os.environ.get("FOUNDRY_EMBED_MODEL", "BAAI/bge-small-en-v1.5")
+_semantic = None
+_semantic_enabled = False
+
+
+def _semantic_init():
+    """Lazy-load fastembed. Returns True if semantic search is available."""
+    global _semantic, _semantic_enabled
+    if _semantic is not None:
+        return _semantic_enabled
+    try:
+        from fastembed import TextEmbedding  # noqa: PLC0415
+
+        _semantic = TextEmbedding(EMBED_MODEL, cache_dir=EMBED_CACHE)
+        _semantic_enabled = True
+    except Exception:
+        _semantic = False
+        _semantic_enabled = False
+    return _semantic_enabled
+
+
+def _embed(texts):
+    """Embed a list of strings → list of float32 vectors. [] on failure."""
+    if not _semantic_init():
+        return []
+    try:
+        return [v.astype("float32") for v in _semantic.embed(list(texts))]
+    except Exception:
+        return []
 
 # Decay: a memory not reinforced in this many days loses confidence.
 DECAY_DAYS = 90
@@ -48,6 +81,7 @@ CREATE TABLE IF NOT EXISTS memories (
   container TEXT NOT NULL,
   memory_type TEXT NOT NULL DEFAULT 'event',
   project TEXT,
+  session_id TEXT,
   metadata TEXT DEFAULT '{}',
   confidence REAL DEFAULT 1.0,
   reinforced_count INTEGER DEFAULT 1,
@@ -150,6 +184,11 @@ def _conn():
     con = sqlite3.connect(DB_PATH)
     con.row_factory = sqlite3.Row
     con.executescript(_SCHEMA)
+    # idempotent migration: ensure session_id column on existing DBs
+    try:
+        con.execute("ALTER TABLE memories ADD COLUMN session_id TEXT")
+    except sqlite3.OperationalError:
+        pass  # column already exists
     return con
 
 
@@ -164,21 +203,105 @@ def _blocked(content):
     return False
 
 
+# ---------------- semantic vectors (local .npy, never versioned) ----------------
+
+VEC_PATH = os.path.join(DB_DIR, "vectors.npz")
+
+
+def _vec_load():
+    """Load {memory_id: embedding} dict from the local .npz cache."""
+    if not os.path.exists(VEC_PATH):
+        return {}
+    try:
+        import numpy as np  # noqa: PLC0415
+
+        data = np.load(VEC_PATH, allow_pickle=False)
+        ids = data["ids"].tolist()
+        vecs = data["vecs"]
+        return dict(zip(ids, vecs))
+    except Exception:
+        return {}
+
+
+def _vec_save(cache):
+    """Persist {memory_id: embedding} to the local .npz cache."""
+    if not cache:
+        return
+    try:
+        import numpy as np  # noqa: PLC0415
+
+        os.makedirs(os.path.dirname(VEC_PATH), exist_ok=True)
+        ids = np.array(list(cache.keys()), dtype=np.int64)
+        vecs = np.stack(list(cache.values())) if len(cache) > 1 else list(cache.values())[0].reshape(1, -1)
+        np.savez(VEC_PATH, ids=ids, vecs=vecs)
+    except Exception:
+        pass
+
+
+def _vec_upsert(memory_id, content):
+    """Embed a memory and cache its vector. Best-effort."""
+    if not _semantic_init():
+        return
+    vecs = _embed([content])
+    if not vecs:
+        return
+    cache = _vec_load()
+    cache[memory_id] = vecs[0]
+    _vec_save(cache)
+
+
+def _semantic_search(query, container=None, limit=10):
+    """Vector search by cosine similarity. Returns [(memory_row, score)]."""
+    if not _semantic_init():
+        return []
+    qvecs = _embed([query])
+    if not qvecs:
+        return []
+    qv = qvecs[0]
+    cache = _vec_load()
+    if not cache:
+        return []
+    try:
+        import numpy as np  # noqa: PLC0415
+
+        ids = np.array(list(cache.keys()), dtype=np.int64)
+        mat = np.stack(list(cache.values()))
+        q = qv / (np.linalg.norm(qv) + 1e-9)
+        mat = mat / (np.linalg.norm(mat, axis=1, keepdims=True) + 1e-9)
+        scores = mat @ q
+        order = np.argsort(-scores)[:limit]
+        con = _conn()
+        try:
+            results = []
+            for idx in order:
+                row = con.execute("SELECT * FROM memories WHERE id=?", (int(ids[idx]),)).fetchone()
+                if row and (container is None or row["container"] == container):
+                    results.append((dict(row), float(scores[idx])))
+            return results
+        finally:
+            con.close()
+    except Exception:
+        return []
+
+
 # ---------------------------------------------------------------- encode
 
-def remember(content, container="default", memory_type="event", project=None, metadata=None):
-    """Store a structured memory. Returns id or None if blocked."""
+def remember(content, container="default", memory_type="event", project=None, session_id=None, metadata=None):
+    """Store a structured memory linked to its opencode session. Returns id or None if blocked."""
     if _blocked(content):
         print("blocked: content contains a secret/PII pattern; not stored")
         return None
     con = _conn()
     try:
         cur = con.execute(
-            "INSERT INTO memories (content, container, memory_type, project, metadata) VALUES (?,?,?,?,?)",
-            (content, container, memory_type, project, json.dumps(metadata or {})),
+            "INSERT INTO memories (content, container, memory_type, project, session_id, metadata) VALUES (?,?,?,?,?,?)",
+            (content, container, memory_type, project, session_id, json.dumps(metadata or {})),
         )
         con.commit()
-        return cur.lastrowid
+        mid = cur.lastrowid
+        # auto-embed for semantic recall (best-effort, local, non-blocking)
+        _vec_upsert(mid, content)
+        return mid
     finally:
         con.close()
 
@@ -264,8 +387,15 @@ def record_finding(container, agent_name, finding_text, severity="MEDIUM"):
 # ---------------------------------------------------------------- retrieve
 
 def search(query, container=None, limit=10):
-    """Full-text search across memories."""
+    """Hybrid search: FTS5 (lexical) + embeddings (semantic), merged by rank.
+
+    Falls back to lexical-only if fastembed isn't available. Semantic enriches
+    recall for agents: a question like "which model is cheapest" finds a memory
+    about choosing DeepSeek over kimi-k3 even without shared tokens.
+    """
+    # Lexical results (always)
     con = _conn()
+    lexical = {}
     try:
         if container:
             rows = con.execute(
@@ -283,9 +413,30 @@ def search(query, container=None, limit=10):
                    ORDER BY bm25(memories_fts) LIMIT ?""",
                 (query, limit),
             ).fetchall()
-        return [dict(r) for r in rows]
+        for i, r in enumerate(rows):
+            lexical[r["id"]] = {"row": dict(r), "rank": i}
     finally:
         con.close()
+
+    # Semantic results (if available)
+    semantic_rows = _semantic_search(query, container, limit)
+    merged = {}
+    for item, _score in semantic_rows:
+        if item["id"] not in merged:
+            merged[item["id"]] = {"row": item, "rank": len(merged)}
+
+    # Merge: lexical wins ties, semantic fills gaps, dedup by id
+    out = []
+    seen = set()
+    for pool in (lexical, merged):
+        for mid in sorted(pool, key=lambda k: pool[k]["rank"]):
+            if mid in seen:
+                continue
+            seen.add(mid)
+            out.append(pool[mid]["row"])
+            if len(out) >= limit:
+                return out
+    return out
 
 
 def recall(container=None, top=5):
