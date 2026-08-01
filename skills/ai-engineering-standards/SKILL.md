@@ -47,3 +47,9 @@ output you produce.
 3. Did I invent anything? URLs, versions, APIs, names?
 4. Is every uncertainty anchored with a label + source, not hedging?
 5. Is the output in the required contract (headers, length, format)?
+6. **Human voice** (see `human-voice`): any em dash `—`, stacked compound hyphens, or
+   AI banlist word (`delve`, `furthermore`, `leverage`, `in conclusion`)? Rewrite. Any
+   prose that reads like a template? Rewrite.
+
+> Prose must pass the `human-voice` gate. Structured output (findings, contracts) stays
+> terse and formatted, but never with AI vocabulary or decorative dashes.

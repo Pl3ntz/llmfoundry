@@ -50,6 +50,7 @@
 | Skill | Use when |
 |-------|----------|
 | [ai-orchestration](skills/ai-orchestration/) | Routing, delegation protocol, fan-in synthesis |
+| [human-voice](skills/human-voice/) | Write in a natural human voice — never looks AI-generated |
 
 ## Commands
 

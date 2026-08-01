@@ -120,6 +120,7 @@ Then restart opencode. The orchestrator becomes your default agent.
 | `ai-dev-process` | Writing code — SPEC, worktree, TDD, atomic commit |
 | `interview-me` | Request is underspecified or high-stakes |
 | `ai-orchestration` | Routing, delegation protocol, fan-in synthesis |
+| `human-voice` | Write in a natural human voice — never looks AI-generated |
 
 ### AI Core
 | Skill | Use when |
@@ -167,6 +168,7 @@ Full catalog with descriptions: [SKILLS.md](SKILLS.md)
 |--------|-------------|
 | `gates.ts` | commit without tests, secret files staged, secrets in outbound fetch/search |
 | `memory.ts` | — (captures errors→gotchas, commits→memory; injects recall into prompts) |
+| `voice-guard.ts` | flags output that reads like AI-generated text (dashes, AI vocabulary) |
 
 ## Memory
 
