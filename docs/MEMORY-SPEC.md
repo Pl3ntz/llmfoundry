@@ -82,6 +82,60 @@ vazar regra de negócio ou dado pessoal em um repo compartilhado. Por isso a cam
 
 ---
 
+## Arquitetura: memória como loop vivo (não um store passivo)
+
+A memória não é um banco onde se guarda e pronto. É um **ciclo de feedback** que a própria
+estrutura LLMFoundry alimenta e consome — como memória humana.
+
+```
+        ┌──────────────────────────────────────────────────────┐
+        │                  LOOP VIVO DA MEMÓRIA                 │
+        │                                                       │
+        │  AGENTES/SKILLS/COMMANDS/PLUGINS                      │
+        │    (deep-researcher, llm-security-reviewer,           │
+        │     ai-architect, ai-evals-runner, hooks, /ai-*)      │
+        │         │                      ▲                      │
+        │   ALIMENTA (encode)      CONSUME (retrieve)           │
+        │         ▼                      │                      │
+        │  ┌─────────────┐         ┌─────────────┐              │
+        │  │  MEMÓRIA    │◄────────│  CONTEXTO   │              │
+        │  │  (SQLite +  │  injeta  │  injetado   │              │
+        │  │  FTS5 + MD) │  no prompt│  no prompt  │              │
+        │  └─────────────┘         └─────────────┘              │
+        │         │                      │                      │
+        │    NORMALIZA                REFORÇA                   │
+        │    DEDUP/DECAY              (recall usa =             │
+        │    CONSOLIDA                reforça o peso)           │
+        │         └──────────┬───────────┘                      │
+        │                    ▼                                  │
+        │             MELHORES DECISÕES →                        │
+        │             mais findings/gotchas → volta ao topo      │
+        └──────────────────────────────────────────────────────┘
+```
+
+### As 4 fases (como a memória humana)
+
+| Fase | Mecanismo | Na estrutura |
+|------|-----------|--------------|
+| **Encode** | A estrutura captura o que aprendeu | hooks `tool.execute.after`, findings de agentes, `/ai-memory remember`, decisões do SPEC |
+| **Consolidate** | Normaliza, dedup, reforça, decai | hash de gotchas, `confidence++`, decay temporal |
+| **Retrieve** | Estrutura busca o que precisa | recall antes de spawnar agente (preamble `---memory---`), skills injetam contexto, `recall_log` |
+| **Reconsolidate** | Recall usado reforça; não usado decai | `acted_on` (foi agido?) → reforça ou arquiiva |
+
+### Regra do loop: nada alimenta, nada é alimentado isoladamente
+
+1. **Todo agente do kit** alimenta a memória (findings) E consulta a memória (preamble)
+   antes de agir — sem `---memory---` injetado, o agente opera "sem memória".
+2. **Todo skill transversal** (ai-engineering-standards, ai-dev-process) consulta decisões
+   e gotchas relevantes ao contexto.
+3. **Commands** (`/ai-*`) registram decisões e leem histórico.
+4. **O recall é observável** — `recall_log` prova que a memória foi consumida e agida.
+   Isso corrige o gap do local-mind (recall_log = 0).
+5. **A memória alimenta o prompt** (retrieve), nunca o contrário: prompt não vira memória
+   bruta; memória é sempre consolidação estruturada.
+
+---
+
 ## Escopo — Subsistemas
 
 ### 1. Captura (estruturada, hook-driven)
@@ -187,23 +241,34 @@ e placeholders**, para o usuário copiar para a camada local. Nenhum conteúdo r
 
 ---
 
-## Integração com o kit
+## Integração com o kit (o loop na prática)
 
-| Componente | Papel |
-|-----------|-------|
-| `plugins/memory.ts` | Hooks de captura (tool.execute.after) |
-| `commands/ai-memory.md` | `/ai-memory remember|search|forget|stats|promote` |
-| `agents/deep-researcher.md` | Findings alimentam `findings` |
-| `skills/ai-engineering-standards` | Decisões registradas via `DECISIONS.md` |
-| `evals/` | Nada muda; memória não entra no eval |
+Cada componente tem papel duplo: **alimenta** (encode) e **consome** (retrieve).
+
+| Componente | ALIMENTA (encode) | CONSUME (retrieve) |
+|-----------|-------------------|--------------------|
+| `plugins/memory.ts` | hooks `tool.execute.after` — erros resolvidos, gotchas | — (é o runtime do loop) |
+| `commands/ai-memory.md` | `/ai-memory remember` | `/ai-memory search` |
+| `agents/deep-researcher.md` | findings → `findings` (severity, status) | preamble `---memory---` antes de pesquisar (já tem decisões anteriores) |
+| `agents/llm-security-reviewer.md` | findings de segurança | recall de findings abertos anteriores |
+| `agents/ai-architect.md` | decisões de arquitetura → `DECISIONS.md` | decisões passadas do projeto |
+| `agents/ai-evals-runner.md` | baselines de eval | histórico de regressões |
+| `skills/ai-engineering-standards` | — | gotchas + decisões relevantes ao contexto |
+| `skills/ai-dev-process` | — | padrões do projeto (SPECs anteriores) |
+| `skills/ai-research` | — | findings de research anteriores (não re-pesquisar o que já foi concluído) |
+| `evals/` | session_metrics | — (não entra no eval como dado) |
+
+**Regra de execução:** todo agente do kit DEVE receber o recall (`---memory---`) antes de
+agir e DEVE registrar o que aprendeu depois. Sem isso, o loop não fecha.
 
 ---
 
 ## Plano de implementação (após aprovação da SPEC)
 
-1. `scripts/memory/` — módulo Python/SQLite (schema, insert, search, promote, decay)
-2. `plugins/memory.ts` — hooks de captura
-3. `commands/ai-memory.md` — CLI surface
-4. Camada curada: template `MEMORY/*.md` por projeto
-5. Teste: sessão real, verificar recall + promoção
-6. Commit + versão
+1. `scripts/memory/` — módulo Python/SQLite (schema, insert, search, promote, decay, recall)
+2. `plugins/memory.ts` — hooks de captura + recall injection
+3. `commands/ai-memory.md` — CLI surface (remember|search|forget|stats|promote|recall)
+4. Templates `MEMORY/*.md` locais (placeholders sanitizados)
+5. Integração de recall nos 4 agentes (preamble `---memory---`)
+6. Teste: sessão real — verificar encode → retrieve → acted_on → reforço
+7. Commit + versão
