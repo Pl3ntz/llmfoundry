@@ -1,35 +1,71 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# LLMFoundry installer — symlinks skills/, agents/, commands/ into ~/.config/opencode.
+# LLMFoundry installer
+#
+# Strategy (safe coexistence with existing skills):
+# - skills/   → registered via `skills.paths` in opencode.json (does NOT touch the
+#               existing ~/.config/opencode/skills/ directory with security skills)
+# - agents/   → per-file symlinks (no name collisions expected)
+# - commands/ → per-file symlinks
+# - plugins/  → registered in opencode.json plugin array
+#
 # Symlinks: edit in the repo, changes reflect in opencode immediately.
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_DIR="${OPENCODE_CONFIG_DIR:-$HOME/.config/opencode}"
+CONFIG_FILE="$CONFIG_DIR/opencode.json"
 
-if [ ! -d "$CONFIG_DIR" ]; then
-  mkdir -p "$CONFIG_DIR"
-fi
+echo "=== LLMFoundry install ==="
 
-link() {
-  local src="$REPO_DIR/$1"
-  local dst="$CONFIG_DIR/$1"
-  if [ -L "$dst" ]; then
-    rm "$dst"
-  elif [ -e "$dst" ]; then
-    echo "ERROR: $dst exists and is not a symlink. Move it away first."
-    exit 1
-  fi
-  ln -s "$src" "$dst"
-  echo "linked $dst → $src"
-}
-
-# Only link directories that exist
-for d in skills agents commands plugins; do
-  [ -d "$REPO_DIR/$d" ] && link "$d"
+# 1. Link agents (per-file, preserve existing)
+echo "[agents]"
+mkdir -p "$CONFIG_DIR/agents"
+for f in "$REPO_DIR"/agents/*.md; do
+  [ -f "$f" ] || continue
+  ln -sfn "$f" "$CONFIG_DIR/agents/$(basename "$f")"
+  echo "  linked agents/$(basename "$f")"
 done
+
+# 2. Link commands (per-file, preserve existing)
+echo "[commands]"
+mkdir -p "$CONFIG_DIR/commands"
+for f in "$REPO_DIR"/commands/*.md; do
+  [ -f "$f" ] || continue
+  ln -sfn "$f" "$CONFIG_DIR/commands/$(basename "$f")"
+  echo "  linked commands/$(basename "$f")"
+done
+
+# 3. Register skills.paths + gates plugin in opencode.json (via python for safe JSON editing)
+echo "[config]"
+python3 - "$CONFIG_FILE" "$REPO_DIR" <<'PY'
+import json, sys, os
+
+config_path, repo_dir = sys.argv[1], sys.argv[2]
+with open(config_path) as f:
+    cfg = json.load(f)
+
+skills_path = os.path.join(repo_dir, "skills")
+skills = cfg.setdefault("skills", {})
+paths = skills.setdefault("paths", [])
+if skills_path not in paths:
+    paths.append(skills_path)
+    print(f"  added skills.paths: {skills_path}")
+else:
+    print(f"  skills.paths already present: {skills_path}")
+
+plugin_path = os.path.join(repo_dir, "plugins", "gates.ts")
+plugins = cfg.setdefault("plugin", [])
+if plugin_path not in plugins:
+    plugins.append(plugin_path)
+    print(f"  added plugin: {plugin_path}")
+else:
+    print(f"  plugin already present: {plugin_path}")
+
+with open(config_path, "w") as f:
+    json.dump(cfg, f, indent=2, ensure_ascii=False)
+    f.write("\n")
+PY
 
 echo
 echo "LLMFoundry installed. Restart opencode to load changes."
-echo "Add plugin gates to opencode.json:"
-echo '  "plugin": ["/path/to/llmfoundry/plugins/gates.ts"]'

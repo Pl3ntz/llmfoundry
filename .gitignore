@@ -6,3 +6,10 @@ node_modules/
 !.env.example
 .evals/cache/
 **/.stability-runs.jsonl
+
+# Memory (local-only, NEVER versioned)
+.llmfoundry/
+memory/
+*.db
+*.db-*
+templates/MEMORY/*.real.*

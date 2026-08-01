@@ -50,19 +50,31 @@ corrigir na versão LLMFoundry (focada em opencode + DeepSeek + engenharia de IA
 **Nossa realidade:** opencode + DeepSeek (barato, queremos maximizar uso) + kit versionável
 no git. Captura estruturada = volume baixo, alto sinal.
 
-**Decisão: SQLite (armazenamento vivo) + Markdown curado (artefato versionável).**
+**Decisão: SQLite (armazenamento vivo) + Markdown curado (LOCAL, nunca versionado).**
 
 | Camada | Tecnologia | Papel |
 |--------|-----------|-------|
 | **Viva** | SQLite + FTS5 | Store de eventos estruturados, busca lexical, métricas |
-| **Curada** | Markdown em `MEMORY/` por projeto (git) | O que sobrevive à sessão — portável, compartilhável, revisável |
+| **Curada** | Markdown em `~/.local/share/llmfoundry/memory/` por projeto | O que sobrevive à sessão — **100% local, nunca no git** |
 | **Semântica** | Embeddings (v2, opcional) | Correlação vetorial sobre a camada curada |
+
+> **PRIVACIDADE (regra inviolável):** memória é **local-only, nunca versionada**.
+> O repo LLMFoundry (versionado/compartilhado) contém **APENAS templates vazios** com
+> placeholders. Nenhuma memória real, regra de negócio, dado pessoal, secret, nome de
+> cliente ou snippet proprietário entra no repo. O que for capturado fica em
+> `~/.local/share/llmfoundry/memory/` (fora do repo) ou em `.llmfoundry/` gitignored
+> por projeto.
 
 **Por que não embeddings na v1:**
 1. Captura estruturada = volume baixo → FTS5 lexical resolve a busca.
 2. Embeddings adicionam custo de API (embedding models) — contra a filosofia DeepSeek-barato.
-3. A camada curada em markdown é o que se versiona/compartilha; vetores não.
+3. Vetores não são portáveis/versionáveis; a camada curada local é markdown simples.
 4. V2 pode adicionar sqlite-vec sem reescrever nada.
+
+**Privacidade (justificativa):** a memória guarda decisões, gotchas e findings de trabalho
+real — conteúdo que NÃO deve sair da máquina nem do repo. Versionar memória = risco de
+vazar regra de negócio ou dado pessoal em um repo compartilhado. Por isso a camada curada
+é local e o repo carrega só templates sanitizados.
 
 **Por que não só arquivos:**
 - O local-mind provou que query estruturada (severidade, status, contagem, confiança) vale.
@@ -106,15 +118,20 @@ CAPTURA (hook/comando)
   → NORMALIZA (dedup por hash, contagem)
   → REFORÇA (confidence++ quando re-observado)
   → DECAY (peso cai com o tempo se não reforçado)
-  → PROMOVE (≥3 recorrências + 5 critérios da matriz → MEMORY/*.md versionável)
+  → PROMOVE (≥3 recorrências + 5 critérios da matriz → MEMORY/*.md LOCAL)
   → ARQUIVA (não usado em 90 dias → movido, não deletado)
 ```
+
+> Promoção escreve na camada local (`~/.local/share/llmfoundry/memory/<projeto>/`), nunca
+> no repo. O repo mantém só `templates/MEMORY/` com exemplos vazios e placeholders.
 
 **Promotion Criteria Matrix** (do Quarterdeck, mantido):
 Recorrência ≥3 sessões · Consistência (mesma solução) · Impacto (preveniu erro/ganhou tempo) ·
 Estabilidade (sistema não mudou) · Clareza (1-2 frases, ≤200 chars).
 
-### 4. Camada curada (git-versionável)
+### 4. Camada curada (LOCAL, nunca versionada)
+
+Local: `~/.local/share/llmfoundry/memory/<projeto>/`
 
 ```
 MEMORY/
@@ -125,7 +142,12 @@ MEMORY/
 └── INDEX.md          # sumário + estatísticas
 ```
 
-Esta camada é o que **se versiona e compartilha** no repo — herda o ethos do LLMFoundry.
+**Regra de ouro:** esta camada é **100% local**. Se um projeto precisar de memória
+versionada, usa-se `.llmfoundry/` no próprio repo **gitignored** — nunca no histórico do
+git e nunca no repo compartilhado.
+
+O repo LLMFoundry mantém apenas `templates/MEMORY/` — o mesmo shape com **exemplos vazios
+e placeholders**, para o usuário copiar para a camada local. Nenhum conteúdo real.
 
 ### 5. Recall com confirmação (corrige o gap)
 
@@ -140,7 +162,7 @@ Esta camada é o que **se versiona e compartilha** no repo — herda o ethos do 
 - Embeddings/semantic search (v2)
 - Servidor MCP de memória (não precisa, SQLite resolve)
 - Captura de turns brutos (rejeitado — ruído)
-- Multi-máquina sync (o git cobre a camada curada)
+- Multi-máquina sync (fora de escopo — camada curada é local)
 
 ---
 
@@ -149,10 +171,19 @@ Esta camada é o que **se versiona e compartilha** no repo — herda o ethos do 
 1. Captura automática de erros resolvidos e achados de agentes (hook)
 2. `recall_log` com `acted_on` populado — gap do local-mind corrigido
 3. Promoção exige 5 critérios; nada auto-promove sem a matriz
-4. Camada curada em markdown git-versionável por projeto
+4. Camada curada em markdown **100% local** — repo contém só templates vazios
 5. Busca FTS5 + filtros (tipo, severidade, projeto)
 6. Zero dependência de servidor; tudo local
 7. Consome < 100 requests/API de DeepSeek/mês (não depende de LLM para capturar)
+
+## Critérios de privacidade (invioláveis)
+
+1. **Nenhuma memória real entra no repo.** Repo = só `templates/MEMORY/` com placeholders.
+2. **Zero regra de negócio, dado pessoal, secret, nome de cliente** em qualquer artefato versionado.
+3. SQLite e markdown curado em `~/.local/share/llmfoundry/` ou `.llmfoundry/` — ambos fora do git.
+4. `.gitignore` do LLMFoundry bloqueia `.llmfoundry/`, `memory/`, `*.db` por padrão.
+5. O install.sh nunca copia memória; só templates sanitizados.
+6. Qualquer conteúdo detectado como PII/secret na captura é descartado ou ofuscado antes de persistir localmente.
 
 ---
 
