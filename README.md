@@ -188,7 +188,8 @@ recall is injected into every session. **100% local, never versioned.**
 | small_model | `opencode-go/deepseek-v4-flash` | 158,150 | $0.28 |
 
 Cost decision: DeepSeek family over kimi-k3 (53x cheaper, 35-322x more requests).
-See [docs/MODEL-POLICY.md](docs/MODEL-POLICY.md).
+Routing rule: **reasoning to PRO, mechanical to FLASH** (orchestration/research/architecture/
+security → PRO; evals/memory/lookups → FLASH). See [docs/MODEL-POLICY.md](docs/MODEL-POLICY.md).
 
 ---
 

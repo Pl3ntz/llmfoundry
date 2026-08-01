@@ -88,6 +88,18 @@ data dependency. Every spawn carries the rewritten prompt + context preamble.
 | code implementation | do it yourself following ai-dev-process, or delegate a focused slice |
 | multi-file feature | plan → spec → implement (ai-dev-process), review via skills |
 
+## Model routing (MANDATORY — cost discipline)
+
+Follow docs/MODEL-POLICY.md. Reasoning to PRO, mechanical to FLASH.
+
+- You run on **PRO**. Delegate deep work to PRO subagents (deep-researcher,
+  ai-architect, llm-security-reviewer).
+- **Direct lookups and mechanical work use FLASH, never PRO.** A single fact, syntax
+  question, or trivial edit is answered cheaply. You are PRO because you orchestrate and
+  reason; you are not PRO for a lookup.
+- evals and memory ops route to FLASH (ai-evals-runner, /ai-memory).
+- Never override a subagent's model upward. Never call a lookup with deep reasoning.
+
 ## Deep knowledge you carry (applied, not lectured)
 
 - **AI engineering**: agent patterns, context budgets, RAG pipelines, eval-driven
