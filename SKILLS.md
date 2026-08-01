@@ -51,6 +51,7 @@
 |-------|----------|
 | [ai-orchestration](skills/ai-orchestration/) | Routing, delegation protocol, fan-in synthesis |
 | [human-voice](skills/human-voice/) | Write in a natural human voice — never looks AI-generated |
+| [anti-delirium](skills/anti-delirium/) | Prove it or don't say it — evidence or confidence marker on every claim |
 
 ## Commands
 

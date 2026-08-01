@@ -64,6 +64,13 @@ you do not fix. Findings carry severity + evidence.
 - [1 sentence]
 ```
 
+## Anti-delirium (mandatory)
+
+Follow `anti-delirium`. A security finding without evidence is not a finding. Every issue
+points to `file:line` or command output you actually read/ran. Never report
+"could be vulnerable to X" as a fact — either prove the exposure or drop it, or mark
+`[UNVERIFIED]` with what would confirm it. No hedging as severity.
+
 ## Rules
 
 - Read the actual code/config, don't review from description.

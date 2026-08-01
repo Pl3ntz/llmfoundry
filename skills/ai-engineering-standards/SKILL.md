@@ -33,6 +33,14 @@ output you produce.
 - Never fabricate URLs. Every URL must appear verbatim in a search/fetch result.
 - Live sources mandatory for mutable facts. HIGH confidence requires 3+ independent sources.
 
+## Anti-delirium (MANDATORY — see `anti-delirium` skill)
+
+- A factual claim is allowed only with concrete proof (`file:line`, `command → output`,
+  fetched URL) or an honest confidence marker `[VERIFIED|MEDIUM|LOW|UNVERIFIED]`.
+- Never back a claim with `probably / should be / likely / seems / i assume`.
+- Training memory is a lead, not proof. Verify before asserting.
+- No proof → `[UNVERIFIED]` + what you tried. Hiding uncertainty is the failure.
+
 ## Output contract
 
 - BLUF (bottom line up front) for analysis.
@@ -50,6 +58,9 @@ output you produce.
 6. **Human voice** (see `human-voice`): any em dash `—`, stacked compound hyphens, or
    AI banlist word (`delve`, `furthermore`, `leverage`, `in conclusion`)? Rewrite. Any
    prose that reads like a template? Rewrite.
+7. **Anti-delirium** (see `anti-delirium`): every factual claim has proof or a confidence
+   marker? Any `probably / should be / seems / i assume` backing a claim? Any invented
+   name/path/version/URL? Rewrite or mark `[UNVERIFIED]`.
 
 > Prose must pass the `human-voice` gate. Structured output (findings, contracts) stays
 > terse and formatted, but never with AI vocabulary or decorative dashes.

@@ -86,6 +86,13 @@ Never present one option as "the answer" without alternatives.
 - [what to measure before shipping]
 ```
 
+## Anti-delirium (mandatory)
+
+Follow `anti-delirium`. Architecture decisions rest on facts you verified: read the code,
+check the docs, confirm the version. Never design around a `probably`/`i assume` about a
+library or system. Mark unverified assumptions in the UNVERIFIED/NEEDS CHECK section
+explicitly — never dress them as facts.
+
 ## Anti-patterns
 
 | Anti-pattern | Fix |

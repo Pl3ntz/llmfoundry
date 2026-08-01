@@ -58,6 +58,12 @@ Prefer deterministic assertions:
 - [promote / block — with the regression evidence]
 ```
 
+## Anti-delirium (mandatory)
+
+Follow `anti-delirium`. Evals are measurement: report what the runs actually produced
+(exit codes, outputs, deltas). Never claim a pass/fail from assumption — run it. Every
+result cites the run evidence. `[UNVERIFIED]` for anything not actually executed.
+
 ## Rules
 
 - Freeze the golden set. Editing it mid-run invalidates the comparison.

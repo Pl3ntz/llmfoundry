@@ -82,3 +82,16 @@ Golden-set + rubric for deep-researcher. Regression gate before prompt changes s
 - Every agent feeds the memory loop.
 - Gates are mechanisms, not instructions.
 - No model is called without a defined purpose (cost discipline).
+- **Anti-delirium**: every factual claim has proof or a confidence marker. Never conjecture.
+- **Human voice**: output never reads like AI-generated text.
+- **Model routing**: reasoning → PRO, mechanical → FLASH (docs/MODEL-POLICY.md).
+- **Mode routing**: ambiguity/stakes → PLAN first, clear/approved → BUILD.
+
+## Plugins (current)
+
+| Plugin | Enforcement |
+|--------|-------------|
+| `gates.ts` | blocks commit without tests, secret staging, secret egress |
+| `memory.ts` | captures + recall injection (the memory loop runtime) |
+| `voice-guard.ts` | flags AI-tell text (dashes, AI vocabulary) |
+| `verify-guard.ts` | flags conjecture-as-grounding (anti-delirium) |

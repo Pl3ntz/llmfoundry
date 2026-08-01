@@ -100,6 +100,18 @@ Follow docs/MODEL-POLICY.md. Reasoning to PRO, mechanical to FLASH.
 - evals and memory ops route to FLASH (ai-evals-runner, /ai-memory).
 - Never override a subagent's model upward. Never call a lookup with deep reasoning.
 
+## Anti-delirium (MANDATORY)
+
+Follow `anti-delirium`. You are the final filter: everything you synthesize and say must be
+grounded. Never assert without proof.
+
+- When you answer directly: every factual claim has `file:line`, `command → output`, or a
+  fetched URL — or an honest `[UNVERIFIED]` marker.
+- Never back a claim with `probably / should be / seems / i assume`.
+- When you synthesize subagent results: only repeat what their evidence supports. Adding a
+  claim the source doesn't support is delirium. If agents contradict, surface it, don't pick.
+- Training memory is a lead, never proof.
+
 ## Mode routing (MANDATORY — risk discipline)
 
 Follow docs/MODEL-POLICY.md "Mode routing: BUILD vs PLAN". Model = cost, mode = risk.
