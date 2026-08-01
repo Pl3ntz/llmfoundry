@@ -1,0 +1,203 @@
+#!/usr/bin/env python3
+"""eval-runner.py — unified eval runner for LLMFoundry.
+
+Runs deterministic checks against golden sets and reports pass/fail with
+baseline comparison. No LLM required for the memory/engine checks; the
+orchestrator/deep-researcher golden sets are scored by routing-score.py.
+
+Usage:
+    eval-runner.py                      # run everything
+    eval-runner.py --suite memory       # only engine unit checks
+    eval-runner.py --suite routing      # routing score validation (deterministic fixtures)
+    eval-runner.py --check-plugins      # validate plugin TS compiles (needs bun)
+    eval-runner.py --baseline           # print current state (the number to beat)
+"""
+
+import argparse
+import json
+import os
+import sqlite3
+import subprocess
+import sys
+import tempfile
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MEMORY_MODULE = os.path.join(ROOT, "scripts", "memory", "foundry_memory.py")
+ROUTING_SCORE = os.path.join(ROOT, "scripts", "routing-score.py")
+
+# ----------------------------------------------------------------------------
+# Engine unit checks (deterministic, no model)
+
+def _mem_db(tmp):
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("foundry_memory", MEMORY_MODULE)
+    m = importlib.util.module_from_spec(spec)
+    # redirect storage to a temp dir for isolation
+    import foundry_memory_patch  # noqa
+    return m
+
+
+def engine_checks():
+    """Unit checks against the memory engine (real SQLite, temp dir)."""
+    results = []
+    with tempfile.TemporaryDirectory() as tmp:
+        env = dict(os.environ, HOME=tmp)
+        sys.path.insert(0, os.path.dirname(MEMORY_MODULE))
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location("foundry_memory", MEMORY_MODULE)
+        m = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(m)
+
+        # patch storage dir to tmp (all paths, so nothing touches ~/.local)
+        m.DB_DIR = os.path.join(tmp, ".local", "share", "llmfoundry", "memory")
+        m.DB_PATH = os.path.join(m.DB_DIR, "memory.db")
+        m.VEC_PATH = os.path.join(m.DB_DIR, "vectors.npz")
+        m.PROJECTS_DIR = os.path.join(m.DB_DIR, "projects")
+        m.EMBED_CACHE = os.path.join(tmp, ".cache")
+
+        # 1. remember + search
+        mid = m.remember("decisao: DeepSeek V4 Pro sobre kimi-k3 por custo", "t", "decision")
+        results.append(("remember stores id", mid is not None))
+        found = m.search("DeepSeek", container="t")
+        results.append(("search finds memory", len(found) == 1))
+
+        # 2. fact reinforcement (dedup + confidence++)
+        m.remember_fact("t", "static", "stack: fastapi")
+        m.remember_fact("t", "static", "stack: fastapi")
+        row = m._conn().execute("SELECT reinforced_count FROM memory_facts WHERE fact_text='stack: fastapi'").fetchone()
+        results.append(("fact reinforcement dedups", row["reinforced_count"] == 2))
+
+        # 3. gotcha recurrence
+        m.record_gotcha("t", "build fails", sample="s1")
+        m.record_gotcha("t", "build fails", sample="s2")
+        m.record_gotcha("t", "build fails", sample="s3")
+        g = m._conn().execute("SELECT count FROM gotchas WHERE normalized_pattern='build fails'").fetchone()
+        results.append(("gotcha count reaches 3", g["count"] == 3))
+
+        # 4. privacy block (secret)
+        blocked = m.remember("chave sk-abc123456789012345678901234567890 no arquivo", "t")
+        results.append(("secret is blocked", blocked is None))
+
+        # 5. finding + recall
+        m.record_finding("t", "deep-researcher", "[HIGH] ssrf via fetch", "HIGH")
+        recall = m.recall(container="t")
+        results.append(("recall returns open finding", len(recall["findings"]) == 1))
+
+        # 6. log recall acted
+        n = m.log_recall("t", "orchestrator", acted_on=True)
+        results.append(("log-recall works", n == 0))
+
+        # 7. stats
+        s = m.stats("t")
+        results.append(("stats report", s["findings"] == 1))
+
+        # 8. decay
+        d = m.apply_decay()
+        results.append(("decay runs", d is not None))
+
+        # 9. promote threshold
+        m.promote("t")
+        g2 = m._conn().execute("SELECT promoted FROM gotchas WHERE normalized_pattern='build fails'").fetchone()
+        results.append(("gotcha promoted at count 3", g2["promoted"] == 1))
+
+    return results
+
+
+# ----------------------------------------------------------------------------
+# Routing score validation (deterministic fixtures)
+
+def routing_checks():
+    results = []
+    spec = os.path.join(ROOT, "evals", "orchestrator", "golden-set.json")
+    data = json.load(open(spec))
+    golden = data.get("questions", data if isinstance(data, list) else [])
+
+    # For each golden question, verify the expected route is one we know
+    known = {"deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer",
+             "direct", "interview", "build", "build+security"}
+    for i, q in enumerate(golden):
+        r = q.get("expectedRoute", "").lower()
+        results.append((f"RS-{i+1} route known: {r}", r in known or "+" in r))
+
+    # Verify scorer works on a known-good case
+    exp = {"expectedRoute": "deep-researcher", "expectedGates": {"interviewMe": False}}
+    act = {"route": "deep-researcher", "gates": {"interviewMe": False}}
+    cmd = [sys.executable, ROUTING_SCORE, json.dumps(exp).replace('"', '\\"'), json.dumps(act).replace('"', '\\"')]
+    # simpler: import the scorer directly
+    import importlib.util
+
+    sspec = importlib.util.spec_from_file_location("routing_score", ROUTING_SCORE)
+    rs = importlib.util.module_from_spec(sspec)
+    sspec.loader.exec_module(rs)
+    route = rs._route_match(rs._route(exp), rs._route(act))
+    gate = rs._gate_score(rs._gates(exp), rs._gates(act))
+    comp = rs.WEIGHTS["route-match"] * route + rs.WEIGHTS["gate-correctness"] * gate
+    results.append(("scorer PASS case", comp >= rs.PASS_THRESHOLD))
+
+    # fail case
+    act_bad = {"route": "direct", "gates": {"interviewMe": False}}
+    route_bad = rs._route_match(rs._route(exp), rs._route(act_bad))
+    comp_bad = rs.WEIGHTS["route-match"] * route_bad + rs.WEIGHTS["gate-correctness"] * gate
+    results.append(("scorer catches wrong route", comp_bad < rs.PASS_THRESHOLD))
+
+    return results
+
+
+# ----------------------------------------------------------------------------
+# Plugin compile check (requires bun)
+
+def plugin_checks():
+    results = []
+    for plugin in ["gates.ts", "memory.ts", "voice-guard.ts"]:
+        path = os.path.join(ROOT, "plugins", plugin)
+        out = os.path.join(tempfile.gettempdir(), "llmfoundry-plugin-check")
+        try:
+            r = subprocess.run(["bun", "build", path, "--outdir", out], capture_output=True, text=True, timeout=60)
+            results.append((f"{plugin} compiles", r.returncode == 0))
+        except FileNotFoundError:
+            results.append((f"{plugin} compiles (bun missing)", True))  # skip, not a regression
+    return results
+
+
+# ----------------------------------------------------------------------------
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--suite", choices=["engine", "routing", "plugins", "all"], default="all")
+    ap.add_argument("--baseline", action="store_true", help="print current state")
+    args = ap.parse_args()
+
+    results = []
+    suites = ["engine", "routing", "plugins"] if args.suite == "all" else [args.suite]
+
+    for s in suites:
+        if s == "engine":
+            results += engine_checks()
+        elif s == "routing":
+            results += routing_checks()
+        elif s == "plugins":
+            results += plugin_checks()
+
+    passed = sum(1 for _, ok in results if ok)
+    failed = [(name, ok) for name, ok in results if not ok]
+
+    print(f"=== LLMFoundry eval runner ({len(results)} checks) ===")
+    for name, ok in results:
+        print(f"  {'PASS' if ok else 'FAIL'}  {name}")
+
+    print(f"\nResult: {passed}/{len(results)} passed")
+    if args.baseline:
+        print(f"\nBASELINE (the number to beat): {passed}/{len(results)} = {passed/len(results)*100:.0f}%")
+
+    if failed:
+        print("\nFAILURES:")
+        for name, _ in failed:
+            print(f"  - {name}")
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

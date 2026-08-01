@@ -18,6 +18,8 @@
   <a href="https://github.com/Pl3ntz/llmfoundry"><img alt="GitHub" src="https://img.shields.io/github/stars/Pl3ntz/llmfoundry?style=social"></a>
   <a href="https://github.com/Pl3ntz/llmfoundry/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-lightgrey.svg"></a>
   <a href="docs/MODEL-POLICY.md"><img alt="Model" src="https://img.shields.io/badge/model-DeepSeek_V4_Pro-2ea44f.svg"></a>
+  <a href=".github/workflows/ci.yml"><img alt="CI" src="https://github.com/Pl3ntz/llmfoundry/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="evals/baseline.json"><img alt="Tests" src="https://img.shields.io/badge/tests-27%2F27-2ea44f.svg"></a>
 </p>
 
 <p align="center">
