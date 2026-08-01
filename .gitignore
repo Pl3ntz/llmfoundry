@@ -24,3 +24,4 @@ templates/MEMORY/*.real.*
 
 # templates/MEMORY is versioned (sanitized placeholders) — re-include
 !templates/MEMORY/
+.playwright-mcp/

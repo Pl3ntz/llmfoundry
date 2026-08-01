@@ -38,6 +38,19 @@ ls ~/.config/opencode/agents/
 cat ~/.config/opencode/opencode.json
 ```
 
+## Chrome DevTools with your logins
+
+The `chrome-devtools` MCP uses `--autoConnect` so it attaches to the Chrome you already
+have open (with your sessions/cookies) instead of launching a clean one.
+
+One-time setup:
+1. Open your normal Chrome and go to `chrome://inspect/#remote-debugging`
+2. Click Enable on the remote debugging prompt
+3. That's it. The MCP connects to your authenticated Chrome from then on.
+
+> macOS note: `--userDataDir` does not reliably restore encrypted cookies (Keychain).
+> `--autoConnect` to your running Chrome is the reliable way to use your logged-in sessions.
+
 ## Memory location
 
 Data (never versioned):

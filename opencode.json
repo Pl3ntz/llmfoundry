@@ -31,8 +31,8 @@
     },
     "chrome-devtools": {
       "type": "local",
-      "description": "Chrome DevTools inspection: DOM, console, network, performance",
-      "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
+      "description": "Chrome DevTools conectado ao Chrome do usuario (logins). Requer: habilitar remote debugging em chrome://inspect/#remote-debugging",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--autoConnect", "--channel", "stable"]
     }
   },
   "watcher": {
