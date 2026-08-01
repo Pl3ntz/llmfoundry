@@ -60,6 +60,8 @@ Config (both global and repo):
 
 ### Rules (non-negotiable)
 
+- **Enable remote debugging once**, then the MCP connects every time. Do not ask to
+  re-enable it on each use; just attempt the MCP call and the Chrome prompts for approval.
 - **Never** use `--userDataDir` (does not restore encrypted cookies on macOS).
 - **Never** force-connect or auto-run tests that bypass the allow prompt.
 - **Never** run batch test runners that spawn many opencode sessions touching the MCP
