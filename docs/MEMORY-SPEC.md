@@ -1,0 +1,178 @@
+# LLMFoundry Memory — SPEC v1
+
+**Status:** Rascunho para revisão
+**Autor:** vplentz
+**Data:** 2026-08-01
+**Nome:** LLMFoundry Memory (working name: `foundry-memory`)
+**Complexidade:** Complexo
+
+---
+
+## O que
+
+Sistema de memória unificada de aprendizado contínuo para o LLMFoundry. Captura
+estruturada de conhecimento das sessões (erros resolvidos, decisões, padrões recorrentes,
+achados de agentes), com busca, confiança, reforço e promoção — portando o que o
+`local-mind` acerta e corrigindo suas limitações.
+
+## Por que
+
+O usuário tem o `local-mind` (Claude Code) — 1853 memórias, 995 fatos de perfil, 385
+gotchas, 205 findings de agentes. A ideia é comprovada. Mas tem limitações que queremos
+corrigir na versão LLMFoundry (focada em opencode + DeepSeek + engenharia de IA).
+
+### O que o local-mind acerta (manter)
+
+| Recurso | Detalhe |
+|---------|---------|
+| FTS5 full-text search | busca lexical com stemming porter |
+| Confiança + reforço | fatos ganham peso ao serem re-confirmados |
+| Severidade/status em findings | memória acionável, não só texto |
+| Container por projeto | isolamento por contexto |
+| Recorrência com promoção | gotchas viram regras (3+ ocorrências) |
+| Captura por hook | automática, não manual |
+
+### O que o local-mind erra (corrigir)
+
+| Limitação | Correção LLMFoundry |
+|-----------|---------------------|
+| `recall_log` vazio — captura sem uso medível | Recall com confirmação de ação |
+| Só busca lexical, sem correlação semântica | Embeddings (v2) sobre a camada estruturada |
+| `session_turn` é tudo — volume de ruído (1848) | **Captura estruturada**: só eventos com sinal |
+| Sem expiração/decay | Decay temporal + arquivamento |
+| Sem promoção automática medível | Promotion gate com critérios explícitos (matriz do Quarterdeck) |
+| Banco proprietário, difícil de versionar/compartilhar | Camada curada em markdown git-versionável |
+
+---
+
+## Decisão de storage (usando nosso setup)
+
+**Nossa realidade:** opencode + DeepSeek (barato, queremos maximizar uso) + kit versionável
+no git. Captura estruturada = volume baixo, alto sinal.
+
+**Decisão: SQLite (armazenamento vivo) + Markdown curado (artefato versionável).**
+
+| Camada | Tecnologia | Papel |
+|--------|-----------|-------|
+| **Viva** | SQLite + FTS5 | Store de eventos estruturados, busca lexical, métricas |
+| **Curada** | Markdown em `MEMORY/` por projeto (git) | O que sobrevive à sessão — portável, compartilhável, revisável |
+| **Semântica** | Embeddings (v2, opcional) | Correlação vetorial sobre a camada curada |
+
+**Por que não embeddings na v1:**
+1. Captura estruturada = volume baixo → FTS5 lexical resolve a busca.
+2. Embeddings adicionam custo de API (embedding models) — contra a filosofia DeepSeek-barato.
+3. A camada curada em markdown é o que se versiona/compartilha; vetores não.
+4. V2 pode adicionar sqlite-vec sem reescrever nada.
+
+**Por que não só arquivos:**
+- O local-mind provou que query estruturada (severidade, status, contagem, confiança) vale.
+- SQLite é local, sem servidor, sem infra — igual ao setup.
+
+---
+
+## Escopo — Subsistemas
+
+### 1. Captura (estruturada, hook-driven)
+
+Capturar **eventos com sinal**, não turns:
+
+| Evento | Gatilho | Exemplo |
+|--------|---------|---------|
+| **Erro resolvido** | `tool.execute.after` (bash falhou → bash ok depois) | "build error X fixed by Y" |
+| **Decisão** | `/ai-memory remember` ou detecção no fluxo SPEC | "escolhemos DeepSeek V4 Pro sobre kimi-k3 por custo" |
+| **Padrão recorrente** | contagem de gotchas ≥ 3 | "npm install sempre roda como sudo" |
+| **Achado de agente** | agentes com findings (deep-researcher, llm-security-reviewer) | "[HIGH] SSRF via fetch tool — fix em X" |
+| **Fato estático** | manual | "projeto usa FastAPI + raw SQL, sem ORM" |
+
+Implementação: plugin opencode (`plugins/memory.ts`) nos hooks `tool.execute.after` +
+comandos `/ai-memory remember|forget|search|stats`.
+
+### 2. Modelo de dados (SQLite)
+
+```
+memories          — eventos estruturados (tipo, conteúdo, container, metadata JSON)
+memory_fts        — FTS5 (conteúdo)
+memory_facts      — fatos de perfil com confidence + reinforced_count
+gotchas           — padrões com hash + count + samples + promoted
+findings          — achados de agentes (severity, status, acted_on)
+recall_log        — recall com acted_on (corrige o gap do local-mind)
+session_metrics   — métricas por sessão
+```
+
+### 3. Ciclo de vida da memória
+
+```
+CAPTURA (hook/comando)
+  → NORMALIZA (dedup por hash, contagem)
+  → REFORÇA (confidence++ quando re-observado)
+  → DECAY (peso cai com o tempo se não reforçado)
+  → PROMOVE (≥3 recorrências + 5 critérios da matriz → MEMORY/*.md versionável)
+  → ARQUIVA (não usado em 90 dias → movido, não deletado)
+```
+
+**Promotion Criteria Matrix** (do Quarterdeck, mantido):
+Recorrência ≥3 sessões · Consistência (mesma solução) · Impacto (preveniu erro/ganhou tempo) ·
+Estabilidade (sistema não mudou) · Clareza (1-2 frases, ≤200 chars).
+
+### 4. Camada curada (git-versionável)
+
+```
+MEMORY/
+├── PROJECT.md        # fatos estáticos do projeto
+├── DECISIONS.md      # ADRs leves (decisão, por que, quando)
+├── GOTCHAS.md        # padrões promovidos com fix
+├── FINDINGS.md       # achados abertos/resolvidos
+└── INDEX.md          # sumário + estatísticas
+```
+
+Esta camada é o que **se versiona e compartilha** no repo — herda o ethos do LLMFoundry.
+
+### 5. Recall com confirmação (corrige o gap)
+
+- Recall acontece quando uma skill/agente consome uma memória.
+- `recall_log` registra: o que foi lembrado, quem lembrou, e **acted_on** (foi agido?).
+- Se um finding é lembrado 2x sem ação → ele sobe de prioridade ou é marcado stale.
+
+---
+
+## Fora de escopo (v1)
+
+- Embeddings/semantic search (v2)
+- Servidor MCP de memória (não precisa, SQLite resolve)
+- Captura de turns brutos (rejeitado — ruído)
+- Multi-máquina sync (o git cobre a camada curada)
+
+---
+
+## Critérios de sucesso
+
+1. Captura automática de erros resolvidos e achados de agentes (hook)
+2. `recall_log` com `acted_on` populado — gap do local-mind corrigido
+3. Promoção exige 5 critérios; nada auto-promove sem a matriz
+4. Camada curada em markdown git-versionável por projeto
+5. Busca FTS5 + filtros (tipo, severidade, projeto)
+6. Zero dependência de servidor; tudo local
+7. Consome < 100 requests/API de DeepSeek/mês (não depende de LLM para capturar)
+
+---
+
+## Integração com o kit
+
+| Componente | Papel |
+|-----------|-------|
+| `plugins/memory.ts` | Hooks de captura (tool.execute.after) |
+| `commands/ai-memory.md` | `/ai-memory remember|search|forget|stats|promote` |
+| `agents/deep-researcher.md` | Findings alimentam `findings` |
+| `skills/ai-engineering-standards` | Decisões registradas via `DECISIONS.md` |
+| `evals/` | Nada muda; memória não entra no eval |
+
+---
+
+## Plano de implementação (após aprovação da SPEC)
+
+1. `scripts/memory/` — módulo Python/SQLite (schema, insert, search, promote, decay)
+2. `plugins/memory.ts` — hooks de captura
+3. `commands/ai-memory.md` — CLI surface
+4. Camada curada: template `MEMORY/*.md` por projeto
+5. Teste: sessão real, verificar recall + promoção
+6. Commit + versão
