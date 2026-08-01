@@ -1,11 +1,44 @@
+<!--
+  LLMFoundry — AI engineering kit for DeepSeek.
+  Keywords for search: AI engineering, LLM agents, RAG, MCP, prompt engineering,
+  LLM evals, DeepSeek, opencode, AI agents toolkit, agent skills, quality gates.
+-->
 <p align="center">
-  <img src="assets/logo.svg" alt="LLMFoundry" width="480">
+  <img src="assets/logo.svg" alt="LLMFoundry — AI engineering kit for DeepSeek" width="480">
 </p>
 
-# LLMFoundry
+<h1 align="center">LLMFoundry</h1>
 
-The AI engineering kit for DeepSeek. Skills, standards, and quality gates for building
-LLM systems — agents, RAG, evals, MCP — with production discipline: **SPEC → TDD → worktree → atomic commit**.
+<p align="center">
+  <strong>The AI engineering kit for DeepSeek.</strong><br>
+  Build LLM apps — agents, RAG, evals, MCP — with production discipline.
+</p>
+
+<p align="center">
+  <a href="https://github.com/Pl3ntz/llmfoundry"><img alt="GitHub" src="https://img.shields.io/github/stars/Pl3ntz/llmfoundry?style=social"></a>
+  <a href="https://github.com/Pl3ntz/llmfoundry/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-lightgrey.svg"></a>
+  <a href="docs/MODEL-POLICY.md"><img alt="Model" src="https://img.shields.io/badge/model-DeepSeek_V4_Pro-2ea44f.svg"></a>
+</p>
+
+<p align="center">
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="#skill-catalog">Skills</a> ·
+  <a href="#agents">Agents</a> ·
+  <a href="#commands">Commands</a> ·
+  <a href="#memory">Memory</a> ·
+  <a href="#documentation">Docs</a> ·
+  <a href="#roadmap">Roadmap</a>
+</p>
+
+---
+
+**LLMFoundry** is a complete kit to develop production-quality LLM applications on
+**DeepSeek** (cheap, high-volume) with engineering discipline. It turns opencode into a
+team: an **orchestrator** that understands your intent and delegates to specialist agents,
+a **living memory** that learns and feeds itself, and **gates** that block bad output.
+
+> Looking for: AI agents, RAG pipeline, prompt engineering, LLM evals, MCP servers,
+> DeepSeek coding, AI engineering best practices, agent skills for opencode? You're in the right place.
 
 [![Skills](https://img.shields.io/badge/skills-18-0366d6.svg)](#skill-catalog)
 [![Agents](https://img.shields.io/badge/agents-5-0366d6.svg)](#agents)
@@ -190,10 +223,43 @@ llmfoundry/
 - [x] Core kit: skills, agents, commands, plugins, memory, evals
 - [x] Orchestrator (the Captain) as default agent
 - [x] Semantic memory (local embeddings)
-- [ ] Gates tested as real commit blockers
-- [ ] Routing eval (measure orchestrator routing quality)
+- [x] Gates as real commit blockers (throw-veto)
+- [x] Routing eval (golden-set + deterministic scorer)
 - [ ] Agent stability baselines (K=5 runs)
 - [ ] GitHub Actions CI for evals
+- [ ] Routing eval baseline captured (measure orchestrator routing quality)
+
+---
+
+## Contributing
+
+Contributions welcome. The kit is structured so each part is independently useful:
+
+- **New skill?** Add `skills/<name>/SKILL.md` with frontmatter (`name`, `description`)
+  following the anatomy in [SKILLS.md](SKILLS.md).
+- **New agent?** Add `agents/<name>.md` with `mode: subagent` + `model: opencode-go/*`.
+- **New command?** Add `commands/<name>.md` with `description` + `model`.
+- **Gate/eval?** See `plugins/` and `evals/` for the patterns.
+
+Follow the kit's own discipline: SPEC → TDD → worktree → atomic commit.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## FAQ
+
+**Do I need to pay for expensive models?** No — the kit is built for DeepSeek
+(V4 Pro/Flash), which is 35-322x more requests per dollar than kimi-k3 on the same plan.
+
+**Is my code/memory sent anywhere?** No. Memory is 100% local (SQLite + local embeddings),
+never versioned, never leaves the machine. See [docs/MEMORY-SPEC.md](docs/MEMORY-SPEC.md).
+
+**Does it work alongside my existing opencode setup?** Yes — the installer uses
+`skills.paths` and per-file symlinks, so it coexists with existing skills/agents.
+
+**Which opencode features does it use?** Agents, skills (Agent Skills standard), commands,
+plugins (hooks), MCP servers, and the memory loop.
+
+**Is it only for opencode?** It's built for opencode, but skills follow the Agent Skills
+open standard (agentskills.io), so they're portable to Claude Code, Codex, Cursor, etc.
 
 ---
 
