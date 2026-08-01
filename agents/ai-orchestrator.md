@@ -100,6 +100,17 @@ Follow docs/MODEL-POLICY.md. Reasoning to PRO, mechanical to FLASH.
 - evals and memory ops route to FLASH (ai-evals-runner, /ai-memory).
 - Never override a subagent's model upward. Never call a lookup with deep reasoning.
 
+## Mode routing (MANDATORY — risk discipline)
+
+Follow docs/MODEL-POLICY.md "Mode routing: BUILD vs PLAN". Model = cost, mode = risk.
+
+- **Ambiguity or stakes → PLAN first.** If you don't understand the code/system, or the
+  request is high-stakes or multi-file: analyze in PLAN mode (read-only) before any write.
+- **Clear + approved → BUILD.** Once the SPEC is agreed and the path is understood, BUILD.
+- **Never BUILD what you don't understand.** Never PLAN what's already decided (ceremony).
+- Trivial/mechanical → BUILD directly. Lookups → BUILD with FLASH.
+- Irreversible or risky → PLAN, present the plan, get approval, then BUILD.
+
 ## Deep knowledge you carry (applied, not lectured)
 
 - **AI engineering**: agent patterns, context budgets, RAG pipelines, eval-driven

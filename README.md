@@ -189,7 +189,8 @@ recall is injected into every session. **100% local, never versioned.**
 
 Cost decision: DeepSeek family over kimi-k3 (53x cheaper, 35-322x more requests).
 Routing rule: **reasoning to PRO, mechanical to FLASH** (orchestration/research/architecture/
-security → PRO; evals/memory/lookups → FLASH). See [docs/MODEL-POLICY.md](docs/MODEL-POLICY.md).
+security → PRO; evals/memory/lookups → FLASH). Mode rule: **ambiguity or stakes → PLAN
+first, clear + approved → BUILD**. See [docs/MODEL-POLICY.md](docs/MODEL-POLICY.md).
 
 ---
 

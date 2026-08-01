@@ -68,3 +68,51 @@ The cost discipline lives in *which* model a task routes to. Flash is 3x cheaper
 
 This is enforced implicitly by frontmatter + explicitly by this policy. A task that spends
 PRO where FLASH suffices is a policy violation.
+
+---
+
+## Mode routing: BUILD vs PLAN
+
+Model policy decides *which* model. Mode policy decides *how* it behaves. Two dimensions,
+both mandatory. **Model = cost, mode = risk.**
+
+| Mode | Tools | Risk profile | Use for |
+|------|-------|--------------|---------|
+| **PLAN** | read-only (edit/bash = ask) | Zero writes, zero surprises | understanding, design, review, decision before action |
+| **BUILD** | full tools | Writes, runs, changes state | implementation after a plan exists |
+
+### When to PLAN first (mandatory)
+
+| When you... | Mode |
+|-------------|------|
+| don't understand the code/system yet | PLAN |
+| the request is ambiguous or high-stakes | PLAN → interview → PLAN again |
+| need architecture / design / trade-offs | PLAN (delegate ai-architect) |
+| want a review of uncommitted work | PLAN |
+| are about to make an irreversible change | PLAN, then BUILD with approval |
+| the work is multi-file or spans systems | PLAN (spec) → BUILD (implementation) |
+
+### When to BUILD directly (no ceremony)
+
+| When you... | Mode |
+|-------------|------|
+| the task is trivial and fully specified | BUILD |
+| you already planned and got approval | BUILD |
+| the change is 1-2 files, low risk | BUILD |
+| it's a mechanical fix / config tweak | BUILD |
+
+### The rule
+
+**Ambiguity or stakes → PLAN first. Clear + approved → BUILD.**
+Never BUILD something you don't understand. Never PLAN something already decided — that's
+ceremony (the same anti-ceremony rule as the SPEC triage).
+
+### Interaction with model routing
+
+| Scenario | Mode | Model |
+|----------|------|-------|
+| understand code / design | PLAN | PRO (reasoning) |
+| trivial lookup | BUILD | FLASH |
+| review before merge | PLAN | PRO (llm-security-reviewer / architect) |
+| evals | BUILD | FLASH (ai-evals-runner) |
+| implement approved spec | BUILD | PRO (orchestrator/build) |
