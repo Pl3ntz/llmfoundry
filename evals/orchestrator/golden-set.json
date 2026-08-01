@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "frozen": "2026-08-01",
+  "questions": [
+    {
+      "id": "RS-1",
+      "type": "research",
+      "prompt": "what are experts saying about AI agents in 2026? give me a landscape overview",
+      "expectedRoute": "deep-researcher",
+      "expectedGates": { "interviewMe": false },
+      "why": "deep multi-source research / landscape"
+    },
+    {
+      "id": "RS-2",
+      "type": "architecture",
+      "prompt": "I want to build an agent that uses RAG over my docs, how should I design it?",
+      "expectedRoute": "ai-architect",
+      "expectedGates": { "interviewMe": true },
+      "why": "LLM architecture design, ambiguous"
+    },
+    {
+      "id": "RS-3",
+      "type": "evals",
+      "prompt": "my prompt changed, how do I know if it got better or worse?",
+      "expectedRoute": "ai-evals-runner",
+      "expectedGates": { "interviewMe": false },
+      "why": "prompt regression needs evals"
+    },
+    {
+      "id": "RS-4",
+      "type": "security",
+      "prompt": "I'm shipping my LLM app to production, I need to make sure there's no prompt injection",
+      "expectedRoute": "llm-security-reviewer",
+      "expectedGates": { "interviewMe": true },
+      "why": "LLM app security review"
+    },
+    {
+      "id": "RS-5",
+      "type": "lookup",
+      "prompt": "what is the OpenAI structured output syntax?",
+      "expectedRoute": "direct",
+      "expectedGates": { "interviewMe": false },
+      "why": "single-fact lookup, do not delegate to deep-researcher"
+    },
+    {
+      "id": "RS-6",
+      "type": "ambiguous",
+      "prompt": "my chatbot is bad, improve it",
+      "expectedRoute": "interview",
+      "expectedGates": { "interviewMe": true },
+      "why": "too vague, must discuss before acting"
+    },
+    {
+      "id": "RS-7",
+      "type": "implementation",
+      "prompt": "implement the login screen with JWT authentication in the project",
+      "expectedRoute": "build",
+      "expectedGates": { "interviewMe": false, "spec": true },
+      "why": "implementation, follows ai-dev-process"
+    },
+    {
+      "id": "RS-8",
+      "type": "research",
+      "prompt": "compare Neo4j vs Memgraph vs FalkorDB for graph databases in production 2026",
+      "expectedRoute": "deep-researcher",
+      "expectedGates": { "interviewMe": false },
+      "why": "multi-source comparison"
+    },
+    {
+      "id": "RS-9",
+      "type": "security",
+      "prompt": "are there CVEs in my LLM stack? which ones?",
+      "expectedRoute": "llm-security-reviewer",
+      "expectedGates": { "interviewMe": false },
+      "why": "vulnerability in LLM app"
+    },
+    {
+      "id": "RS-10",
+      "type": "architecture",
+      "prompt": "our RAG is slow and returning irrelevant results, what do we do?",
+      "expectedRoute": "ai-architect",
+      "expectedGates": { "interviewMe": true },
+      "why": "RAG design problem, needs diagnosis"
+    },
+    {
+      "id": "RS-11",
+      "type": "lookup",
+      "prompt": "what is the current version of React?",
+      "expectedRoute": "direct",
+      "expectedGates": { "interviewMe": false },
+      "why": "single fact, do not delegate"
+    },
+    {
+      "id": "RS-12",
+      "type": "multi-goal",
+      "prompt": "create a new endpoint AND review the security of the app",
+      "expectedRoute": "build+security",
+      "expectedGates": { "scopeSplit": true, "interviewMe": true },
+      "why": "multi-goal, must split scope"
+    }
+  ]
+}

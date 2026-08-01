@@ -1,0 +1,59 @@
+name: CI — evals & tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  evals:
+    name: evals + engine tests + plugins
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Python deps
+        run: python3 -m pip install --quiet numpy pyyaml
+
+      - name: Run eval suite
+        run: python3 scripts/eval-runner.py
+
+      - name: Validate all frontmatters
+        run: |
+          python3 - <<'EOF'
+          import glob, yaml
+          files = glob.glob('skills/*/SKILL.md') + glob.glob('agents/*.md') + glob.glob('commands/*.md')
+          for f in files:
+              txt = open(f).read()
+              assert txt.startswith('---'), f'no frontmatter: {f}'
+              yaml.safe_load(txt.split('---', 2)[1])
+          print(f'frontmatters OK ({len(files)} files)')
+          EOF
+
+      - name: Validate JSON (opencode config + evals)
+        run: |
+          python3 - <<'EOF'
+          import json, glob
+          for f in ['opencode.json'] + glob.glob('evals/**/*.json', recursive=True):
+              json.load(open(f))
+          print('JSONs OK')
+          EOF
+
+  voice-check:
+    name: human-voice gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Flag AI-tell patterns in repo docs
+        run: |
+          # This is a smoke check; the real enforcement is the voice-guard plugin.
+          # CI documents the standard exists and is referenced.
+          grep -rl "human-voice" skills/ >/dev/null && echo "human-voice skill present and referenced" || exit 1

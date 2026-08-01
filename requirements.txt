@@ -1,0 +1,5 @@
+# LLMFoundry memory engine deps
+# Optional semantic layer: fastembed pulls onnxruntime. Skip and memory still
+# works with lexical (FTS5) search only.
+fastembed>=0.8.0
+numpy>=1.26

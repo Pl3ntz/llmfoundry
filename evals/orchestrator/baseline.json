@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "captured": "2026-08-01",
+  "suite": "routing-runner",
+  "questions": 6,
+  "passed": 4,
+  "percent": 67,
+  "results": [
+    {
+      "id": "RS-1",
+      "expected": "deep-researcher",
+      "actual": "deep-researcher"
+    },
+    {
+      "id": "RS-2",
+      "expected": "ai-architect",
+      "actual": "interview"
+    },
+    {
+      "id": "RS-3",
+      "expected": "ai-evals-runner",
+      "actual": "ai-evals-runner"
+    },
+    {
+      "id": "RS-4",
+      "expected": "llm-security-reviewer",
+      "actual": "interview"
+    },
+    {
+      "id": "RS-5",
+      "expected": "direct",
+      "actual": "direct"
+    },
+    {
+      "id": "RS-6",
+      "expected": "interview",
+      "actual": "interview"
+    }
+  ]
+}
