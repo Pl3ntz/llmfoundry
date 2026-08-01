@@ -44,16 +44,42 @@ def classify(text: str) -> str:
     return "direct"
 
 
+# Default answer to give the orchestrator if it asks a clarifying question.
+# The answer is generic enough to unblock any interview without skewing the route.
+DEFAULT_ANSWER = (
+    "Use padrao, projeto normal. Objetivo claro, sem restricao especial. "
+    "Siga o melhor approach e me mostre o resultado."
+)
+
+
+def _run(args: list, cwd: str) -> str:
+    # --pure: run without external plugins/MCPs. Critical so batch sessions do not
+    # touch chrome-devtools (which would autoConnect to the user's Chrome) or leave
+    # orphaned MCP processes. Routing tests only need the orchestrator, no MCPs.
+    cmd = ["opencode", "run", *args, "--agent", "ai-orchestrator", "--auto", "--pure"]
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=240, cwd=cwd)
+    out = re.sub(r"\x1b\[[0-9;]*m", "", r.stdout or "")
+    return out
+
+
 def run_question(q: dict) -> dict:
-    prompt = q["prompt"]
-    cmd = ["opencode", "run", prompt, "--agent", "ai-orchestrator", "--auto"]
+    cwd = os.path.expanduser("~/dev/personal/opencode")
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=240, cwd=os.path.expanduser("~/dev/personal/opencode"))
-        out = r.stdout or ""
-        # strip ANSI
-        out = re.sub(r"\x1b\[[0-9;]*m", "", out)
-        route = classify(out)
-        return {"id": q["id"], "expected": q["expectedRoute"], "actual": route, "output": out[:300]}
+        out = _run([q["prompt"]], cwd)
+        # If the orchestrator asked a clarifying question, answer it (closure test),
+        # then classify the final turn which should include the delegation.
+        is_asking = "?" in out and re.search(
+            r"primeira pergunta|uma de cada vez|qual |onde |me diz|me conta|opção|opcao|a\)|b\)|c\)",
+            out,
+            re.I,
+        )
+        if is_asking:
+            out2 = _run([DEFAULT_ANSWER, "--continue"], cwd)
+            combined = out + "\n" + out2
+        else:
+            combined = out
+        route = classify(combined)
+        return {"id": q["id"], "expected": q["expectedRoute"], "actual": route, "output": combined[:300]}
     except subprocess.TimeoutExpired:
         return {"id": q["id"], "expected": q["expectedRoute"], "actual": "timeout", "output": ""}
     except Exception as e:

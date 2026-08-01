@@ -38,18 +38,34 @@ ls ~/.config/opencode/agents/
 cat ~/.config/opencode/opencode.json
 ```
 
-## Chrome DevTools with your logins
+## Chrome DevTools with your logins (THE standard)
 
-The `chrome-devtools` MCP uses `--autoConnect` so it attaches to the Chrome you already
-have open (with your sessions/cookies) instead of launching a clean one.
+The `chrome-devtools` MCP connects to **your running Chrome** (with your sessions and
+cookies) using `--autoConnect`. It never launches a clean Chrome. This is the only mode
+we use.
 
-One-time setup:
-1. Open your normal Chrome and go to `chrome://inspect/#remote-debugging`
-2. Click Enable on the remote debugging prompt
-3. That's it. The MCP connects to your authenticated Chrome from then on.
+Config (both global and repo):
+```json
+"chrome-devtools": {
+  "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--autoConnect", "--channel", "stable"]
+}
+```
 
-> macOS note: `--userDataDir` does not reliably restore encrypted cookies (Keychain).
-> `--autoConnect` to your running Chrome is the reliable way to use your logged-in sessions.
+### The allow flow (how it works)
+
+1. The user asks for a browser action (navigate, screenshot, inspect).
+2. The MCP connects to the user's Chrome, which shows a debugging-permission prompt.
+3. The user approves it. The MCP then works with the user's logged-in session.
+4. Done. The user drives the MCP; the approval is part of the flow.
+
+### Rules (non-negotiable)
+
+- **Never** use `--userDataDir` (does not restore encrypted cookies on macOS).
+- **Never** force-connect or auto-run tests that bypass the allow prompt.
+- **Never** run batch test runners that spawn many opencode sessions touching the MCP
+  (they leave orphaned chrome-devtools-mcp processes that fall back to a clean Chrome).
+  After any aborted run, check: `pgrep -fl chrome-devtools-mcp` and kill orphans.
+- The user is the one who triggers the MCP and approves it. We do not drive it ourselves.
 
 ## Memory location
 

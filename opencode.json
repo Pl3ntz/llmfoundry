@@ -31,7 +31,7 @@
     },
     "chrome-devtools": {
       "type": "local",
-      "description": "Chrome DevTools conectado ao Chrome do usuario (logins). Requer: habilitar remote debugging em chrome://inspect/#remote-debugging",
+      "description": "Chrome DevTools conectado ao Chrome do usuario via autoConnect (logins; aprova o prompt de debugging no Chrome)",
       "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--autoConnect", "--channel", "stable"]
     }
   },
