@@ -240,12 +240,15 @@ python3 scripts/eval-runner.py --baseline  # show the number to beat
 - [x] Orchestrator (the Captain) as default agent
 - [x] Semantic memory (local embeddings)
 - [x] Gates as real commit blockers
-- [x] Routing eval (golden-set + deterministic scorer)
+- [x] Routing eval (golden-set + deterministic scorer, validated manually)
 - [x] Regression CI (27 checks on every push)
 - [x] Human-voice + anti-delirium disciplines
 - [x] PRO/FLASH + BUILD/PLAN routing policies
 - [ ] Agent stability baselines (K=5 runs)
 - [ ] Reverse engineering specialist (see [SPEC](docs/REVERSE-ENGINEERING-SPEC.md))
+
+> Routing is validated manually, one question at a time, to avoid batch sessions
+> touching the user's Chrome. Batch automation of model-routing tests was removed.
 
 ---
 
