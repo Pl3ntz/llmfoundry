@@ -8,11 +8,8 @@
   <img src="assets/logo.svg" alt="LLMFoundry: AI engineering kit for DeepSeek" width="480">
 </p>
 
-<h1 align="center">LLMFoundry</h1>
-
 <p align="center">
-  <strong>The AI engineering kit for DeepSeek.</strong><br>
-  Build LLM apps, agents, RAG, evals, MCP, with production discipline.
+  <strong>Build LLM apps, agents, RAG, evals, and MCP with production discipline.</strong>
 </p>
 
 <p align="center">
