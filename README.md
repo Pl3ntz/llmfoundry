@@ -228,6 +228,7 @@ llmfoundry/
 - [ ] Agent stability baselines (K=5 runs)
 - [ ] GitHub Actions CI for evals
 - [ ] Routing eval baseline captured (measure orchestrator routing quality)
+- [ ] Reverse engineering specialist (agent + skills) — see docs/REVERSE-ENGINEERING-SPEC.md
 
 ---
 
