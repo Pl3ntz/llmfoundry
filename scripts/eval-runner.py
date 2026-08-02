@@ -85,6 +85,13 @@ def engine_checks():
         recall = m.recall(container="t")
         results.append(("recall returns open finding", len(recall["findings"]) == 1))
 
+        # 5b. recall includes memories and facts (imported knowledge enters context)
+        m.remember("decisao: usar DeepSeek V4", container="t", memory_type="decision")
+        m.remember_fact("t", "dynamic", "preferencia: resposta em pt-br")
+        recall2 = m.recall(container="t")
+        results.append(("recall includes memories", len(recall2.get("memories", [])) >= 1))
+        results.append(("recall includes facts", len(recall2.get("facts", [])) >= 1))
+
         # 6. log recall acted
         n = m.log_recall("t", "orchestrator", acted_on=True)
         results.append(("log-recall works", n == 0))

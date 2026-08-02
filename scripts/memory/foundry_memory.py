@@ -440,7 +440,12 @@ def search(query, container=None, limit=10):
 
 
 def recall(container=None, top=5):
-    """Recall most relevant open findings + recent gotchas for a preamble."""
+    """Recall the most relevant context for a preamble.
+
+    Returns open findings, recent gotchas, AND the most relevant memories and
+    facts of the container, so imported knowledge enters agent context
+    automatically instead of only via explicit search.
+    """
     con = _conn()
     try:
         where = "WHERE status='open'" + (" AND container=?" if container else "")
@@ -453,7 +458,24 @@ def recall(container=None, top=5):
         gotchas = con.execute(
             f"SELECT * FROM gotchas {gw} ORDER BY count DESC LIMIT ?", params + (top,)
         ).fetchall()
-        return {"findings": [dict(r) for r in findings], "gotchas": [dict(r) for r in gotchas]}
+        # memories: most relevant by confidence+recency, capped at top
+        mw = "WHERE 1=1" + (" AND container=?" if container else "")
+        memories = con.execute(
+            f"SELECT * FROM memories {mw} ORDER BY confidence DESC, reinforced_count DESC, created_at DESC LIMIT ?",
+            params + (top,),
+        ).fetchall()
+        # facts: profile facts most reinforced, capped at top
+        fw = "WHERE 1=1" + (" AND container=?" if container else "")
+        facts = con.execute(
+            f"SELECT * FROM memory_facts {fw} ORDER BY reinforced_count DESC, confidence DESC, created_at DESC LIMIT ?",
+            params + (top,),
+        ).fetchall()
+        return {
+            "findings": [dict(r) for r in findings],
+            "gotchas": [dict(r) for r in gotchas],
+            "memories": [dict(r) for r in memories],
+            "facts": [dict(r) for r in facts],
+        }
     finally:
         con.close()
 
@@ -619,6 +641,12 @@ def main():
         print("=== GOTCHAS ===")
         for g in data["gotchas"]:
             print(f"(x{g['count']}) {g['normalized_pattern'][:120]}")
+        print("=== MEMORIES ===")
+        for m in data["memories"]:
+            print(f"[{m['memory_type']}] {m['content'][:120]}")
+        print("=== FACTS ===")
+        for f in data["facts"]:
+            print(f"[{f['fact_type']}] {f['fact_text'][:120]}")
     elif args.cmd == "log-recall":
         n = log_recall(args.container, args.by, args.session, args.acted)
         print(f"recall logged; finding recall_count={n}")
