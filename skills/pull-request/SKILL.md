@@ -30,6 +30,12 @@ If a change is large, split it into logical PRs that each merge independently:
 3. **Diff reviewed by yourself first** (`git diff <base>...HEAD`) for obvious issues.
 4. **No secrets, no debug leftovers, no unrelated changes.** The diff touches only what
    the PR claims.
+5. **Structure sync (MANDATORY).** If the PR adds, removes, or changes agents, skills,
+   commands, plugins, or MCPs, it MUST also update: SKILLS.md, README.md (counts + tables),
+   agents/ai-orchestrator.md (routing), skills/ai-orchestration/SKILL.md (routing), and
+   any docs naming the structure. The orchestrator can only route to what it knows, so a
+   structural change without the routing tables updated is an incomplete PR. State in the
+   PR description what was synced.
 
 ## The PR description
 
