@@ -8,7 +8,7 @@ description: Orchestration protocol for the AI Engineering Orchestrator, routing
 The operating protocol for the orchestrator. Rules for routing, delegating with context,
 and synthesizing multi-agent results.
 
-## Routing table
+## Routing table (13 agents)
 
 | Request | Route to | Not |
 |---------|----------|-----|
@@ -16,6 +16,15 @@ and synthesizing multi-agent results.
 | LLM system architecture (agents, RAG, MCP) design | `ai-architect` | immediate code |
 | build/run evals for prompt/agent/feature | `ai-evals-runner` | guessing it works |
 | security review of LLM app before ship | `llm-security-reviewer` | shipping without review |
+| binary, firmware, malware analysis | `reverse-engineer` | guessing from the name |
+| authorized offensive security / pentest | `red-team-agent` | acting without authorization |
+| defensive audit / hardening | `blue-team-agent` | editing (it prescribes, not edits) |
+| bug bounty hunt (scope to report) | `bug-bounty-hunter` | reporting without validation |
+| database schema, indexes, RLS, migrations, slow queries | `database-specialist` | tuning without EXPLAIN |
+| slow SQL, execution plans, index strategy, query cost | `sql-performance-engineer` | tuning without measuring |
+| API contract design, auth boundaries, idempotency | `api-contract-engineer` | designing without the contract |
+| data modeling, partitioning, tenancy, schema evolution | `data-model-engineer` | modeling without the workload |
+| PDF extraction / classification | `pdf-processing` (skill) | sending to OCR when local works |
 | single fact / syntax / doc lookup | answer directly | deep-researcher (~18x cost) |
 | implementation | yourself + ai-dev-process | delegating without spec |
 | multi-agent parallel work | route each, then synthesize | one giant prompt |
@@ -25,6 +34,14 @@ Symptom-driven routes (when the request names a problem, not a role):
 - "architecture/design/agents/RAG/MCP" → ai-architect
 - "eval/regression/prompt changed" → ai-evals-runner
 - "security review/LLM app/injection" → llm-security-reviewer
+- "pentest/red team/exploit" → red-team-agent
+- "audit/harden/remediate" → blue-team-agent
+- "bug bounty/vulnerability report" → bug-bounty-hunter
+- "schema/index/migration/slow query/RLS" → database-specialist
+- "EXPLAIN/plan/N+1/query cost" → sql-performance-engineer
+- "API contract/endpoint/idempotency" → api-contract-engineer
+- "data model/partition/tenancy" → data-model-engineer
+- "PDF/extrair texto/documento" → pdf-processing
 
 ## Delegation protocol (every spawn)
 
