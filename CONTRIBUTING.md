@@ -61,3 +61,22 @@ python3 -c "import json,glob;[json.load(open(f)) for f in glob.glob('evals/**/*.
 - Model IDs are always `opencode-go/*` (never `opencode/` Zen, never expensive models).
 - No secrets, PII, or business rules in any versioned file, memory is local-only.
 - Conventional commits: `feat:|fix:|refactor:|docs:|test:|chore:|perf:|ci:`.
+
+### Structure sync (MANDATORY on every PR)
+
+**Any change to the project structure must keep everything in sync.** When you add, remove,
+or change agents, skills, commands, plugins, or MCPs, the PR must update ALL of:
+
+1. **`SKILLS.md`** — the catalog (agents, skills, commands)
+2. **`README.md`** — counts (agents/skills), the team diagram, the agents table, the
+   skill catalog
+3. **`agents/ai-orchestrator.md`** — the routing table (so the orchestrator routes to the
+   new piece)
+4. **`skills/ai-orchestration/SKILL.md`** — the routing table (the skill the orchestrator
+   loads)
+5. **`docs/`** — any doc that names the structure (architecture, model policy)
+
+**Why:** the orchestrator can only route to what it knows. A new agent the routing table
+does not mention is invisible. The PR description must state what was synced, and the CI
+must pass before merge. A structural change that does not update the routing tables is an
+incomplete PR.
