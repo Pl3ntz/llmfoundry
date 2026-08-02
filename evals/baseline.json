@@ -2,8 +2,8 @@
   "version": 1,
   "captured": "2026-08-01",
   "suite": "eval-runner.py",
-  "checks": 27,
-  "passed": 27,
+  "checks": 34,
+  "passed": 34,
   "percent": 100,
-  "note": "The number to beat. Any change that drops below this fails the regression gate. Engine checks (10) run without a model; routing checks validate the golden-set + scorer; plugin checks compile all 3 plugins."
+  "note": "The number to beat. Any change that drops below this fails the regression gate. Includes recall memories+facts checks."
 }
