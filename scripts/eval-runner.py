@@ -80,6 +80,22 @@ def engine_checks():
         blocked = m.remember("chave sk-abc123456789012345678901234567890 no arquivo", "t")
         results.append(("secret is blocked", blocked is None))
 
+        # 4b. idempotent import: same source file must not duplicate
+        idem_con = m._conn()
+        src_meta = json.dumps({"type": "reference", "source": "project-x.md"})
+        now = "2026-01-01T00:00:00Z"
+        idem_con.execute(
+            "INSERT INTO memories (content, container, memory_type, project, metadata, created_at, updated_at) VALUES (?,?,?,?,?,?,?)",
+            ("contexto do projeto x", "t", "reference", "t", src_meta, now, now),
+        )
+        idem_con.commit()
+        already = idem_con.execute(
+            "SELECT 1 FROM memories WHERE container='t' AND metadata LIKE ? LIMIT 1",
+            (f'%"source": "project-x.md"%',),
+        ).fetchone()
+        idem_con.close()
+        results.append(("idempotent import dedups by source", already is not None))
+
         # 5. finding + recall
         m.record_finding("t", "deep-researcher", "[HIGH] ssrf via fetch", "HIGH")
         recall = m.recall(container="t")
