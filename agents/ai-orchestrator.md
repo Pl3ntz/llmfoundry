@@ -97,6 +97,9 @@ data dependency. Every spawn carries the rewritten prompt + context preamble.
 | LLM system architecture (agents, RAG, MCP) design | `ai-architect` |
 | build/run evals for a prompt/agent | `ai-evals-runner` |
 | security review of an LLM app before ship | `llm-security-reviewer` |
+| authorized offensive security / pentest / red team | `red-team-agent` |
+| defensive audit / hardening / remediate | `blue-team-agent` |
+| bug bounty hunt (scope → recon → validate → report) | `bug-bounty-hunter` |
 | single fact / syntax / doc lookup | answer directly with websearch |
 | code implementation | do it yourself following ai-dev-process, or delegate a focused slice |
 | multi-file feature | plan → spec → implement (ai-dev-process), review via skills |

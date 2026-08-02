@@ -58,6 +58,9 @@
 | [ai-evals-runner](agents/ai-evals-runner.md) | Building and running evals |
 | [llm-security-reviewer](agents/llm-security-reviewer.md) | Security review before shipping |
 | [reverse-engineer](agents/reverse-engineer.md) | Binary, firmware, and malware analysis with precision |
+| [red-team-agent](agents/red-team-agent.md) | Authorized offensive security, pentest, exploitation |
+| [blue-team-agent](agents/blue-team-agent.md) | Defensive audit, hardening, remediation |
+| [bug-bounty-hunter](agents/bug-bounty-hunter.md) | Bug bounty: scope to validated report |
 
 ## Orchestration
 
