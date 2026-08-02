@@ -144,6 +144,16 @@ def main():
             continue
         seen_hashes.add(h)
 
+        # Idempotent: skip if this source file is already indexed for this container.
+        # Checks the DB, not just this run, so re-importing does not duplicate.
+        already = con.execute(
+            "SELECT 1 FROM memories WHERE container=? AND metadata LIKE ? LIMIT 1",
+            (project, f'%"source": "{fname}"%'),
+        ).fetchone()
+        if already:
+            skipped_dup += 1
+            continue
+
         # secret pre-scan
         if fm._blocked(body) or fm._blocked(fname):
             skipped_secret += 1
