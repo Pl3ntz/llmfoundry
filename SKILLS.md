@@ -47,6 +47,7 @@
 | [re-dynamic-analysis](skills/re-dynamic-analysis/) | Confirm behavior under controlled execution |
 | [re-malware-analysis](skills/re-malware-analysis/) | Malware triage, IOC extraction, safe detonation |
 | [re-firmware-analysis](skills/re-firmware-analysis/) | Extract and analyze device firmware |
+| [pdf-processing](skills/pdf-processing/) | Fast local PDF to text/Markdown (pdf-inspector, MIT, free) |
 
 ## Agents
 
