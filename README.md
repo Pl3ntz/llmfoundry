@@ -43,7 +43,7 @@ team: an **orchestrator** that understands your intent and delegates to speciali
 a **living memory** that learns and feeds itself, and **gates** that block bad output.
 
 <p align="center">
-  <strong>Built for $2.01.</strong> The entire kit, 29 skills, 6 agents, memory, gates,
+  <strong>Built for $2.01.</strong> The entire kit, 30 skills, 9 agents, memory, gates,
   32 tests, and full docs, developed on DeepSeek V4. This is what cost discipline buys.
 </p>
 
@@ -114,7 +114,7 @@ a team instead of a single model.
 
 ```text
 What you had:    one generic agent, prompt by prompt
-What you get:    an orchestrator + 5 specialists + a memory that learns + gates that protect
+What you get:    an orchestrator + 8 specialists + a memory that learns + gates that protect
 ```
 
 > Requires: opencode, python3, DeepSeek V4 (Go plan or API key).
@@ -129,7 +129,10 @@ You ──→ AI Orchestrator (the Captain) ──→ specialist subagents
               ├─ ai-architect         (LLM system design with trade-offs)
               ├─ ai-evals-runner      (prove it works)
               ├─ llm-security-reviewer(security before shipping)
-              └─ reverse-engineer     (binary, firmware, malware analysis)
+              ├─ reverse-engineer     (binary, firmware, malware analysis)
+              ├─ red-team-agent       (authorized offensive security)
+              ├─ blue-team-agent      (defensive audit, hardening)
+              └─ bug-bounty-hunter    (scope to validated report)
               │
               └─ Living Memory (SQLite + embeddings, self-feeding)
 ```
@@ -142,7 +145,7 @@ prompt → **delegates** with full context → **synthesizes** results and prese
 
 ## Skill Catalog
 
-29 skills in 5 categories. All follow the transversal standards.
+30 skills in 5 categories. All follow the transversal standards.
 
 ### Dev Process (transversal, inherited by all)
 | Skill | Use when |
@@ -188,6 +191,7 @@ prompt → **delegates** with full context → **synthesizes** results and prese
 | `re-dynamic-analysis` | Confirm behavior under controlled execution |
 | `re-malware-analysis` | Malware triage, IOC extraction, safe detonation |
 | `re-firmware-analysis` | Extract and analyze device firmware |
+| `pdf-processing` | Fast local PDF to text/Markdown (pdf-inspector, MIT, free) |
 
 Full catalog: [SKILLS.md](SKILLS.md)
 
@@ -203,6 +207,9 @@ Full catalog: [SKILLS.md](SKILLS.md)
 | [ai-evals-runner](agents/ai-evals-runner.md) | subagent | Build and run evals |
 | [llm-security-reviewer](agents/llm-security-reviewer.md) | subagent | Security review of LLM apps |
 | [reverse-engineer](agents/reverse-engineer.md) | subagent | Binary, firmware, malware analysis with precision |
+| [red-team-agent](agents/red-team-agent.md) | subagent | Authorized offensive security, recon to exploitation |
+| [blue-team-agent](agents/blue-team-agent.md) | subagent | Defensive audit, hardening, remediation |
+| [bug-bounty-hunter](agents/bug-bounty-hunter.md) | subagent | Bug bounty, scope to validated report |
 
 ## Commands
 
@@ -242,9 +249,9 @@ Routing rule: **reasoning to PRO, mechanical to FLASH**. Mode rule: **ambiguity 
 
 ```
 llmfoundry/
-├── agents/          # 6 agents (orchestrator + 5 specialists)
+├── agents/          # 9 agents (orchestrator + 8 specialists)
 ├── commands/        # 7 slash commands
-├── skills/          # 29 skills (5 categories)
+├── skills/          # 30 skills (5 categories)
 ├── plugins/         # gates, memory, voice-guard, verify-guard
 ├── evals/           # golden-sets, rubric, baseline
 ├── docs/            # architecture, model policy, memory spec, RE spec
@@ -322,7 +329,7 @@ Honest numbers, sourced from a live deep-researcher pass over GitHub and npm (Au
 | CrewBee | 16 | agent teams | ⚠️ reviewer | ❌ | ❌ | ❌ |
 | maestria | 2 | cross-IDE management | ⚠️ guidance only | ❌ | ❌ | ❌ |
 
-What no competitor combines: **DeepSeek-first cost, an orchestrator + 5 specialists,
+What no competitor combines: **DeepSeek-first cost, an orchestrator + 8 specialists,
 living semantic memory, runtime quality gates, anti-delirium, and human-voice in one
 install for opencode.** agent-skills is the closest in quality, but it is a skills pack,
 not a team with memory and gates, and it is not cost-optimized for DeepSeek.
