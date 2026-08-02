@@ -61,6 +61,10 @@
 | [red-team-agent](agents/red-team-agent.md) | Authorized offensive security, pentest, exploitation |
 | [blue-team-agent](agents/blue-team-agent.md) | Defensive audit, hardening, remediation |
 | [bug-bounty-hunter](agents/bug-bounty-hunter.md) | Bug bounty: scope to validated report |
+| [database-specialist](agents/database-specialist.md) | PostgreSQL deep, schema, indexes, RLS, migrations |
+| [sql-performance-engineer](agents/sql-performance-engineer.md) | Execution plans, index strategy, query cost |
+| [api-contract-engineer](agents/api-contract-engineer.md) | Contract-first API design, auth, idempotency |
+| [data-model-engineer](agents/data-model-engineer.md) | Data modeling, partitioning, tenancy |
 
 ## Orchestration
 

@@ -100,6 +100,10 @@ data dependency. Every spawn carries the rewritten prompt + context preamble.
 | authorized offensive security / pentest / red team | `red-team-agent` |
 | defensive audit / hardening / remediate | `blue-team-agent` |
 | bug bounty hunt (scope → recon → validate → report) | `bug-bounty-hunter` |
+| database schema, indexes, migrations, RLS, slow queries | `database-specialist` |
+| slow SQL, execution plans, index strategy, query cost | `sql-performance-engineer` |
+| API contract design, auth boundaries, idempotency | `api-contract-engineer` |
+| data modeling, partitioning, tenancy, schema evolution | `data-model-engineer` |
 | single fact / syntax / doc lookup | answer directly with websearch |
 | code implementation | do it yourself following ai-dev-process, or delegate a focused slice |
 | multi-file feature | plan → spec → implement (ai-dev-process), review via skills |

@@ -43,7 +43,7 @@ team: an **orchestrator** that understands your intent and delegates to speciali
 a **living memory** that learns and feeds itself, and **gates** that block bad output.
 
 <p align="center">
-  <strong>Built for $2.01.</strong> The entire kit, 30 skills, 9 agents, memory, gates,
+  <strong>Built for $2.01.</strong> The entire kit, 30 skills, 13 agents, memory, gates,
   32 tests, and full docs, developed on DeepSeek V4. This is what cost discipline buys.
 </p>
 
@@ -114,7 +114,7 @@ a team instead of a single model.
 
 ```text
 What you had:    one generic agent, prompt by prompt
-What you get:    an orchestrator + 8 specialists + a memory that learns + gates that protect
+What you get:    an orchestrator + 12 specialists + a memory that learns + gates that protect
 ```
 
 > Requires: opencode, python3, DeepSeek V4 (Go plan or API key).
@@ -210,6 +210,10 @@ Full catalog: [SKILLS.md](SKILLS.md)
 | [red-team-agent](agents/red-team-agent.md) | subagent | Authorized offensive security, recon to exploitation |
 | [blue-team-agent](agents/blue-team-agent.md) | subagent | Defensive audit, hardening, remediation |
 | [bug-bounty-hunter](agents/bug-bounty-hunter.md) | subagent | Bug bounty, scope to validated report |
+| [database-specialist](agents/database-specialist.md) | subagent | PostgreSQL deep, schema, indexes, RLS, migrations |
+| [sql-performance-engineer](agents/sql-performance-engineer.md) | subagent | Execution plans, index strategy, query cost |
+| [api-contract-engineer](agents/api-contract-engineer.md) | subagent | Contract-first API design, auth, idempotency |
+| [data-model-engineer](agents/data-model-engineer.md) | subagent | Data modeling, partitioning, tenancy |
 
 ## Commands
 
@@ -249,7 +253,7 @@ Routing rule: **reasoning to PRO, mechanical to FLASH**. Mode rule: **ambiguity 
 
 ```
 llmfoundry/
-├── agents/          # 9 agents (orchestrator + 8 specialists)
+├── agents/          # 13 agents (orchestrator + 12 specialists)
 ├── commands/        # 7 slash commands
 ├── skills/          # 30 skills (5 categories)
 ├── plugins/         # gates, memory, voice-guard, verify-guard
@@ -329,7 +333,7 @@ Honest numbers, sourced from a live deep-researcher pass over GitHub and npm (Au
 | CrewBee | 16 | agent teams | ⚠️ reviewer | ❌ | ❌ | ❌ |
 | maestria | 2 | cross-IDE management | ⚠️ guidance only | ❌ | ❌ | ❌ |
 
-What no competitor combines: **DeepSeek-first cost, an orchestrator + 8 specialists,
+What no competitor combines: **DeepSeek-first cost, an orchestrator + 12 specialists,
 living semantic memory, runtime quality gates, anti-delirium, and human-voice in one
 install for opencode.** agent-skills is the closest in quality, but it is a skills pack,
 not a team with memory and gates, and it is not cost-optimized for DeepSeek.
