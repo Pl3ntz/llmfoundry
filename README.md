@@ -297,6 +297,7 @@ python3 scripts/eval-runner.py --baseline  # show the number to beat
 - [x] PRO/FLASH + BUILD/PLAN routing policies
 - [x] Stability checks (K=5, deterministic engine)
 - [x] Reverse engineering specialist (6 skills + agent + command)
+- [ ] Recall includes memories + facts (not just findings/gotchas) so imported knowledge enters agent context automatically
 
 > Routing is validated manually, one question at a time, to avoid batch sessions
 > touching the user's Chrome. Batch automation of model-routing tests was removed.
