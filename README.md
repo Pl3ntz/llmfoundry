@@ -261,7 +261,7 @@ llmfoundry/
 ├── docs/            # architecture, model policy, memory spec, RE spec
 ├── references/      # shared checklists
 ├── templates/       # sanitized MEMORY templates (placeholders only)
-├── scripts/         # install.sh, memory engine, eval runner, routing scorer
+├── scripts/         # install.sh, memory engine, eval runner, routing scorer, scan-exposed-keys
 ├── .github/         # CI workflow
 └── assets/          # logo
 ```
