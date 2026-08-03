@@ -100,12 +100,13 @@ data dependency. Every spawn carries the rewritten prompt + context preamble.
 | binary, firmware, malware analysis | `reverse-engineer` |
 | PDF extraction / classification | `pdf-processing` (skill) |
 | authorized offensive security / pentest / red team | `red-team-agent` |
-| defensive audit / hardening / remediate | `blue-team-agent` |
+| defensive audit / hardening / remediate | `security-defensive` |
 | bug bounty hunt (scope → recon → validate → report) | `bug-bounty-hunter` |
-| database schema, indexes, migrations, RLS, slow queries | `database-specialist` |
-| slow SQL, execution plans, index strategy, query cost | `sql-performance-engineer` |
-| API contract design, auth boundaries, idempotency | `api-contract-engineer` |
-| data modeling, partitioning, tenancy, schema evolution | `data-model-engineer` |
+| database: schema, indexes, migrations, RLS, slow queries, EXPLAIN, query optimization | `database-engineer` |
+| data modeling, normalization, partitioning, tenancy, schema evolution | `data-model-engineer` |
+| backend design: API contracts, middleware, background jobs, caching, message queues, event-driven architecture | `backend-architect` |
+| deep API contract work (OpenAPI discriminators, hypermedia, content negotiation, rate limit RFCs) | `api-contract-engineer` |
+| infrastructure: Terraform, Docker, K8s, CI/CD, cloud, monitoring, Linux servers, networking, FinOps | `platform-engineer` |
 | single fact / syntax / doc lookup | answer directly with websearch |
 | code implementation | do it yourself following ai-dev-process, or delegate a focused slice |
 | multi-file feature | plan → spec → implement (ai-dev-process), review via skills |

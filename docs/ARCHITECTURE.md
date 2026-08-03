@@ -13,27 +13,36 @@ How the kit fits together.
 │  └───────────┬─────────────────────────────┬──────────┘    │
 │              │                             │               │
 │   ┌──────────▼──────────┐      ┌───────────▼──────────┐    │
-│   │   SUBAGENTS         │      │   MEMORY (loop)      │    │
+│   │   SUBAGENTS (13)    │      │   MEMORY (loop)      │    │
 │   │  deep-researcher    │      │  SQLite + FTS5       │    │
 │   │  ai-architect       │      │  + embeddings        │    │
 │   │  ai-evals-runner    │◄────►│  encode→consolidate  │    │
 │   │  llm-security-      │ feed │  →retrieve→reconsol. │    │
 │   │  reviewer           │ recall│                     │    │
 │   │  reverse-engineer   │      │                      │    │
+│   │  red-team-agent     │      │                      │    │
+│   │  bug-bounty-hunter  │      │                      │    │
+│   │  security-defensive │      │                      │    │
+│   │  database-engineer  │      │                      │    │
+│   │  data-model-engineer│      │                      │    │
+│   │  backend-architect  │      │                      │    │
+│   │  api-contract-eng.  │      │                      │    │
+│   │  platform-engineer  │      │                      │    │
 │   └─────────────────────┘      └──────────────────────┘    │
 │              │                                             │
 │   ┌──────────▼──────────┐      ┌──────────────────────┐    │
-│   │      SKILLS (29)    │      │   PLUGINS (gates)    │    │
+│   │      SKILLS (30)    │      │   PLUGINS (7)        │    │
 │   │  process / ai-core  │      │  gates.ts            │    │
 │   │  advanced / RE      │      │  memory.ts           │    │
 │   │  human-voice /      │      │  voice-guard.ts      │    │
 │   │  anti-delirium      │      │  verify-guard.ts     │    │
-│   └─────────────────────┘      └──────────────────────┘    │
-│              │                                             │
-│   ┌──────────▼──────────────────────────────────────────┐  │
-│   │                    MCP SERVERS                      │  │
-│   │  filesystem · context7 · playwright · chrome-devtools│  │
-│   └─────────────────────────────────────────────────────┘  │
+│   └─────────────────────┘      │  publish-guard.ts    │    │
+│              │                  │  delegation-guard.ts │    │
+│   ┌──────────▼────────────────┐ │  research-guard.ts   │    │
+│   │      MCP SERVERS          │ └──────────────────────┘    │
+│   │  filesystem · context7    │                             │
+│   │  playwright · chrome-devtools│                          │
+│   └───────────────────────────┘                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -44,11 +53,20 @@ Primary agent. The single interface with the user. Runs the
 CAPTURE → DISCUSS → DEFINE → REWRITE → DELEGATE → SYNTHESIZE loop.
 Carries deep AI engineering + SWE knowledge. Routes via `skills/ai-orchestration`.
 
-### Subagents
+### Subagents (13)
 Each is a leaf specialist. Receives objective + context + output contract + boundaries
 from the orchestrator. Reports findings; never acts alone.
 
-### Skills
+| Domain | Agents |
+|--------|--------|
+| AI/LLM | deep-researcher, ai-architect, ai-evals-runner, llm-security-reviewer |
+| Security | red-team-agent, bug-bounty-hunter, security-defensive |
+| Database | database-engineer, data-model-engineer |
+| Backend | backend-architect, api-contract-engineer |
+| Platform | platform-engineer |
+| Niche | reverse-engineer |
+
+### Skills (30)
 Methodology packages the model loads on demand. `ai-engineering-standards` is
 transversal (all inherit it). `human-voice` and `anti-delirium` are the two disciplines
 every agent follows. `ai-orchestration` is the routing protocol. Reverse engineering has
@@ -90,11 +108,14 @@ anything ships.
 - **Model routing**: reasoning → PRO, mechanical → FLASH (docs/MODEL-POLICY.md).
 - **Mode routing**: ambiguity/stakes → PLAN first, clear/approved → BUILD.
 
-## Plugins (current)
+## Plugins
 
 | Plugin | Enforcement |
 |--------|-------------|
 | `gates.ts` | blocks commit without tests, secret staging, secret egress |
 | `memory.ts` | captures + recall injection (the memory loop runtime) |
-| `voice-guard.ts` | flags AI-tell text (dashes, AI vocabulary) |
-| `verify-guard.ts` | flags conjecture-as-grounding (anti-delirium) |
+| `voice-guard.ts` | flags AI-tell text in file output (dashes, AI vocabulary) |
+| `verify-guard.ts` | flags conjecture-as-grounding in file output (anti-delirium) |
+| `publish-guard.ts` | injects mandatory human-voice + anti-delirium + standards gate into every system prompt |
+| `delegation-guard.ts` | validates subagent spawns (4 mandatory parts + routing table check) |
+| `research-guard.ts` | enforces research delegation: warns on direct webfetch, forces deep-researcher |
