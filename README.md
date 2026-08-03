@@ -43,7 +43,7 @@ team: an **orchestrator** that understands your intent and delegates to speciali
 a **living memory** that learns and feeds itself, and **gates** that block bad output.
 
 <p align="center">
-  <strong>Built for $2.01.</strong> The entire kit, 30 skills, 13 agents, memory, gates,
+  <strong>Built for $2.01.</strong> The entire kit, 30 skills, 14 agents, memory, gates,
   32 tests, and full docs, developed on DeepSeek V4. This is what cost discipline buys.
 </p>
 
@@ -114,7 +114,7 @@ a team instead of a single model.
 
 ```text
 What you had:    one generic agent, prompt by prompt
-What you get:    an orchestrator + 12 specialists + a memory that learns + gates that protect
+What you get:    an orchestrator + 13 specialists + a memory that learns + gates that protect
 ```
 
 > Requires: opencode, python3, DeepSeek V4 (Go plan or API key).
@@ -131,8 +131,13 @@ You ──→ AI Orchestrator (the Captain) ──→ specialist subagents
               ├─ llm-security-reviewer(security before shipping)
               ├─ reverse-engineer     (binary, firmware, malware analysis)
               ├─ red-team-agent       (authorized offensive security)
-              ├─ blue-team-agent      (defensive audit, hardening)
-              └─ bug-bounty-hunter    (scope to validated report)
+              ├─ bug-bounty-hunter    (scope to validated report)
+              ├─ security-defensive   (defensive audit, hardening)
+              ├─ database-engineer    (full PostgreSQL stack)
+              ├─ data-model-engineer  (data modeling, tenancy)
+              ├─ backend-architect    (API design, middleware, queues, caching)
+              ├─ platform-engineer    (infra, Docker, CI/CD, cloud, monitoring)
+              └─ api-contract-engineer(deep API contract work)
               │
               └─ Living Memory (SQLite + embeddings, self-feeding)
 ```
@@ -206,14 +211,15 @@ Full catalog: [SKILLS.md](SKILLS.md)
 | [ai-architect](agents/ai-architect.md) | subagent | LLM system architecture with trade-offs |
 | [ai-evals-runner](agents/ai-evals-runner.md) | subagent | Build and run evals |
 | [llm-security-reviewer](agents/llm-security-reviewer.md) | subagent | Security review of LLM apps |
-| [reverse-engineer](agents/reverse-engineer.md) | subagent | Binary, firmware, malware analysis with precision |
-| [red-team-agent](agents/red-team-agent.md) | subagent | Authorized offensive security, recon to exploitation |
-| [blue-team-agent](agents/blue-team-agent.md) | subagent | Defensive audit, hardening, remediation |
-| [bug-bounty-hunter](agents/bug-bounty-hunter.md) | subagent | Bug bounty, scope to validated report |
-| [database-specialist](agents/database-specialist.md) | subagent | PostgreSQL deep, schema, indexes, RLS, migrations |
-| [sql-performance-engineer](agents/sql-performance-engineer.md) | subagent | Execution plans, index strategy, query cost |
-| [api-contract-engineer](agents/api-contract-engineer.md) | subagent | Contract-first API design, auth, idempotency |
-| [data-model-engineer](agents/data-model-engineer.md) | subagent | Data modeling, partitioning, tenancy |
+| [reverse-engineer](agents/reverse-engineer.md) | subagent | Binary, firmware, malware analysis |
+| [red-team-agent](agents/red-team-agent.md) | subagent | Enterprise red team, pentest, exploitation |
+| [bug-bounty-hunter](agents/bug-bounty-hunter.md) | subagent | Bug bounty, web and API hunting |
+| [security-defensive](agents/security-defensive.md) | subagent | Defensive audit, hardening, remediation |
+| [database-engineer](agents/database-engineer.md) | subagent | Full PostgreSQL: schema, indexes, EXPLAIN, RLS, migrations |
+| [data-model-engineer](agents/data-model-engineer.md) | subagent | Data modeling, normalization, partitioning, tenancy |
+| [backend-architect](agents/backend-architect.md) | subagent | Backend design: APIs, middleware, jobs, caching, queues |
+| [api-contract-engineer](agents/api-contract-engineer.md) | subagent | Deep API contracts: OpenAPI discriminators, hypermedia, rate limit RFCs |
+| [platform-engineer](agents/platform-engineer.md) | subagent | Infrastructure: Terraform, Docker, K8s, CI/CD, cloud, monitoring |
 
 ## Commands
 
@@ -227,6 +233,9 @@ Full catalog: [SKILLS.md](SKILLS.md)
 | `memory.ts` | Captures errors→gotchas, commits→memory; injects recall into every session |
 | `voice-guard.ts` | Flags output that reads like AI-generated text (dashes, AI vocabulary) |
 | `verify-guard.ts` | Flags conjecture-as-grounding (`probably`, `should be`, `i assume`) per anti-delirium |
+| `publish-guard.ts` | Injects mandatory human-voice + anti-delirium + standards gate into every system prompt |
+| `delegation-guard.ts` | Validates subagent spawns: 4 mandatory parts + routing table check |
+| `research-guard.ts` | Enforces research delegation policy: warns on direct webfetch, forces deep-researcher |
 
 ## Memory
 
@@ -253,10 +262,10 @@ Routing rule: **reasoning to PRO, mechanical to FLASH**. Mode rule: **ambiguity 
 
 ```
 llmfoundry/
-├── agents/          # 13 agents (orchestrator + 12 specialists)
+├── agents/          # 14 agents (orchestrator + 13 specialists)
 ├── commands/        # 7 slash commands
 ├── skills/          # 30 skills (5 categories)
-├── plugins/         # gates, memory, voice-guard, verify-guard
+├── plugins/         # 7 plugins: gates, memory, voice-guard, verify-guard, publish-guard, delegation-guard, research-guard
 ├── evals/           # golden-sets, rubric, baseline
 ├── docs/            # architecture, model policy, memory spec, RE spec
 ├── references/      # shared checklists
@@ -309,6 +318,10 @@ python3 scripts/eval-runner.py --baseline  # show the number to beat
 - [x] Stability checks (K=5, deterministic engine)
 - [x] Reverse engineering specialist (6 skills + agent + command)
 - [x] Recall includes memories + facts (not just findings/gotchas) so imported knowledge enters agent context automatically
+- [x] Fleet redesign: database-engineer, backend-architect, platform-engineer, security-defensive (14 agents, balanced coverage)
+- [x] Publish guard: mandatory human-voice + anti-delirium + standards gate on every system prompt
+- [x] Delegation guard: validate subagent spawns (4 mandatory parts + routing table)
+- [x] Research guard: enforce research delegation policy (no direct webfetch from orchestrator)
 
 > Routing is validated manually, one question at a time, to avoid batch sessions
 > touching the user's Chrome. Batch automation of model-routing tests was removed.
@@ -333,7 +346,7 @@ Honest numbers, sourced from a live deep-researcher pass over GitHub and npm (Au
 | CrewBee | 16 | agent teams | ⚠️ reviewer | ❌ | ❌ | ❌ |
 | maestria | 2 | cross-IDE management | ⚠️ guidance only | ❌ | ❌ | ❌ |
 
-What no competitor combines: **DeepSeek-first cost, an orchestrator + 12 specialists,
+What no competitor combines: **DeepSeek-first cost, an orchestrator + 13 specialists,
 living semantic memory, runtime quality gates, anti-delirium, and human-voice in one
 install for opencode.** agent-skills is the closest in quality, but it is a skills pack,
 not a team with memory and gates, and it is not cost-optimized for DeepSeek.

@@ -1,53 +1,47 @@
 # Deep Specialists — SPEC
 
-**Status:** Draft para revisão
+**Status:** ✅ Implementado (2026-08-03) — Fleet redesenhado: 14 agentes
 **Autor:** vplentz
-**Data:** 2026-08-02
+**Data:** 2026-08-02 (spec), 2026-08-03 (implementação + redesign)
 **Complexidade:** Médio
 **Tipo:** Feature (agentes de nicho no LLMFoundry)
-**Entrega:** via branch + worktree + PR documentada (padrão do kit)
+**Entrega:** branch `feat/fleet-redesign`, plugins em `feat/publish-guard`
 
 ---
 
 ## O que
 
 Adicionar agentes **especialistas profundos de nicho** (não generalistas) ao LLMFoundry,
-alinhados ao trabalho real do usuário: banco de dados, NL→SQL, performance de query,
-multi-tenant, e infraestrutura de produção.
+alinhados ao trabalho real do usuário e às necessidades do mercado.
 
-## Por que
+## Resultado final (14 agentes)
 
-O usuário trabalha com sistemas de dados reais (PostgreSQL 44M rows, NL→SQL, RLS,
-outbox, multi-tenant no gestor-ai). Generalistas (frontend/backend) são o que qualquer
-modelo já faz. O valor está em especialistas que conhecem a profundidade do domínio.
+| Agente | Domínio | Ação |
+|--------|---------|------|
+| `ai-orchestrator` | Multi-agent coordination | Mantido |
+| `ai-architect` | LLM system design | Mantido |
+| `ai-evals-runner` | Eval pipeline | Mantido |
+| `deep-researcher` | Multi-source research | Mantido |
+| `llm-security-reviewer` | LLM app security | Mantido |
+| `reverse-engineer` | Binary/firmware analysis | Mantido |
+| `bug-bounty-hunter` | Web/API offensive security | Mantido (não merge) |
+| `red-team-agent` | Enterprise offensive security | Mantido (não merge) |
+| `security-defensive` | Defensive audit/hardening | Renomeado (blue-team-agent) |
+| `database-engineer` | Full PostgreSQL stack | **Merge** (db-specialist + sql-perf) |
+| `data-model-engineer` | Data modeling | Mantido |
+| `backend-architect` | Full backend design | **Novo** (expande api-contract) |
+| `api-contract-engineer` | Deep API contract work | Mantido (Tier 2) |
+| `platform-engineer` | Infra/DevOps | **Novo** |
 
-## Escopo — 4 especialistas profundos
+## Mudanças do plano original
 
-| Agente | Modo | Profundidade (não generalista) |
-|--------|------|--------------------------------|
-| `database-specialist` | subagent | PostgreSQL profundo: schema design, índices, planos (EXPLAIN), RLS, migrations, outbox, tuning, custo de query |
-| `sql-performance-engineer` | subagent | Planos de execução, EXPLAIN ANALYZE, índices, N+1, custo de query, otimização multi-tenant |
-| `api-contract-engineer` | subagent | FastAPI/Hono profundo: contract-first, auth, idempotência, streaming, error semantics |
-| `data-model-engineer` | subagent | Modelagem de dados: normalização, particionamento, chaves, tenancy, evolução de schema |
+1. **Security NÃO mergeado**: bug-bounty-hunter e red-team-agent ficam separados (context budget + domínios distintos)
+2. **Backend expandido com Tier 2 mantido**: backend-architect cobre 70% das perguntas, api-contract-engineer fica como especialista profundo
+3. **Infra adicionado**: platform-engineer cobre o gap de DevOps/infraestrutura
+4. **Database mergeado**: um agente único cobre schema + queries (80% dos problemas)
 
 ## Fora de escopo
 
 - NÃO generalistas (frontend/backend genéricos)
 - NÃO duplicar skills existentes
 - NÃO substituir ai-orchestrator
-
-## Critérios de sucesso
-
-1. 4 agentes criados com frontmatter válido
-2. Cada um com profundidade real de domínio (não genérico)
-3. Anti-delirium + human-voice
-4. Routing table atualizada
-5. 50+ frontmatters, 32/32 evals, CI green
-6. Worktree + branch + commits atômicos + PR documentada
-
-## Plano
-
-1. `git worktree add` + branch `feat/deep-specialists`
-2. Criar os 4 agentes
-3. Atualizar routing + SKILLS.md + README
-4. Validar + commits atômicos + PR

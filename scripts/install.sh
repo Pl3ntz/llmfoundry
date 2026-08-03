@@ -64,7 +64,7 @@ if skills_path not in paths:
 else:
     print(f"  skills.paths already present: {skills_path}")
 
-for plugin_name in ("gates.ts", "memory.ts", "voice-guard.ts", "verify-guard.ts"):
+for plugin_name in ("gates.ts", "memory.ts", "voice-guard.ts", "verify-guard.ts", "publish-guard.ts", "delegation-guard.ts", "research-guard.ts"):
     plugin_path = os.path.join(repo_dir, "plugins", plugin_name)
     plugins = cfg.setdefault("plugin", [])
     if plugin_path not in plugins:

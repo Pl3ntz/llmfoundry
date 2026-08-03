@@ -59,13 +59,14 @@
 | [ai-evals-runner](agents/ai-evals-runner.md) | Building and running evals |
 | [llm-security-reviewer](agents/llm-security-reviewer.md) | Security review before shipping |
 | [reverse-engineer](agents/reverse-engineer.md) | Binary, firmware, and malware analysis with precision |
-| [red-team-agent](agents/red-team-agent.md) | Authorized offensive security, pentest, exploitation |
-| [blue-team-agent](agents/blue-team-agent.md) | Defensive audit, hardening, remediation |
-| [bug-bounty-hunter](agents/bug-bounty-hunter.md) | Bug bounty: scope to validated report |
-| [database-specialist](agents/database-specialist.md) | PostgreSQL deep, schema, indexes, RLS, migrations |
-| [sql-performance-engineer](agents/sql-performance-engineer.md) | Execution plans, index strategy, query cost |
-| [api-contract-engineer](agents/api-contract-engineer.md) | Contract-first API design, auth, idempotency |
-| [data-model-engineer](agents/data-model-engineer.md) | Data modeling, partitioning, tenancy |
+| [red-team-agent](agents/red-team-agent.md) | Authorized offensive security, enterprise red team |
+| [bug-bounty-hunter](agents/bug-bounty-hunter.md) | Bug bounty: web, API, platform-specific hunting |
+| [security-defensive](agents/security-defensive.md) | Defensive audit, hardening, remediation |
+| [database-engineer](agents/database-engineer.md) | Full PostgreSQL stack: schema, indexes, EXPLAIN, RLS, migrations, query optimization |
+| [data-model-engineer](agents/data-model-engineer.md) | Data modeling, normalization, partitioning, tenancy |
+| [backend-architect](agents/backend-architect.md) | Backend design: APIs, middleware, jobs, caching, queues, event-driven |
+| [api-contract-engineer](agents/api-contract-engineer.md) | Deep API contract work: OpenAPI discriminator, hypermedia, rate limit RFCs |
+| [platform-engineer](agents/platform-engineer.md) | Infrastructure: Terraform, Docker, K8s, CI/CD, cloud, monitoring, Linux |
 
 ## Orchestration
 
