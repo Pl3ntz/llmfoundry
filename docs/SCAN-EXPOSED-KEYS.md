@@ -1,4 +1,4 @@
-# scan-exposed-keys — Passive API Key Exposure Scanner
+# scan-exposed-keys: Passive API Key Exposure Scanner
 
 Finds public repositories that expose API keys, the typical vibe-coding pattern:
 `NEXT_PUBLIC_*` keys, Supabase/Firebase configs, and `.env` files committed to GitHub.
