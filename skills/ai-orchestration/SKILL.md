@@ -8,7 +8,7 @@ description: Orchestration protocol for the AI Engineering Orchestrator, routing
 The operating protocol for the orchestrator. Rules for routing, delegating with context,
 and synthesizing multi-agent results.
 
-## Routing table (13 agents)
+## Routing table (14 agents)
 
 | Request | Route to | Not |
 |---------|----------|-----|
@@ -18,12 +18,13 @@ and synthesizing multi-agent results.
 | security review of LLM app before ship | `llm-security-reviewer` | shipping without review |
 | binary, firmware, malware analysis | `reverse-engineer` | guessing from the name |
 | authorized offensive security / pentest | `red-team-agent` | acting without authorization |
-| defensive audit / hardening | `blue-team-agent` | editing (it prescribes, not edits) |
+| defensive audit / hardening | `security-defensive` | editing (it prescribes, not edits) |
 | bug bounty hunt (scope to report) | `bug-bounty-hunter` | reporting without validation |
-| database schema, indexes, RLS, migrations, slow queries | `database-specialist` | tuning without EXPLAIN |
-| slow SQL, execution plans, index strategy, query cost | `sql-performance-engineer` | tuning without measuring |
-| API contract design, auth boundaries, idempotency | `api-contract-engineer` | designing without the contract |
+| database: schema, indexes, RLS, migrations, slow queries, EXPLAIN, optimization | `database-engineer` | tuning without EXPLAIN |
 | data modeling, partitioning, tenancy, schema evolution | `data-model-engineer` | modeling without the workload |
+| backend design: APIs, middleware, background jobs, caching, queues, events | `backend-architect` | deep API contract work (use api-contract-engineer) |
+| deep API contracts: OpenAPI discriminators, hypermedia, content negotiation, rate limit RFCs | `api-contract-engineer` | general backend (use backend-architect) |
+| infrastructure: Terraform, Docker, K8s, CI/CD, cloud, monitoring, Linux, networking | `platform-engineer` | application code |
 | PDF extraction / classification | `pdf-processing` (skill) | sending to OCR when local works |
 | single fact / syntax / doc lookup | answer directly | deep-researcher (~18x cost) |
 | implementation | yourself + ai-dev-process | delegating without spec |
@@ -35,12 +36,13 @@ Symptom-driven routes (when the request names a problem, not a role):
 - "eval/regression/prompt changed" → ai-evals-runner
 - "security review/LLM app/injection" → llm-security-reviewer
 - "pentest/red team/exploit" → red-team-agent
-- "audit/harden/remediate" → blue-team-agent
+- "audit/harden/remediate" → security-defensive
 - "bug bounty/vulnerability report" → bug-bounty-hunter
-- "schema/index/migration/slow query/RLS" → database-specialist
-- "EXPLAIN/plan/N+1/query cost" → sql-performance-engineer
-- "API contract/endpoint/idempotency" → api-contract-engineer
+- "schema/index/migration/slow query/EXPLAIN/RLS" → database-engineer
 - "data model/partition/tenancy" → data-model-engineer
+- "API design/backend architecture/middleware/queue/cache" → backend-architect
+- "API contract/OpenAPI/hypermedia/rate limit/idempotency deep" → api-contract-engineer
+- "infra/Terraform/Docker/K8s/CI/CD/cloud/monitoring" → platform-engineer
 - "PDF/extrair texto/documento" → pdf-processing
 
 ## Delegation protocol (every spawn)

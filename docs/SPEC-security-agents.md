@@ -32,7 +32,7 @@
 | Agente | Mode | Papel | Roteia para |
 |--------|------|-------|-------------|
 | `red-team-agent` | subagent | Ofensivo (autorizado): recon → hunt → exploração | recon-playbook, web2-recon, hunt-*, redteam-mindset |
-| `blue-team-agent` | subagent | Defensivo: auditar, corrigir, proteger | security-review, ai-llm-app-security, code-review |
+| `security-defensive` | subagent | Defensivo: auditar, corrigir, proteger | security-review, ai-llm-app-security, code-review |
 | `bug-bounty-hunter` | subagent | Caça de bug: alvo → recon → validação → report | bb-methodology, hunt-*, triage-validation, report-writing |
 
 Cada agente: `model: opencode-go/deepseek-v4-pro`, `edit: deny`, `bash: ask`,
@@ -70,7 +70,7 @@ anti-delirium + human-voice, rotas para skills existentes.
 
 ## Plano de execução
 
-1. Criar `agents/red-team-agent.md`, `blue-team-agent.md`, `bug-bounty-hunter.md`
+1. Criar `agents/red-team-agent.md`, `security-defensive.md`, `bug-bounty-hunter.md`
 2. Criar `skills/pdf-processing/SKILL.md`
 3. Atualizar routing table no `ai-orchestrator.md`
 4. Atualizar `opencode.json` (pdf-inspector nota, firecrawl comentado)

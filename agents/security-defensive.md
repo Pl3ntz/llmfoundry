@@ -74,5 +74,5 @@ Prescribe how to verify the hardening worked:
 
 Register high-severity issues in local memory:
 ```bash
-python3 ~/dev/llmfoundry/scripts/memory/foundry_memory.py finding default blue-team-agent "<issue>" --severity HIGH
+python3 ~/dev/llmfoundry/scripts/memory/foundry_memory.py finding default security-defensive "<issue>" --severity HIGH
 ```
