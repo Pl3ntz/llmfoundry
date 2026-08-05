@@ -17,25 +17,56 @@
     "filesystem": {
       "type": "local",
       "description": "Safe file system access",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "."]
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "."
+      ]
     },
     "context7": {
       "type": "local",
       "description": "Up-to-date library documentation",
-      "command": ["npx", "-y", "@upstash/context7-mcp"]
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp"
+      ]
     },
     "playwright": {
       "type": "local",
       "description": "Browser automation and E2E testing",
-      "command": ["npx", "-y", "@playwright/mcp@latest"]
+      "command": [
+        "npx",
+        "-y",
+        "@playwright/mcp@latest"
+      ]
     },
     "chrome-devtools": {
       "type": "local",
       "description": "Chrome DevTools conectado ao Chrome do usuario via autoConnect (logins; aprova o prompt de debugging no Chrome)",
-      "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--autoConnect", "--channel", "stable"]
+      "command": [
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--autoConnect",
+        "--channel",
+        "stable"
+      ]
     }
   },
   "watcher": {
-    "ignore": [".env", ".env.*", "secrets/", "*.pem", "*.key", "node_modules/", ".git/"]
-  }
+    "ignore": [
+      ".env",
+      ".env.*",
+      "secrets/",
+      "*.pem",
+      "*.key",
+      "node_modules/",
+      ".git/"
+    ]
+  },
+  "plugin": [
+    "/Users/vplentz/dev/llmfoundry/plugins/chrome-guarantee.ts"
+  ]
 }

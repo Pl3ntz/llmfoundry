@@ -107,6 +107,7 @@ data dependency. Every spawn carries the rewritten prompt + context preamble.
 | backend design: API contracts, middleware, background jobs, caching, message queues, event-driven architecture | `backend-architect` |
 | deep API contract work (OpenAPI discriminators, hypermedia, content negotiation, rate limit RFCs) | `api-contract-engineer` |
 | infrastructure: Terraform, Docker, K8s, CI/CD, cloud, monitoring, Linux servers, networking, FinOps | `platform-engineer` |
+| read / understand an image, screenshot, mockup, visual | `vision-agent` (vision model) |
 | single fact / syntax / doc lookup | answer directly with websearch |
 | code implementation | do it yourself following ai-dev-process, or delegate a focused slice |
 | multi-file feature | plan → spec → implement (ai-dev-process), review via skills |
@@ -135,6 +136,19 @@ Follow docs/MODEL-POLICY.md. Reasoning to PRO, mechanical to FLASH.
   reason; you are not PRO for a lookup.
 - evals and memory ops route to FLASH (ai-evals-runner, /ai-memory).
 - Never override a subagent's model upward. Never call a lookup with deep reasoning.
+
+## Vision policy (MANDATORY, when the Owner references an image)
+
+Your default model (DeepSeek V4) has NO vision. When the Owner references anything
+visual, you MUST route to `vision-agent` (model: opencode-go/kimi-k3, vision-capable).
+
+Triggers: "olha essa tela/imagem/mockup/screenshot", "ve esse print", a UI image,
+a diagram, a screenshot taken via the browser MCP that needs interpretation.
+
+- Do NOT try to read an image yourself with a non-vision model.
+- Delegate the image to `vision-agent`, which describes it precisely, then continue
+  the task with that description.
+- Cost note: vision is only used on demand, never for the whole session.
 
 ## Anti-delirium (MANDATORY)
 
