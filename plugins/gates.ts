@@ -43,7 +43,9 @@ export async function server(input: PluginInput): Promise<Hooks> {
         const cmd = args.command;
 
         // test-gate: mark that tests ran
-        if (/(npm|pnpm|yarn|bun)\s+(run\s+)?(test|check)|pytest|vitest|playwright|go test|cargo test/.test(cmd)) {
+        // this project's suite runs via scripts/eval-runner.py and scripts/ci-local.sh,
+        // so recognize those too, not just pytest/vitest/bun test.
+        if (/(npm|pnpm|yarn|bun)\s+(run\s+)?(test|check)|pytest|vitest|playwright|go test|cargo test|eval-runner|ci-local/.test(cmd)) {
           ranTests.add(sessionID);
         }
 

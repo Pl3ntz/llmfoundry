@@ -194,20 +194,21 @@ def plugin_checks():
 
 import re as _re
 
-# mirror of delegation-guard.ts MISROUTE_RULES (after the topic/verb fix)
+# mirror of delegation-guard.ts MISROUTE_RULES (word-boundaried + evals + debate gate)
 _DG_MISROUTE = [
-    (_re.compile(r"(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon)", _re.I),
+    (_re.compile(r"\b(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon)\b", _re.I),
      ["ai-architect", "ai-evals-runner", "llm-security-reviewer", "reverse-engineer"]),
-    (_re.compile(r"(?:design|architect(?:ure|ing)?|build|implement|system\s+design|spec\s+for)", _re.I),
+    (_re.compile(r"\b(?:design|architect(?:ure|ing|s)?|build|implement|system\s+design|spec\s+for)\b", _re.I),
      ["ai-evals-runner", "reverse-engineer"]),
-    (_re.compile(r"(?:eval|golden.set|regression|baseline|assertion|prompt.*(?:change|update))", _re.I),
+    (_re.compile(r"\b(?:eval(?:s|uation)?|golden\s+set|regression|baseline|assertion|prompt.*(?:change|update))\b", _re.I),
      ["deep-researcher", "ai-architect", "llm-security-reviewer", "reverse-engineer"]),
-    (_re.compile(r"(?:security\s+review|prompt\s+injection|OWASP|LLM\s+(?:app\s+)?security)", _re.I),
+    (_re.compile(r"\b(?:security\s+review|prompt\s+injection|OWASP|LLM\s+(?:app\s+)?security)\b", _re.I),
      ["deep-researcher", "ai-evals-runner", "reverse-engineer"]),
-    (_re.compile(r"(?:binary|firmware|malware|decompil|disassembl|ghidra|radare)", _re.I),
+    (_re.compile(r"\b(?:binary|firmware|malware|decompil\w*|disassembl\w*|ghidra|radare)\b", _re.I),
      ["deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer"]),
 ]
-_DG_RESEARCH_SIGNALS = _re.compile(r"(?:research|compare|landscape|market|competitor|industry|OSINT|recon|pesquis)", _re.I)
+_DG_RESEARCH_SIGNALS = _re.compile(r"\b(?:research|compare|landscape|market|competitor|industry|OSINT|recon|pesquis\w*)\b", _re.I)
+_DG_AGENT_MENTION = _re.compile(r"\b(?:deep-researcher|ai-architect|ai-evals-runner|llm-security-reviewer|reverse-engineer|platform-engineer|backend-architect|api-contract-engineer|database-engineer|data-model-engineer|red-team-agent|security-defensive|bug-bounty-hunter|recon-agent|report-agent|triage-agent|general|explore)\b", _re.I)
 
 # mirror of research-guard.ts
 _RG_RESEARCH = _re.compile(r"\b(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon|vs\.?\.?\s+alternatives?)\b", _re.I)
@@ -216,6 +217,9 @@ _RG_DOC_TERMS = _re.compile(r"\b(?:docs?|documentation|api|guide|tutorial|refere
 
 def _dg_blocked(prompt, target):
     """Mirror of delegation-guard.validateDelegation gate logic (parts skipped)."""
+    # Gate 2: transversal consultation (2+ distinct agents named) -> not a misroute
+    if len(set(_DG_AGENT_MENTION.findall(prompt))) >= 2:
+        return None
     if _DG_RESEARCH_SIGNALS.search(prompt) and target == "deep-researcher":
         return None
     for re_, blocked in _DG_MISROUTE:
@@ -246,6 +250,38 @@ def guard_checks():
                     _dg_blocked("Design a RAG system with reranking", "ai-evals-runner") is not None))
     results.append(("delegation: eval task NAO vai p/ deep-researcher",
                     _dg_blocked("Build a golden set for the prompt change", "deep-researcher") is not None))
+
+    # word-boundary regression: pt verb "reconhecer" must NOT trigger market rule
+    debate_prompt = (
+        "A pergunta central: como montar um agente de pesquisa profunda com capacidade "
+        "massiva, capaz de reconhecer padroes entre fontes, e replicar o que um "
+        "pesquisador humano faria manualmente."
+    )
+    results.append(("delegation: 'reconhecer' NAO bloqueia ai-architect (word boundary)",
+                    _dg_blocked(debate_prompt, "ai-architect") is None))
+    results.append(("delegation: 'reconhecer' NAO bloqueia ai-evals-runner (word boundary)",
+                    _dg_blocked(debate_prompt, "ai-evals-runner") is None))
+    results.append(("delegation: 'reconhecer' NAO bloqueia llm-security-reviewer (word boundary)",
+                    _dg_blocked(debate_prompt, "llm-security-reviewer") is None))
+
+    # transversal consultation (debate): naming 2+ agents is not a misroute
+    multi_agent_prompt = (
+        "Debate entre ai-architect, ai-evals-runner, llm-security-reviewer, "
+        "deep-researcher e platform-engineer sobre o mesmo tema."
+    )
+    results.append(("delegation: debate com 5 agentes NAO bloqueado p/ ai-architect",
+                    _dg_blocked(multi_agent_prompt, "ai-architect") is None))
+    results.append(("delegation: debate com 5 agentes NAO bloqueado p/ ai-evals-runner",
+                    _dg_blocked(multi_agent_prompt, "ai-evals-runner") is None))
+    results.append(("delegation: debate com 5 agentes NAO bloqueado p/ llm-security-reviewer",
+                    _dg_blocked(multi_agent_prompt, "llm-security-reviewer") is None))
+
+    # 'evals' (plural) is still an eval task -> deep-researcher blocked
+    results.append(("delegation: 'Build evals...' NAO vai p/ deep-researcher",
+                    _dg_blocked("Build evals for the prompt change", "deep-researcher") is not None))
+    # single-agent mention does NOT unlock misroute gates
+    results.append(("delegation: mencao de 1 agente ainda bloqueia market research p/ ai-architect",
+                    _dg_blocked("market research de CRMs (consulte ai-architect)", "ai-architect") is not None))
 
     # research-guard: doc lookups (query-only websearch) are NOT research
     doc_queries = [

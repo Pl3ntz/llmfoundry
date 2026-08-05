@@ -30,36 +30,59 @@ const MANDATORY_PARTS: [string, RegExp][] = [
 // (what to do). Only verbs should misroute. "agents", "MCP", "RAG" are topics that
 // legitimately appear in research prompts ("research AI agent frameworks"),
 // so they must never block a deep-researcher spawn.
+//
+// Every alternative here is wrapped in \b...\b (word boundaries). Without them,
+// a Portuguese verb like "reconhecer" contains "recon" and falsely triggers the
+// market-research rule, blocking legit design/security/evals spawns.
 const MISROUTE_RULES: [RegExp, string[]][] = [
   [
     // market/competitive/landscape research does not go to architects, evals, security, RE
-    /(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon)/i,
+    /\b(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon)\b/i,
     ["ai-architect", "ai-evals-runner", "llm-security-reviewer", "reverse-engineer"],
   ],
   [
     // a DESIGN/BUILD task (verb) does not go to evals or RE
     // deep-researcher is NOT blocked here: a prompt may contain "architecture" or
     // "design" as a topic while still being a research task.
-    /(?:design|architect(?:ure|ing)?|build|implement|system\s+design|spec\s+for)/i,
+    /\b(?:design|architect(?:ure|ing|s)?|build|implement|system\s+design|spec\s+for)\b/i,
     ["ai-evals-runner", "reverse-engineer"],
   ],
   [
-    /(?:eval|golden.set|regression|baseline|assertion|prompt.*(?:change|update))/i,
+    // eval/evals/evaluation. \bevals?\b keeps "ai-evals-runner" (mentioned as a
+    // topic in a multi-agent prompt) from matching — handled by the debate gate.
+    /\b(?:eval(?:s|uation)?|golden\s+set|regression|baseline|assertion|prompt.*(?:change|update))\b/i,
     ["deep-researcher", "ai-architect", "llm-security-reviewer", "reverse-engineer"],
   ],
   [
-    /(?:security\s+review|prompt\s+injection|OWASP|LLM\s+(?:app\s+)?security)/i,
+    /\b(?:security\s+review|prompt\s+injection|OWASP|LLM\s+(?:app\s+)?security)\b/i,
     ["deep-researcher", "ai-evals-runner", "reverse-engineer"],
   ],
   [
-    /(?:binary|firmware|malware|decompil|disassembl|ghidra|radare)/i,
+    /\b(?:binary|firmware|malware|decompil\w*|disassembl\w*|ghidra|radare)\b/i,
     ["deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer"],
   ],
 ];
 
 // Strong research signals: when present, deep-researcher is a VALID route no
 // matter which topic words appear in the prompt ("research MCP servers").
-const RESEARCH_SIGNALS = /(?:research|compare|landscape|market|competitor|industry|OSINT|recon|pesquis)/i;
+// "pesquis\w*" matches Portuguese "pesquisa/pesquisar/pesquisador".
+const RESEARCH_SIGNALS = /\b(?:research|compare|landscape|market|competitor|industry|OSINT|recon|pesquis\w*)\b/i;
+
+// Known subagents. When 2+ distinct agents are named in a single prompt, the
+// orchestrator is deliberately running a transversal consultation (a debate
+// over the same topic), not misrouting a single task. Agent names there are
+// TOPICS, not the task target, so misroute rules must not fire.
+const AGENT_NAMES = [
+  "deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer",
+  "reverse-engineer", "platform-engineer", "backend-architect", "api-contract-engineer",
+  "database-engineer", "data-model-engineer", "red-team-agent", "security-defensive",
+  "bug-bounty-hunter", "recon-agent", "report-agent", "triage-agent", "general", "explore",
+];
+const AGENT_MENTION = new RegExp(`\\b(?:${AGENT_NAMES.join("|")})\\b`, "gi");
+
+function distinctAgents(prompt: string): number {
+  return new Set(prompt.match(AGENT_MENTION) ?? []).size;
+}
 
 function validateDelegation(
   prompt: string,
@@ -74,13 +97,20 @@ function validateDelegation(
     return `Delegation blocked: missing mandatory part${missing.length > 1 ? "s" : ""}: ${missing.join(", ")}. Rewrite with: ## Objective, ## Context, ## Output contract, ## Boundaries.`;
   }
 
-  // Gate 2: research-first priority. A task that asks for research and is
+  // Gate 2: transversal consultation. When the orchestrator names 2+ distinct
+  // agents in one prompt it is gathering multiple views on the same topic, not
+  // misrouting a single task. Trust the explicit mention.
+  if (distinctAgents(prompt) >= 2) {
+    return null;
+  }
+
+  // Gate 3: research-first priority. A task that asks for research and is
   // routed to the researcher is correct, whatever its topic mentions.
   if (RESEARCH_SIGNALS.test(prompt) && targetAgent === "deep-researcher") {
     return null;
   }
 
-  // Gate 3: clear misroutes
+  // Gate 4: clear misroutes
   for (const [re, blocked] of MISROUTE_RULES) {
     if (re.test(prompt) && blocked.includes(targetAgent)) {
       return `Delegation blocked: prompt appears to be about "${re.source.replace(/[()]/g, "").replace(/\|\?/g, "").slice(0, 60)}..." but was routed to ${targetAgent}. This is likely a misroute. Check the routing table.`;
