@@ -299,6 +299,7 @@ python3 scripts/eval-runner.py --baseline  # show the number to beat
 | [docs/MODEL-POLICY.md](docs/MODEL-POLICY.md) | Why DeepSeek, PRO/FLASH + BUILD/PLAN routing |
 | [docs/MEMORY-SPEC.md](docs/MEMORY-SPEC.md) | Memory architecture, living loop, privacy |
 | [docs/INSTALL.md](docs/INSTALL.md) | Full install/uninstall guide |
+| [docs/CI-LOCAL.md](docs/CI-LOCAL.md) | CI na VPS via Docker + cron, sem GitHub Actions |
 | [docs/REVERSE-ENGINEERING-SPEC.md](docs/REVERSE-ENGINEERING-SPEC.md) | Reverse engineering specialist design |
 | [SKILLS.md](SKILLS.md) | Skill catalog |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to add skills/agents/commands/evals |
