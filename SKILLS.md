@@ -67,6 +67,7 @@
 | [backend-architect](agents/backend-architect.md) | Backend design: APIs, middleware, jobs, caching, queues, event-driven |
 | [api-contract-engineer](agents/api-contract-engineer.md) | Deep API contract work: OpenAPI discriminator, hypermedia, rate limit RFCs |
 | [platform-engineer](agents/platform-engineer.md) | Infrastructure: Terraform, Docker, K8s, CI/CD, cloud, monitoring, Linux |
+| [vision-agent](agents/vision-agent.md) | Reads images, screenshots, mockups (vision model, on demand) |
 
 ## Orchestration
 
