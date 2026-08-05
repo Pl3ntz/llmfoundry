@@ -4,14 +4,14 @@ import type { Hooks, PluginInput } from "@opencode-ai/plugin";
  * LLMFoundry research-guard — enforces the research delegation policy.
  *
  * The orchestrator must delegate internet research to the deep-researcher
- * subagent. Direct webfetch/websearch calls from the orchestrator bypass
+ * subagent. Direct webfetch/websearch calls from the ORCHESTRATOR bypass
  * source triangulation, confidence scoring, and correlation — the entire
  * research quality stack.
  *
- * This guard fires a recoverable warning on every direct webfetch/websearch
- * call. The orchestrator sees it and delegates. The deep-researcher sees it
- * and continues (it's doing legitimate research). Context7 documentation
- * lookups pass through silently.
+ * This guard fires a recoverable warning ONLY when the research-looking call
+ * comes from a root session (the orchestrator). Subagents run in child
+ * sessions (Session.parentID set), so the deep-researcher does legitimate
+ * research without ever being nagged. Context7 and doc lookups pass silently.
  *
  * If LF_RESEARCH_STRICT=1 is set, the guard BLOCKS (throws) instead of
  * warning — useful in CI or when you want hard enforcement.
@@ -50,7 +50,8 @@ function looksLikeResearch(args: Record<string, unknown>): boolean {
   return RESEARCH_KEYWORDS.test(payload);
 }
 
-export async function server(_input: PluginInput): Promise<Hooks> {
+export async function server(input: PluginInput): Promise<Hooks> {
+  const { client } = input;
   return {
     "tool.execute.before": async ({ tool, sessionID, callID }, output) => {
       if (tool !== "webfetch" && tool !== "websearch") return;
@@ -60,10 +61,27 @@ export async function server(_input: PluginInput): Promise<Hooks> {
       if (isDocLookup(args)) return;
       if (!looksLikeResearch(args)) return;
 
+      // Subagents (deep-researcher) run in child sessions (parentID set).
+      // Their research is the whole point of the policy — never nag them.
+      // Only a root session (the orchestrator fetching directly) is warned.
+      let isChildSession = false;
+      try {
+        const session = await client.session.get({ path: { id: sessionID } });
+        const data = session as {
+          data?: { parentID?: string | null };
+          parentID?: string | null;
+        };
+        isChildSession = Boolean(data?.data?.parentID ?? data?.parentID);
+      } catch {
+        // a lookup failure must never break the tool call
+      }
+      if (isChildSession) return;
+
       const msg =
-        `[research-guard] Direct ${tool} detected. Per research policy, ` +
-        `internet research must go through the deep-researcher subagent ` +
-        `(source triangulation + confidence scoring). Delegate this task.`;
+        `[research-guard] Direct ${tool} detected in the root session. Per ` +
+        `research policy, internet research must go through the ` +
+        `deep-researcher subagent (source triangulation + confidence ` +
+        `scoring). Delegate this task.`;
 
       if (STRICT) {
         throw new Error(msg);

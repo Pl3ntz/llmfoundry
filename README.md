@@ -235,7 +235,7 @@ Full catalog: [SKILLS.md](SKILLS.md)
 | `verify-guard.ts` | Flags conjecture-as-grounding (`probably`, `should be`, `i assume`) per anti-delirium |
 | `publish-guard.ts` | Injects mandatory human-voice + anti-delirium + standards gate into every system prompt |
 | `delegation-guard.ts` | Validates subagent spawns: 4 mandatory parts + routing table check |
-| `research-guard.ts` | Enforces research delegation policy: warns on direct webfetch, forces deep-researcher |
+| `research-guard.ts` | Warns only when the ORCHESTRATOR fetches research directly; subagents (deep-researcher) research freely |
 
 ## Memory
 
