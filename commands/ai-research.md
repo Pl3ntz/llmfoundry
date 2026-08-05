@@ -1,7 +1,7 @@
 ---
 description: Deep multi-source research with correlation and confidence scoring
 model: opencode-go/deepseek-v4-pro
-agent: deep-researcher-v2
+agent: deep-researcher
 ---
 
 Deep research using the `ai-research` skill (correlation-first protocol).

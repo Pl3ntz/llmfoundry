@@ -93,7 +93,7 @@ structure feeds and consumes, like human memory.
         │                  MEMORY LIVING LOOP                  │
         │                                                       │
         │  AGENTS/SKILLS/COMMANDS/PLUGINS                       │
-        │    (deep-researcher-v2, llm-security-reviewer,           │
+        │    (deep-researcher, llm-security-reviewer,           │
         │     ai-architect, ai-evals-runner, hooks, /ai-*)      │
         │         │                      ▲                      │
         │   FEEDS (encode)         CONSUMES (retrieve)          │
@@ -149,7 +149,7 @@ Capture **events with signal**, not turns:
 | **Resolved error** | `tool.execute.after` (bash failed, then ok) | "build error X fixed by Y" |
 | **Decision** | `/ai-memory remember` or SPEC-flow detection | "chose DeepSeek V4 Pro over kimi-k3 on cost" |
 | **Recurring pattern** | gotcha count >= 3 | "npm install always runs as sudo" |
-| **Agent finding** | agents with findings (deep-researcher-v2, llm-security-reviewer) | "[HIGH] SSRF via fetch tool, fix at X" |
+| **Agent finding** | agents with findings (deep-researcher, llm-security-reviewer) | "[HIGH] SSRF via fetch tool, fix at X" |
 | **Static fact** | manual | "project uses FastAPI + raw SQL, no ORM" |
 
 Implementation: opencode plugin (`plugins/memory.ts`) on `tool.execute.after` hooks +
@@ -253,7 +253,7 @@ Each component has a dual role: **feeds** (encode) and **consumes** (retrieve).
 |-----------|-------------------|--------------------|
 | `plugins/memory.ts` | `tool.execute.after` hooks, resolved errors, gotchas | (it is the loop runtime) |
 | `commands/ai-memory.md` | `/ai-memory remember` | `/ai-memory search` |
-| `agents/deep-researcher-v2.md` | findings into `findings` (severity, status) | `---memory---` preamble before researching (past decisions) |
+| `agents/deep-researcher.md` | findings into `findings` (severity, status) | `---memory---` preamble before researching (past decisions) |
 | `agents/llm-security-reviewer.md` | security findings | recall of previous open findings |
 | `agents/ai-architect.md` | architecture decisions into `DECISIONS.md` | past project decisions |
 | `agents/ai-evals-runner.md` | eval baselines | regression history |

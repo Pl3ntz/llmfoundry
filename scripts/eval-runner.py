@@ -138,7 +138,7 @@ def routing_checks():
     golden = data.get("questions", data if isinstance(data, list) else [])
 
     # For each golden question, verify the expected route is one we know
-    known = {"deep-researcher-v2", "ai-architect", "ai-evals-runner", "llm-security-reviewer",
+    known = {"deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer",
              "direct", "interview", "build", "build+security"}
     for i, q in enumerate(golden):
         r = q.get("expectedRoute", "").lower()
@@ -201,14 +201,14 @@ _DG_MISROUTE = [
     (_re.compile(r"\b(?:design|architect(?:ure|ing|s)?|build|implement|system\s+design|spec\s+for)\b", _re.I),
      ["ai-evals-runner", "reverse-engineer"]),
     (_re.compile(r"\b(?:eval(?:s|uation)?|golden\s+set|regression|baseline|assertion|prompt.*(?:change|update))\b", _re.I),
-     ["deep-researcher-v2", "ai-architect", "llm-security-reviewer", "reverse-engineer"]),
+     ["deep-researcher", "ai-architect", "llm-security-reviewer", "reverse-engineer"]),
     (_re.compile(r"\b(?:security\s+review|prompt\s+injection|OWASP|LLM\s+(?:app\s+)?security)\b", _re.I),
-     ["deep-researcher-v2", "ai-evals-runner", "reverse-engineer"]),
+     ["deep-researcher", "ai-evals-runner", "reverse-engineer"]),
     (_re.compile(r"\b(?:binary|firmware|malware|decompil\w*|disassembl\w*|ghidra|radare)\b", _re.I),
-     ["deep-researcher-v2", "ai-architect", "ai-evals-runner", "llm-security-reviewer"]),
+     ["deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer"]),
 ]
 _DG_RESEARCH_SIGNALS = _re.compile(r"\b(?:research|compare|landscape|market|competitor|industry|OSINT|recon|pesquis\w*)\b", _re.I)
-_DG_AGENT_MENTION = _re.compile(r"\b(?:deep-researcher-v2|ai-architect|ai-evals-runner|llm-security-reviewer|reverse-engineer|platform-engineer|backend-architect|api-contract-engineer|database-engineer|data-model-engineer|red-team-agent|security-defensive|bug-bounty-hunter|recon-agent|report-agent|triage-agent|general|explore)\b", _re.I)
+_DG_AGENT_MENTION = _re.compile(r"\b(?:deep-researcher|ai-architect|ai-evals-runner|llm-security-reviewer|reverse-engineer|platform-engineer|backend-architect|api-contract-engineer|database-engineer|data-model-engineer|red-team-agent|security-defensive|bug-bounty-hunter|recon-agent|report-agent|triage-agent|general|explore)\b", _re.I)
 
 # mirror of research-guard.ts
 _RG_RESEARCH = _re.compile(r"\b(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon|vs\.?\.?\s+alternatives?)\b", _re.I)
@@ -220,7 +220,7 @@ def _dg_blocked(prompt, target):
     # Gate 2: transversal consultation (2+ distinct agents named) -> not a misroute
     if len(set(_DG_AGENT_MENTION.findall(prompt))) >= 2:
         return None
-    if _DG_RESEARCH_SIGNALS.search(prompt) and target == "deep-researcher-v2":
+    if _DG_RESEARCH_SIGNALS.search(prompt) and target == "deep-researcher":
         return None
     for re_, blocked in _DG_MISROUTE:
         if re_.search(prompt) and target in blocked:
@@ -231,7 +231,7 @@ def _dg_blocked(prompt, target):
 def guard_checks():
     results = []
 
-    # research prompts with technical TOPICS must reach deep-researcher-v2
+    # research prompts with technical TOPICS must reach deep-researcher
     research_topics = [
         "Pesquise sobre AI agent frameworks em 2026 e compare os 5 melhores",
         "Research MCP servers ecosystem landscape 2026",
@@ -240,16 +240,16 @@ def guard_checks():
         "Pesquise sobre agentes open source de coding",
         "Research vector databases 2026 for RAG",
     ]
-    ok = all(_dg_blocked(p, "deep-researcher-v2") is None for p in research_topics)
-    results.append(("delegation: research com topicos tecnicos NAO bloqueado p/ deep-researcher-v2", ok))
+    ok = all(_dg_blocked(p, "deep-researcher") is None for p in research_topics)
+    results.append(("delegation: research com topicos tecnicos NAO bloqueado p/ deep-researcher", ok))
 
     # real misroutes are still blocked
     results.append(("delegation: market research NAO vai p/ ai-architect",
                     _dg_blocked("market research de CRMs para 2026", "ai-architect") is not None))
     results.append(("delegation: task de design NAO vai p/ ai-evals-runner",
                     _dg_blocked("Design a RAG system with reranking", "ai-evals-runner") is not None))
-    results.append(("delegation: eval task NAO vai p/ deep-researcher-v2",
-                    _dg_blocked("Build a golden set for the prompt change", "deep-researcher-v2") is not None))
+    results.append(("delegation: eval task NAO vai p/ deep-researcher",
+                    _dg_blocked("Build a golden set for the prompt change", "deep-researcher") is not None))
 
     # word-boundary regression: pt verb "reconhecer" must NOT trigger market rule
     debate_prompt = (
@@ -276,9 +276,9 @@ def guard_checks():
     results.append(("delegation: debate com 5 agentes NAO bloqueado p/ llm-security-reviewer",
                     _dg_blocked(multi_agent_prompt, "llm-security-reviewer") is None))
 
-    # 'evals' (plural) is still an eval task -> deep-researcher-v2 blocked
-    results.append(("delegation: 'Build evals...' NAO vai p/ deep-researcher-v2",
-                    _dg_blocked("Build evals for the prompt change", "deep-researcher-v2") is not None))
+    # 'evals' (plural) is still an eval task -> deep-researcher blocked
+    results.append(("delegation: 'Build evals...' NAO vai p/ deep-researcher",
+                    _dg_blocked("Build evals for the prompt change", "deep-researcher") is not None))
     # single-agent mention does NOT unlock misroute gates
     results.append(("delegation: mencao de 1 agente ainda bloqueia market research p/ ai-architect",
                     _dg_blocked("market research de CRMs (consulte ai-architect)", "ai-architect") is not None))
@@ -366,7 +366,7 @@ def stability_checks():
 
 
 # ----------------------------------------------------------------------------
-# deep-researcher-v2: synthetic haystack eval (deterministic, offline)
+# deep-researcher: synthetic haystack eval (deterministic, offline)
 
 def drv2_checks():
     """Synthetic-haystack scoring for the v2 research agent.

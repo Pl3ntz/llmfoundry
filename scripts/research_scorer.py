@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""research-scorer.py — deterministic recall/fabrication scorer for deep-researcher-v2.
+"""research-scorer.py — deterministic recall/fabrication scorer for deep-researcher.
 
 Simulates a "synthetic haystack": a known corpus with planted needles (facts)
 hidden among noise, plus a candidate research output. Scores how many needles

@@ -12,7 +12,7 @@ and synthesizing multi-agent results.
 
 | Request | Route to | Not |
 |---------|----------|-----|
-| deep multi-source research, comparisons, landscape, OSINT (orgs) | `deep-researcher-v2` | yourself, it runs the correlation protocol |
+| deep multi-source research, comparisons, landscape, OSINT (orgs) | `deep-researcher` | yourself, it runs the correlation protocol |
 | LLM system architecture (agents, RAG, MCP) design | `ai-architect` | immediate code |
 | build/run evals for prompt/agent/feature | `ai-evals-runner` | guessing it works |
 | security review of LLM app before ship | `llm-security-reviewer` | shipping without review |
@@ -26,12 +26,12 @@ and synthesizing multi-agent results.
 | deep API contracts: OpenAPI discriminators, hypermedia, content negotiation, rate limit RFCs | `api-contract-engineer` | general backend (use backend-architect) |
 | infrastructure: Terraform, Docker, K8s, CI/CD, cloud, monitoring, Linux, networking | `platform-engineer` | application code |
 | PDF extraction / classification | `pdf-processing` (skill) | sending to OCR when local works |
-| single fact / syntax / doc lookup | answer directly | deep-researcher-v2 (~18x cost) |
+| single fact / syntax / doc lookup | answer directly | deep-researcher (~18x cost) |
 | implementation | yourself + ai-dev-process | delegating without spec |
 | multi-agent parallel work | route each, then synthesize | one giant prompt |
 
 Symptom-driven routes (when the request names a problem, not a role):
-- "research/compare/landscape" → deep-researcher-v2
+- "research/compare/landscape" → deep-researcher
 - "architecture/design/agents/RAG/MCP" → ai-architect
 - "eval/regression/prompt changed" → ai-evals-runner
 - "security review/LLM app/injection" → llm-security-reviewer
@@ -79,11 +79,11 @@ When 2+ agents ran, merge results:
 ### SYNTHESIS
 | Agent | Key result |
 |-------|-----------|
-| deep-researcher-v2 | ... |
+| deep-researcher | ... |
 | ai-architect | ... |
 
 ### ACTION ITEMS (merged by severity)
-- [HIGH] ... (deep-researcher-v2 + architect agree)
+- [HIGH] ... (deep-researcher + architect agree)
 
 ### CONTRADICTIONS
 - [A says X] vs [B says Y]: assessment

@@ -6,7 +6,7 @@
       "id": "RS-1",
       "type": "research",
       "prompt": "what are experts saying about AI agents in 2026? give me a landscape overview",
-      "expectedRoute": "deep-researcher-v2",
+      "expectedRoute": "deep-researcher",
       "expectedGates": {
         "interviewMe": false
       },
@@ -77,7 +77,7 @@
       "id": "RS-8",
       "type": "research",
       "prompt": "compare Neo4j vs Memgraph vs FalkorDB for graph databases in production 2026",
-      "expectedRoute": "deep-researcher-v2",
+      "expectedRoute": "deep-researcher",
       "expectedGates": {
         "interviewMe": false
       },

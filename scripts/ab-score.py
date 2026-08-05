@@ -86,7 +86,7 @@ def url_alive(u, timeout=10):
 
 def main():
     for qid, facts in GOLDEN.items():
-        for agent in ["deep-researcher", "deep-researcher-v2"]:
+        for agent in ["deep-researcher", "deep-researcher"]:
             recalls, url_ok, url_tot, verified = [], 0, 0, 0
             for run in range(1, 4):
                 fn = os.path.join(RAW, qid, f"run{run}", f"{agent}.json")
@@ -109,7 +109,7 @@ def main():
                   f"urls {url_ok}/{url_tot} verified {verified}")
 
     print("\n=== MEDIA GERAL (9 runs por agent) ===")
-    for agent in ["deep-researcher", "deep-researcher-v2"]:
+    for agent in ["deep-researcher", "deep-researcher"]:
         allr = []
         ut = uo = vc = 0
         for qid, facts in GOLDEN.items():

@@ -8,7 +8,7 @@ import type { Hooks, PluginInput } from "@opencode-ai/plugin";
  * 1. Spawning without the 4 mandatory parts (Objective, Context, Output
  *    contract, Boundaries) — the subagent guesses and wastes tokens.
  * 2. Clear misrouting — e.g., a research task going to ai-architect, or
- *    an eval task going to deep-researcher-v2.
+ *    an eval task going to deep-researcher.
  *
  * Blocks are recoverable: the spawn is rejected with an error message that
  * tells the orchestrator what to fix. The orchestrator rewrites and retries.
@@ -29,7 +29,7 @@ const MANDATORY_PARTS: [string, RegExp][] = [
 // Design principle: keywords are TOPICS (what the task is about), verbs are TASKS
 // (what to do). Only verbs should misroute. "agents", "MCP", "RAG" are topics that
 // legitimately appear in research prompts ("research AI agent frameworks"),
-// so they must never block a deep-researcher-v2 spawn.
+// so they must never block a deep-researcher spawn.
 //
 // Every alternative here is wrapped in \b...\b (word boundaries). Without them,
 // a Portuguese verb like "reconhecer" contains "recon" and falsely triggers the
@@ -42,7 +42,7 @@ const MISROUTE_RULES: [RegExp, string[]][] = [
   ],
   [
     // a DESIGN/BUILD task (verb) does not go to evals or RE
-    // deep-researcher-v2 is NOT blocked here: a prompt may contain "architecture" or
+    // deep-researcher is NOT blocked here: a prompt may contain "architecture" or
     // "design" as a topic while still being a research task.
     /\b(?:design|architect(?:ure|ing|s)?|build|implement|system\s+design|spec\s+for)\b/i,
     ["ai-evals-runner", "reverse-engineer"],
@@ -51,19 +51,19 @@ const MISROUTE_RULES: [RegExp, string[]][] = [
     // eval/evals/evaluation. \bevals?\b keeps "ai-evals-runner" (mentioned as a
     // topic in a multi-agent prompt) from matching — handled by the debate gate.
     /\b(?:eval(?:s|uation)?|golden\s+set|regression|baseline|assertion|prompt.*(?:change|update))\b/i,
-    ["deep-researcher-v2", "ai-architect", "llm-security-reviewer", "reverse-engineer"],
+    ["deep-researcher", "ai-architect", "llm-security-reviewer", "reverse-engineer"],
   ],
   [
     /\b(?:security\s+review|prompt\s+injection|OWASP|LLM\s+(?:app\s+)?security)\b/i,
-    ["deep-researcher-v2", "ai-evals-runner", "reverse-engineer"],
+    ["deep-researcher", "ai-evals-runner", "reverse-engineer"],
   ],
   [
     /\b(?:binary|firmware|malware|decompil\w*|disassembl\w*|ghidra|radare)\b/i,
-    ["deep-researcher-v2", "ai-architect", "ai-evals-runner", "llm-security-reviewer"],
+    ["deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer"],
   ],
 ];
 
-// Strong research signals: when present, deep-researcher-v2 is a VALID route no
+// Strong research signals: when present, deep-researcher is a VALID route no
 // matter which topic words appear in the prompt ("research MCP servers").
 // "pesquis\w*" matches Portuguese "pesquisa/pesquisar/pesquisador".
 const RESEARCH_SIGNALS = /\b(?:research|compare|landscape|market|competitor|industry|OSINT|recon|pesquis\w*)\b/i;
@@ -73,7 +73,7 @@ const RESEARCH_SIGNALS = /\b(?:research|compare|landscape|market|competitor|indu
 // over the same topic), not misrouting a single task. Agent names there are
 // TOPICS, not the task target, so misroute rules must not fire.
 const AGENT_NAMES = [
-  "deep-researcher-v2", "ai-architect", "ai-evals-runner", "llm-security-reviewer",
+  "deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer",
   "reverse-engineer", "platform-engineer", "backend-architect", "api-contract-engineer",
   "database-engineer", "data-model-engineer", "red-team-agent", "security-defensive",
   "bug-bounty-hunter", "recon-agent", "report-agent", "triage-agent", "general", "explore",
@@ -106,7 +106,7 @@ function validateDelegation(
 
   // Gate 3: research-first priority. A task that asks for research and is
   // routed to the researcher is correct, whatever its topic mentions.
-  if (RESEARCH_SIGNALS.test(prompt) && targetAgent === "deep-researcher-v2") {
+  if (RESEARCH_SIGNALS.test(prompt) && targetAgent === "deep-researcher") {
     return null;
   }
 

@@ -17,7 +17,7 @@ recovery, and vulnerability identification.
 
 The user works in security and has an Android/APK pipeline. What was missing is a general
 binary specialist for firmware, executables, malware, and libraries, at a professional
-level of precision (the way the deep-researcher-v2 is for research).
+level of precision (the way the deep-researcher is for research).
 
 ## Scope: Skills
 
@@ -77,7 +77,7 @@ mode: subagent
 | capstone + pyelftools + r2pipe | pip install | programmatic analysis |
 | binwalk | install | firmware |
 
-> Skills degrade gracefully when a tool is missing (like deep-researcher-v2 without
+> Skills degrade gracefully when a tool is missing (like deep-researcher without
 > fastembed): radare2 is enough for the core, Ghidra is a precision upgrade.
 
 ## Out of scope

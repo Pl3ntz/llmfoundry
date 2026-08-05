@@ -21,7 +21,7 @@ alinhados ao trabalho real do usuário e às necessidades do mercado.
 | `ai-orchestrator` | Multi-agent coordination | Mantido |
 | `ai-architect` | LLM system design | Mantido |
 | `ai-evals-runner` | Eval pipeline | Mantido |
-| `deep-researcher-v2` | Multi-source research | Mantido |
+| `deep-researcher` | Multi-source research | Mantido |
 | `llm-security-reviewer` | LLM app security | Mantido |
 | `reverse-engineer` | Binary/firmware analysis | Mantido |
 | `bug-bounty-hunter` | Web/API offensive security | Mantido (não merge) |

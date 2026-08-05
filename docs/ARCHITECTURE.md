@@ -14,7 +14,7 @@ How the kit fits together.
 │              │                             │               │
 │   ┌──────────▼──────────┐      ┌───────────▼──────────┐    │
 │   │   SUBAGENTS (13)    │      │   MEMORY (loop)      │    │
-│   │  deep-researcher-v2    │      │  SQLite + FTS5       │    │
+│   │  deep-researcher    │      │  SQLite + FTS5       │    │
 │   │  ai-architect       │      │  + embeddings        │    │
 │   │  ai-evals-runner    │◄────►│  encode→consolidate  │    │
 │   │  llm-security-      │ feed │  →retrieve→reconsol. │    │
@@ -59,7 +59,7 @@ from the orchestrator. Reports findings; never acts alone.
 
 | Domain | Agents |
 |--------|--------|
-| AI/LLM | deep-researcher-v2, ai-architect, ai-evals-runner, llm-security-reviewer |
+| AI/LLM | deep-researcher, ai-architect, ai-evals-runner, llm-security-reviewer |
 | Security | red-team-agent, bug-bounty-hunter, security-defensive |
 | Database | database-engineer, data-model-engineer |
 | Backend | backend-architect, api-contract-engineer |
@@ -118,4 +118,4 @@ anything ships.
 | `verify-guard.ts` | flags conjecture-as-grounding in file output (anti-delirium) |
 | `publish-guard.ts` | injects mandatory human-voice + anti-delirium + standards gate into every system prompt |
 | `delegation-guard.ts` | validates subagent spawns (4 mandatory parts + routing table check) |
-| `research-guard.ts` | enforces research delegation: warns on direct webfetch, forces deep-researcher-v2 |
+| `research-guard.ts` | enforces research delegation: warns on direct webfetch, forces deep-researcher |

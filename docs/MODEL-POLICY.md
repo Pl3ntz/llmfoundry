@@ -48,7 +48,7 @@ The cost discipline lives in *which* model a task routes to. Flash is 3x cheaper
 | When you... | Use |
 |-------------|-----|
 | orchestrate, delegate, synthesize, review security/architecture | PRO (you are PRO) |
-| delegate deep research | deep-researcher-v2 = PRO |
+| delegate deep research | deep-researcher = PRO |
 | delegate evals | ai-evals-runner = FLASH |
 | answer a single fact / lookup directly | **FLASH** (or small_model), never PRO |
 | run memory ops (`/ai-memory`) | FLASH |
@@ -58,9 +58,9 @@ The cost discipline lives in *which* model a task routes to. Flash is 3x cheaper
 ### Rules the orchestrator MUST follow
 
 1. **Direct lookups never spend PRO.** A "what is X / syntax / version" question is
-   answered with FLASH or the small_model, routing to deep-researcher-v2 for a fact is
+   answered with FLASH or the small_model, routing to deep-researcher for a fact is
    wasteful (and the routing table already forbids it).
-2. **Delegation is already priced.** Subagent frontmatter fixes the model: deep-researcher-v2,
+2. **Delegation is already priced.** Subagent frontmatter fixes the model: deep-researcher,
    ai-architect, llm-security-reviewer = PRO; ai-evals-runner = FLASH. Do not override up.
 3. **FLASH default for cheap work.** If a task is mechanical and you are unsure, FLASH.
    Upgrade to PRO only when reasoning depth is actually required.

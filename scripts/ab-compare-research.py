@@ -72,7 +72,7 @@ GOLDEN = [
 CONTRACT_HEADERS = {  # v1 has 7, v2 has 8
     "deep-researcher": ["### FINDINGS", "### CORRELATIONS", "### CONTRADICTIONS", "### GAPS",
                         "### NEXT STEP", "### OPEN QUESTIONS", "### SOURCES"],
-    "deep-researcher-v2": ["### FINDINGS", "### CORRELATIONS", "### CONTRADICTIONS", "### AUTHORITY-BY-VOLUME",
+    "deep-researcher": ["### FINDINGS", "### CORRELATIONS", "### CONTRADICTIONS", "### AUTHORITY-BY-VOLUME",
                            "### GAPS", "### NEXT STEP", "### OPEN QUESTIONS", "### SOURCES"],
 }
 
@@ -207,7 +207,7 @@ def score_output(agent, text, golden):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", type=int, default=3)
-    ap.add_argument("--agents", default="deep-researcher,deep-researcher-v2")
+    ap.add_argument("--agents", default="deep-researcher,deep-researcher")
     ap.add_argument("--only", default=None, help="e.g. Q1 to run a single golden")
     args = ap.parse_args()
 
@@ -272,7 +272,7 @@ def main():
         tok = sum(s["tokens"] for s in rs) / len(rs)
         cost = sum(s["cost"] for s in rs) / len(rs)
         print(f"{agent:<18} {recall:>7.1f}% {alive:>10.1f}% {hdr:>9.2f} {tok:>8.0f} ${cost:.4f}")
-        if agent == "deep-researcher-v2":
+        if agent == "deep-researcher":
             v_claims = sum(s["verified_claims"] for s in rs)
             v_ok = sum(s["verified_urls_ok"] for s in rs)
             print(f"  VERIFIED claims: {v_ok}/{v_claims} com URL ao vivo")
