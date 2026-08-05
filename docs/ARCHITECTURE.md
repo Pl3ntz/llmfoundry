@@ -82,7 +82,7 @@ SQLite + FTS5 + optional semantic embeddings (fastembed/ONNX). Living loop:
 Privacy: 100% local, never versioned, blocks secret/PII patterns.
 
 ### Evals
-Golden-sets + rubric + baseline. `scripts/eval-runner.py` runs 32 deterministic checks
+Golden-sets + rubric + baseline. `scripts/eval-runner.py` runs 35 deterministic checks
 (engine, routing, plugins, K=5 stability) in CI on every push. Regression gate before
 anything ships.
 
