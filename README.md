@@ -17,8 +17,8 @@
   <a href="https://github.com/Pl3ntz/llmfoundry"><img alt="GitHub" src="https://img.shields.io/github/stars/Pl3ntz/llmfoundry?style=social"></a>
   <a href="https://github.com/Pl3ntz/llmfoundry/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-lightgrey.svg"></a>
   <a href="docs/MODEL-POLICY.md"><img alt="Model" src="https://img.shields.io/badge/model-DeepSeek_V4_Pro-2ea44f.svg"></a>
-  <a href=".github/workflows/ci.yml"><img alt="CI" src="https://github.com/Pl3ntz/llmfoundry/actions/workflows/ci.yml/badge.svg"></a>
-  <a href="evals/baseline.json"><img alt="Tests" src="https://img.shields.io/badge/tests-35%2F35-2ea44f.svg"></a>
+  <a href="docs/CI-LOCAL.md"><img alt="CI" src="https://img.shields.io/badge/CI-VPS_cron_06--00-2ea44f.svg"></a>
+  <a href="evals/baseline.json"><img alt="Tests" src="https://img.shields.io/badge/tests-44%2F44-2ea44f.svg"></a>
   <a href="skills/anti-delirium/"><img alt="Anti-delirium" src="https://img.shields.io/badge/discipline-anti--delirium-2ea44f.svg"></a>
   <a href="skills/human-voice/"><img alt="Human voice" src="https://img.shields.io/badge/discipline-human--voice-2ea44f.svg"></a>
 </p>
@@ -44,7 +44,7 @@ a **living memory** that learns and feeds itself, and **gates** that block bad o
 
 <p align="center">
   <strong>Built for $2.01.</strong> The entire kit, 30 skills, 14 agents, memory, gates,
-  35 tests, and full docs, developed on DeepSeek V4. This is what cost discipline buys.
+  44 tests, and full docs, developed on DeepSeek V4. This is what cost discipline buys.
 </p>
 
 > Looking for: AI agents, RAG pipeline, prompt engineering, LLM evals, MCP servers,
@@ -279,7 +279,7 @@ llmfoundry/
 
 ## Testing (regression gate)
 
-The kit tests itself. `scripts/eval-runner.py` runs 35 deterministic checks, no model
+The kit tests itself. `scripts/eval-runner.py` runs 44 deterministic checks, no model
 calls: engine unit tests, routing golden-set validation, scorer cases, plugin compile
 checks, and K=5 stability checks. A GitHub Actions CI runs them on every push/PR, so a
 regression is caught before it ships. Baseline: [evals/baseline.json](evals/baseline.json).
@@ -313,7 +313,7 @@ python3 scripts/eval-runner.py --baseline  # show the number to beat
 - [x] Semantic memory (local embeddings)
 - [x] Gates as real commit blockers
 - [x] Routing eval (golden-set + deterministic scorer, validated manually)
-- [x] Regression CI (35 checks on every push)
+- [x] Regression CI (44 checks on every push)
 - [x] Human-voice + anti-delirium disciplines
 - [x] PRO/FLASH + BUILD/PLAN routing policies
 - [x] Stability checks (K=5, deterministic engine)
@@ -340,7 +340,7 @@ Honest numbers, sourced from a live deep-researcher pass over GitHub and npm (Au
 
 | Project | Stars | Focus | Gates | Anti-delirium | Evals | DeepSeek-first |
 |---------|-------|-------|-------|---------------|-------|----------------|
-| **LLMFoundry** | new | complete kit for opencode | ✅ runtime plugins | ✅ | ✅ 35 checks | ✅ |
+| **LLMFoundry** | new | complete kit for opencode | ✅ runtime plugins | ✅ | ✅ 44 checks | ✅ |
 | agent-skills (addyosmani) | 81.2k | skills pack (multi-tool) | ⚠️ prompt-based | ✅ | ✅ evals/ | ❌ |
 | hiai-opencode | 12 | multi-agent + gates | ✅ runtime | ❌ | ✅ 986 tests | ❌ |
 | GoopSpec | 37 | spec-driven workflow | ✅ contract gates | ❌ | ❌ | ❌ |

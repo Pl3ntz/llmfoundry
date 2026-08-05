@@ -19,14 +19,27 @@ import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 
 const STRICT = process.env.LF_RESEARCH_STRICT === "1";
 
-const RESEARCH_KEYWORDS = /\b(?:research|compare|competitor|market|landscape|OSINT|recon)\b/i;
+// Strong signals of market/competitive/OSINT research. "research" and "compare"
+// alone are too ambiguous (a query like "compare bun vs node" is a doc lookup),
+// so they are not in this list.
+const RESEARCH_KEYWORDS =
+  /\b(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon|vs\.?\.?\s+alternatives?)\b/i;
+
+// Doc/technical lookup terms. A websearch has no URL, so the guard must read the
+// query too: "fastapi vs flask docs", "install bun", "setup MCP server" are NOT
+// market research.
+const DOC_TERMS =
+  /\b(?:docs?|documentation|api|guide|tutorial|reference|getting\s+started|setup|install|config|example|how\s+to|library|framework|sdk|syntax|error|changelog|release|npm|pypi|crates)\b/i;
 
 function isDocLookup(args: Record<string, unknown>): boolean {
   const url = (args.url ?? "") as string;
+  const query = (args.query ?? args.q ?? "") as string;
   // Context7 documentation lookups are not research
   if (url.includes("context7")) return true;
   // Specific documentation URLs are not research
   if (/\/docs?\/|\/api\/|readme|\.md$/i.test(url)) return true;
+  // Query-only lookups (websearch): technical/doc intent is not research
+  if (query && DOC_TERMS.test(query)) return true;
   return false;
 }
 

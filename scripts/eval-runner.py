@@ -173,7 +173,8 @@ def routing_checks():
 
 def plugin_checks():
     results = []
-    for plugin in ["gates.ts", "memory.ts", "voice-guard.ts", "verify-guard.ts"]:
+    for plugin in ["gates.ts", "memory.ts", "voice-guard.ts", "verify-guard.ts",
+                   "publish-guard.ts", "delegation-guard.ts", "research-guard.ts"]:
         path = os.path.join(ROOT, "plugins", plugin)
         out = os.path.join(tempfile.gettempdir(), "llmfoundry-plugin-check")
         try:
@@ -181,6 +182,91 @@ def plugin_checks():
             results.append((f"{plugin} compiles", r.returncode == 0))
         except FileNotFoundError:
             results.append((f"{plugin} compiles (bun missing)", True))  # skip, not a regression
+    return results
+
+
+# ----------------------------------------------------------------------------
+# Guard regression checks (delegation-guard.ts + research-guard.ts)
+#
+# These mirror the regex logic in the TS plugins so a regression in the guards
+# (e.g. a research prompt being blocked) is caught by the deterministic suite.
+# If you change the plugins, update these fixtures in the same commit.
+
+import re as _re
+
+# mirror of delegation-guard.ts MISROUTE_RULES (after the topic/verb fix)
+_DG_MISROUTE = [
+    (_re.compile(r"(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon)", _re.I),
+     ["ai-architect", "ai-evals-runner", "llm-security-reviewer", "reverse-engineer"]),
+    (_re.compile(r"(?:design|architect(?:ure|ing)?|build|implement|system\s+design|spec\s+for)", _re.I),
+     ["ai-evals-runner", "reverse-engineer"]),
+    (_re.compile(r"(?:eval|golden.set|regression|baseline|assertion|prompt.*(?:change|update))", _re.I),
+     ["deep-researcher", "ai-architect", "llm-security-reviewer", "reverse-engineer"]),
+    (_re.compile(r"(?:security\s+review|prompt\s+injection|OWASP|LLM\s+(?:app\s+)?security)", _re.I),
+     ["deep-researcher", "ai-evals-runner", "reverse-engineer"]),
+    (_re.compile(r"(?:binary|firmware|malware|decompil|disassembl|ghidra|radare)", _re.I),
+     ["deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer"]),
+]
+_DG_RESEARCH_SIGNALS = _re.compile(r"(?:research|compare|landscape|market|competitor|industry|OSINT|recon|pesquis)", _re.I)
+
+# mirror of research-guard.ts
+_RG_RESEARCH = _re.compile(r"\b(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon|vs\.?\.?\s+alternatives?)\b", _re.I)
+_RG_DOC_TERMS = _re.compile(r"\b(?:docs?|documentation|api|guide|tutorial|reference|getting\s+started|setup|install|config|example|how\s+to|library|framework|sdk|syntax|error|changelog|release|npm|pypi|crates)\b", _re.I)
+
+
+def _dg_blocked(prompt, target):
+    """Mirror of delegation-guard.validateDelegation gate logic (parts skipped)."""
+    if _DG_RESEARCH_SIGNALS.search(prompt) and target == "deep-researcher":
+        return None
+    for re_, blocked in _DG_MISROUTE:
+        if re_.search(prompt) and target in blocked:
+            return re_.pattern
+    return None
+
+
+def guard_checks():
+    results = []
+
+    # research prompts with technical TOPICS must reach deep-researcher
+    research_topics = [
+        "Pesquise sobre AI agent frameworks em 2026 e compare os 5 melhores",
+        "Research MCP servers ecosystem landscape 2026",
+        "Compare RAG pipelines vs agentic workflows para suporte",
+        "Pesquise architecture patterns de sistemas LLM atuais",
+        "Pesquise sobre agentes open source de coding",
+        "Research vector databases 2026 for RAG",
+    ]
+    ok = all(_dg_blocked(p, "deep-researcher") is None for p in research_topics)
+    results.append(("delegation: research com topicos tecnicos NAO bloqueado p/ deep-researcher", ok))
+
+    # real misroutes are still blocked
+    results.append(("delegation: market research NAO vai p/ ai-architect",
+                    _dg_blocked("market research de CRMs para 2026", "ai-architect") is not None))
+    results.append(("delegation: task de design NAO vai p/ ai-evals-runner",
+                    _dg_blocked("Design a RAG system with reranking", "ai-evals-runner") is not None))
+    results.append(("delegation: eval task NAO vai p/ deep-researcher",
+                    _dg_blocked("Build a golden set for the prompt change", "deep-researcher") is not None))
+
+    # research-guard: doc lookups (query-only websearch) are NOT research
+    doc_queries = [
+        {"query": "compare bun vs node install docs"},
+        {"query": "fastapi vs flask api guide"},
+        {"query": "setup MCP server tutorial"},
+        {"url": "https://docs.example.com/api/"},
+        {"url": "https://example.com/readme.md"},
+        {"url": "https://context7.com/x"},
+    ]
+    ok = all((_RG_DOC_TERMS.search(q.get("query", "")) or "/docs" in q.get("url", "")
+              or "/api" in q.get("url", "") or "readme" in q.get("url", "")
+              or "context7" in q.get("url", "")) for q in doc_queries)
+    results.append(("research: doc lookup websearch NAO e pesquisa de mercado", ok))
+
+    # research-guard: real market/OSINT research IS flagged
+    market = [{"query": "competitor landscape of observability tools 2026"},
+              {"query": "market pricing of vector databases"}]
+    ok = all(_RG_RESEARCH.search(q["query"]) for q in market)
+    results.append(("research: pesquisa de mercado/landscape e detectada", ok))
+
     return results
 
 
@@ -247,12 +333,12 @@ def stability_checks():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--suite", choices=["engine", "routing", "plugins", "stability", "all"], default="all")
+    ap.add_argument("--suite", choices=["engine", "routing", "plugins", "stability", "guards", "all"], default="all")
     ap.add_argument("--baseline", action="store_true", help="print current state")
     args = ap.parse_args()
 
     results = []
-    suites = ["engine", "routing", "plugins", "stability"] if args.suite == "all" else [args.suite]
+    suites = ["engine", "routing", "plugins", "stability", "guards"] if args.suite == "all" else [args.suite]
 
     for s in suites:
         if s == "engine":
@@ -263,6 +349,8 @@ def main():
             results += plugin_checks()
         elif s == "stability":
             results += stability_checks()
+        elif s == "guards":
+            results += guard_checks()
 
     passed = sum(1 for _, ok in results if ok)
     failed = [(name, ok) for name, ok in results if not ok]

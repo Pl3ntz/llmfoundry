@@ -65,7 +65,7 @@ anti-delirium + human-voice, rotas para skills existentes.
 3. `opencode.json` atualizado (pdf-inspector documentado, firecrawl-mcp comentado)
 4. SKILLS.md + README atualizados
 5. Routing table do orquestrador atualizada
-6. Validação: 45+ frontmatters, 35/35 evals, CI green
+6. Validação: 45+ frontmatters, 44/44 evals, CI green
 7. **Entrega: worktree + branch + commits atômicos + PR documentada**
 
 ## Plano de execução
