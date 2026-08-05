@@ -3,14 +3,14 @@ import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 /**
  * LLMFoundry research-guard — enforces the research delegation policy.
  *
- * The orchestrator must delegate internet research to the deep-researcher
+ * The orchestrator must delegate internet research to the deep-researcher-v2
  * subagent. Direct webfetch/websearch calls from the ORCHESTRATOR bypass
  * source triangulation, confidence scoring, and correlation — the entire
  * research quality stack.
  *
  * This guard fires a recoverable warning ONLY when the research-looking call
  * comes from a root session (the orchestrator). Subagents run in child
- * sessions (Session.parentID set), so the deep-researcher does legitimate
+ * sessions (Session.parentID set), so the deep-researcher-v2 does legitimate
  * research without ever being nagged. Context7 and doc lookups pass silently.
  *
  * If LF_RESEARCH_STRICT=1 is set, the guard BLOCKS (throws) instead of
@@ -61,7 +61,7 @@ export async function server(input: PluginInput): Promise<Hooks> {
       if (isDocLookup(args)) return;
       if (!looksLikeResearch(args)) return;
 
-      // Subagents (deep-researcher) run in child sessions (parentID set).
+      // Subagents (deep-researcher-v2) run in child sessions (parentID set).
       // Their research is the whole point of the policy — never nag them.
       // Only a root session (the orchestrator fetching directly) is warned.
       let isChildSession = false;
@@ -80,7 +80,7 @@ export async function server(input: PluginInput): Promise<Hooks> {
       const msg =
         `[research-guard] Direct ${tool} detected in the root session. Per ` +
         `research policy, internet research must go through the ` +
-        `deep-researcher subagent (source triangulation + confidence ` +
+        `deep-researcher-v2 subagent (source triangulation + confidence ` +
         `scoring). Delegate this task.`;
 
       if (STRICT) {

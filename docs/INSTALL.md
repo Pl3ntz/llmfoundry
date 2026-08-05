@@ -32,7 +32,7 @@ Restart opencode. `ai-orchestrator` becomes the default agent.
 ```bash
 # agents present
 ls ~/.config/opencode/agents/
-# should include ai-orchestrator.md, deep-researcher.md, etc.
+# should include ai-orchestrator.md, deep-researcher-v2.md, etc.
 
 # opencode.json has the plugins and skills.paths
 cat ~/.config/opencode/opencode.json

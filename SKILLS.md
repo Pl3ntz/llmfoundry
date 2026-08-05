@@ -54,7 +54,7 @@
 | Agent | Use when |
 |-------|----------|
 | [ai-orchestrator](agents/ai-orchestrator.md) | **Default.** The Captain, interprets, discusses, delegates, synthesizes |
-| [deep-researcher](agents/deep-researcher.md) | Deep research with correlation |
+| [deep-researcher-v2](agents/deep-researcher-v2.md) | Deep research with correlation |
 | [ai-architect](agents/ai-architect.md) | Designing LLM system architecture |
 | [ai-evals-runner](agents/ai-evals-runner.md) | Building and running evals |
 | [llm-security-reviewer](agents/llm-security-reviewer.md) | Security review before shipping |
@@ -82,5 +82,5 @@
 
 ## Eval harness
 
-- [deep-researcher](evals/deep-researcher/), golden set + rubric (factual, myth,
+- [deep-researcher-v2](evals/deep-researcher-v2/), golden set + rubric (factual, myth,
   current-events, false-premise, OSINT). Run before changing the research agent.

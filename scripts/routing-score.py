@@ -22,7 +22,7 @@ PASS_THRESHOLD = 0.70
 
 # acceptable alternatives per expected route
 ALTERNATIVES = {
-    "deep-researcher": ["ai-research", "research"],
+    "deep-researcher-v2": ["ai-research", "research"],
     "ai-architect": ["architect"],
     "ai-evals-runner": ["evals"],
     "llm-security-reviewer": ["security"],

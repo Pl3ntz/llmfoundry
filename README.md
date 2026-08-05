@@ -69,7 +69,7 @@ Orch: Good, an MCP server. Let me specify:
 
       [ai-architect] returns a design with trade-offs
       [llm-security-reviewer] reviews prompt injection and exfiltration
-      [deep-researcher] validates the cited sources
+      [deep-researcher-v2] validates the cited sources
 
 Orch: 3 agents ran in parallel. Contradictions resolved.
       Here is the final plan, approved to implement.
@@ -125,7 +125,7 @@ What you get:    an orchestrator + 13 specialists + a memory that learns + gates
 ```
 You ──→ AI Orchestrator (the Captain) ──→ specialist subagents
               │
-              ├─ deep-researcher      (deep research with correlation + anti-injection)
+              ├─ deep-researcher-v2      (deep research with correlation + anti-injection)
               ├─ ai-architect         (LLM system design with trade-offs)
               ├─ ai-evals-runner      (prove it works)
               ├─ llm-security-reviewer(security before shipping)
@@ -207,7 +207,7 @@ Full catalog: [SKILLS.md](SKILLS.md)
 | Agent | Mode | Role |
 |-------|------|------|
 | [ai-orchestrator](agents/ai-orchestrator.md) | primary (default) | The Captain, interprets, discusses, delegates, synthesizes |
-| [deep-researcher](agents/deep-researcher.md) | subagent | Deep research with correlation + anti-injection |
+| [deep-researcher-v2](agents/deep-researcher-v2.md) | subagent | Deep research with correlation + anti-injection |
 | [ai-architect](agents/ai-architect.md) | subagent | LLM system architecture with trade-offs |
 | [ai-evals-runner](agents/ai-evals-runner.md) | subagent | Build and run evals |
 | [llm-security-reviewer](agents/llm-security-reviewer.md) | subagent | Security review of LLM apps |
@@ -235,7 +235,7 @@ Full catalog: [SKILLS.md](SKILLS.md)
 | `verify-guard.ts` | Flags conjecture-as-grounding (`probably`, `should be`, `i assume`) per anti-delirium |
 | `publish-guard.ts` | Injects mandatory human-voice + anti-delirium + standards gate into every system prompt |
 | `delegation-guard.ts` | Validates subagent spawns: 4 mandatory parts + routing table check |
-| `research-guard.ts` | Warns only when the ORCHESTRATOR fetches research directly; subagents (deep-researcher) research freely |
+| `research-guard.ts` | Warns only when the ORCHESTRATOR fetches research directly; subagents (deep-researcher-v2) research freely |
 
 ## Memory
 
@@ -336,7 +336,7 @@ SPEC → TDD → worktree → atomic commit.
 
 ## How we compare
 
-Honest numbers, sourced from a live deep-researcher pass over GitHub and npm (Aug 2026).
+Honest numbers, sourced from a live deep-researcher-v2 pass over GitHub and npm (Aug 2026).
 
 | Project | Stars | Focus | Gates | Anti-delirium | Evals | DeepSeek-first |
 |---------|-------|-------|-------|---------------|-------|----------------|

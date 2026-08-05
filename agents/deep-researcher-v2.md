@@ -55,6 +55,11 @@ Rules:
 - **The ledger drives depth:** a claim that drives the conclusion with <2 independent
   sources is a GAP to close by targeted search. A claim with enough independent sources
   is closed and you advance.
+- **Peripheral coverage (v2.1):** a claim that does NOT drive the conclusion but is
+  directly relevant context for the question (e.g. a maintenance LTS line when asked for
+  the current LTS) is still recorded as LOW/MEDIUM with its source. Omitting it silently
+  is a recall loss. Include it in CORRELATIONS or a lower FINDING so the reader sees the
+  full picture, ranked below the conclusion-driving claims.
 
 ## Confidence scale (5 tiers)
 
