@@ -18,6 +18,17 @@ const MEMORY_BIN =
   (process.env.HOME || "") + "/dev/llmfoundry/scripts/memory/foundry_memory.py";
 const PY = "python3";
 
+// Nome do projeto = diretorio da sessao (estilo Claude Code: cada projeto tem
+// a propria memoria, globais ficam em `default`). O PluginInput expoe o
+// diretorio real da sessao em `input.directory`, entao nao dependemos do cwd
+// do processo (que pode ser outro se o opencode rodou de um diretorio base).
+function projectName(input: PluginInput): string {
+  const dir = input?.directory || input?.project?.worktree || process.env.HOME || "";
+  const base = dir.split(/[\\/]/).filter(Boolean).pop() || "default";
+  const homeBase = (process.env.HOME || "").split(/[\\/]/).filter(Boolean).pop() || "";
+  return base === "root" || base === homeBase ? "default" : base;
+}
+
 async function run(args: string[]): Promise<string> {
   try {
     const p = Bun.spawnSync([PY, MEMORY_BIN, ...args], {
@@ -60,14 +71,14 @@ export async function server(input: PluginInput): Promise<Hooks> {
       if (/(^|&&|;)\s*git\s+commit\b/.test(cmd) && out) {
         const m = out.match(/(feat|fix|refactor|docs|test|chore|perf|ci)[^:]*:\s*[^\n]*/);
         if (m) {
-          await run(["remember", `commit: ${m[0]}`, "--container", "default", "--type", "commit"]);
+          await run(["remember", `commit: ${m[0]}`, "--container", "default", "--type", "commit", "--project", projectName(input)]);
         }
       }
     },
 
     // ---- RETRIEVE: inject recall preamble into the system prompt ----
     "experimental.chat.system.transform": async (_input, output) => {
-      const recall = await run(["recall", "--top", "5"]);
+      const recall = await run(["recall", "--top", "5", "--project", projectName(input)]);
       if (!recall.trim() || recall.includes("=== FINDINGS ===") === false) {
         return;
       }

@@ -439,12 +439,17 @@ def search(query, container=None, limit=10):
     return out
 
 
-def recall(container=None, top=5):
+def recall(container=None, top=5, project=None):
     """Recall the most relevant context for a preamble.
 
     Returns open findings, recent gotchas, AND the most relevant memories and
     facts of the container, so imported knowledge enters agent context
     automatically instead of only via explicit search.
+
+    Quando `project` e passado (estilo Claude Code), memories/facts buscam as
+    do projeto MAIS as globais (project NULL ou 'default'), deduplicadas e com
+    prioridade para as do projeto. Gotchas e findings permanecem por container:
+    sao padroes tecnicos transversais, nao conhecimento de projeto.
     """
     con = _conn()
     try:
@@ -458,18 +463,47 @@ def recall(container=None, top=5):
         gotchas = con.execute(
             f"SELECT * FROM gotchas {gw} ORDER BY count DESC LIMIT ?", params + (top,)
         ).fetchall()
-        # memories: most relevant by confidence+recency, capped at top
-        mw = "WHERE 1=1" + (" AND container=?" if container else "")
-        memories = con.execute(
-            f"SELECT * FROM memories {mw} ORDER BY confidence DESC, reinforced_count DESC, created_at DESC LIMIT ?",
-            params + (top,),
-        ).fetchall()
-        # facts: profile facts most reinforced, capped at top
-        fw = "WHERE 1=1" + (" AND container=?" if container else "")
-        facts = con.execute(
-            f"SELECT * FROM memory_facts {fw} ORDER BY reinforced_count DESC, confidence DESC, created_at DESC LIMIT ?",
-            params + (top,),
-        ).fetchall()
+        if project:
+            # memórias: do projeto primeiro, globais em segundo. Dedup por id,
+            # e o projeto sempre ganha a vaga se empatar com uma global.
+            # container opcional: sem container, busca em todos; com, filtra.
+            if container:
+                mw = (
+                    "WHERE 1=1 AND container=?"
+                    " AND (project=? OR project IS NULL OR project='default')"
+                )
+                memories = con.execute(
+                    f"SELECT * FROM memories {mw} "
+                    "ORDER BY CASE WHEN project=? THEN 0 ELSE 1 END, "
+                    "confidence DESC, reinforced_count DESC, created_at DESC LIMIT ?",
+                    (container, project, project, top),
+                ).fetchall()
+            else:
+                mw = "WHERE 1=1 AND (project=? OR project IS NULL OR project='default')"
+                memories = con.execute(
+                    f"SELECT * FROM memories {mw} "
+                    "ORDER BY CASE WHEN project=? THEN 0 ELSE 1 END, "
+                    "confidence DESC, reinforced_count DESC, created_at DESC LIMIT ?",
+                    (project, project, top),
+                ).fetchall()
+            # facts sao perfil transversal (nao tem coluna project): ficam por
+            # container, como o CLAUDE.md global do Claude Code.
+            fw = "WHERE 1=1" + (" AND container=?" if container else "")
+            facts = con.execute(
+                f"SELECT * FROM memory_facts {fw} ORDER BY reinforced_count DESC, confidence DESC, created_at DESC LIMIT ?",
+                params + (top,),
+            ).fetchall()
+        else:
+            mw = "WHERE 1=1" + (" AND container=?" if container else "")
+            memories = con.execute(
+                f"SELECT * FROM memories {mw} ORDER BY confidence DESC, reinforced_count DESC, created_at DESC LIMIT ?",
+                params + (top,),
+            ).fetchall()
+            fw = "WHERE 1=1" + (" AND container=?" if container else "")
+            facts = con.execute(
+                f"SELECT * FROM memory_facts {fw} ORDER BY reinforced_count DESC, confidence DESC, created_at DESC LIMIT ?",
+                params + (top,),
+            ).fetchall()
         return {
             "findings": [dict(r) for r in findings],
             "gotchas": [dict(r) for r in gotchas],
@@ -599,6 +633,7 @@ def main():
 
     p = sub.add_parser("recall", help="recall open findings + gotchas for preamble")
     p.add_argument("--container"); p.add_argument("--top", type=int, default=5)
+    p.add_argument("--project", help="nome do projeto/diretorio (estilo Claude Code): traz memories/facts do projeto + globais")
 
     p = sub.add_parser("log-recall", help="log a recall event")
     p.add_argument("--container", required=True); p.add_argument("--by", default="unknown")
@@ -630,7 +665,7 @@ def main():
         for m in search(args.query, args.container, args.limit):
             print(f"[{m['id']}] [{m['memory_type']}] {m['content'][:120]}")
     elif args.cmd == "recall":
-        data = recall(args.container, args.top)
+        data = recall(args.container, args.top, args.project)
         print("=== FINDINGS ===")
         for f in data["findings"]:
             sev = f["severity"]
