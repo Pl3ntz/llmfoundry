@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "captured": "2026-08-01",
+  "captured": "2026-08-05",
   "suite": "eval-runner.py",
-  "checks": 35,
-  "passed": 35,
+  "checks": 60,
+  "passed": 60,
   "percent": 100,
-  "note": "The number to beat. Any change that drops below this fails the regression gate. Includes recall memories+facts checks."
+  "note": "The number to beat. Any change that drops below this fails the regression gate. Includes recall memories+facts checks. Regenerated 2026-08-05: runner now has 6 suites (engine, routing, plugins, stability, guards, drv2)."
 }
