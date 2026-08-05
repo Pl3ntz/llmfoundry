@@ -208,7 +208,7 @@ _DG_MISROUTE = [
      ["deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer"]),
 ]
 _DG_RESEARCH_SIGNALS = _re.compile(r"\b(?:research|compare|landscape|market|competitor|industry|OSINT|recon|pesquis\w*)\b", _re.I)
-_DG_AGENT_MENTION = _re.compile(r"\b(?:deep-researcher|ai-architect|ai-evals-runner|llm-security-reviewer|reverse-engineer|platform-engineer|backend-architect|api-contract-engineer|database-engineer|data-model-engineer|red-team-agent|security-defensive|bug-bounty-hunter|recon-agent|report-agent|triage-agent|general|explore)\b", _re.I)
+_DG_AGENT_MENTION = _re.compile(r"\b(?:deep-researcher|deep-researcher-v2|ai-architect|ai-evals-runner|llm-security-reviewer|reverse-engineer|platform-engineer|backend-architect|api-contract-engineer|database-engineer|data-model-engineer|red-team-agent|security-defensive|bug-bounty-hunter|recon-agent|report-agent|triage-agent|general|explore)\b", _re.I)
 
 # mirror of research-guard.ts
 _RG_RESEARCH = _re.compile(r"\b(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon|vs\.?\.?\s+alternatives?)\b", _re.I)
@@ -366,15 +366,93 @@ def stability_checks():
 
 
 # ----------------------------------------------------------------------------
+# deep-researcher-v2: synthetic haystack eval (deterministic, offline)
+
+def drv2_checks():
+    """Synthetic-haystack scoring for the v2 research agent.
+
+    Simulates a corpus with planted needles (facts) hidden among noise and
+    scores a candidate output: recall (did it find the needles?), fabrication
+    (did it report claims that match no source?), and VERIFIED integrity
+    (did every VERIFIED claim carry a source whose content actually matches?).
+    """
+    import importlib.util
+    import sys as _sys
+
+    _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    spec = importlib.util.spec_from_file_location(
+        "research_scorer", os.path.join(os.path.dirname(os.path.abspath(__file__)), "research_scorer.py")
+    )
+    rs = importlib.util.module_from_spec(spec)
+    _sys.modules["research_scorer"] = rs  # required: dataclass resolution needs __module__ in sys.modules
+    spec.loader.exec_module(rs)
+
+    results = []
+
+    needles = [
+        rs.Needle("n1", "O Satelite Kepler-186f orbita uma estrela anã vermelha a 490 anos-luz da Terra",
+                  "https://exo.example.org/kepler186f", "Kepler-186f is a planet orbiting a red dwarf star at 490 light-years."),
+        rs.Needle("n2", "O preco do Bytecoing caiu 22 por cento em 2024 por causa de regulacao",
+                  "https://crypto.example.org/bytecoing-2024", "Bytecoing fell 22% in 2024 amid tightening regulation."),
+        rs.Needle("n3", "A proteina TCMP-9 reverte fibrose pulmonar em camundongos",
+                  "https://bio.example.org/tcmp9", "TCMP-9 reversed pulmonary fibrosis in mice."),
+    ]
+
+    # --- Case 1: perfect recall, no fabrication, VERIFIED with matching source
+    good_output = [
+        "O Satelite Kepler-186f orbita uma estrela anã vermelha a 490 anos-luz da Terra",
+        "O preco do Bytecoing caiu 22 por cento em 2024 por causa de regulacao",
+        "A proteina TCMP-9 reverte fibrose pulmonar em camundongos",
+    ]
+    good_sources = {
+        "https://exo.example.org/kepler186f": "A estrela anã vermelha é pequena. O Satelite Kepler-186f orbita uma estrela anã vermelha a 490 anos-luz da Terra, segundo a equipe.",
+        "https://crypto.example.org/bytecoing-2024": "O preco do Bytecoing caiu 22 por cento em 2024 por causa de regulacao, informou o relatorio.",
+        "https://bio.example.org/tcmp9": "A proteina TCMP-9 reverte fibrose pulmonar em camundongos, conforme os experimentos de laboratorio.",
+    }
+    r = rs.score_haystack(needles, good_output, good_output, good_sources)
+    results.append(("drv2: recall 3/3 no palheiro sintetico", r.recall == 1.0))
+    results.append(("drv2: zero fabricacoes em output correto", r.fabrication_rate == 0.0))
+    results.append(("drv2: VERIFIED com fonte real = 0 violacoes", r.verified_bad == 0))
+
+    # --- Case 2: missed needle (recall loss) + a fabricated claim
+    partial_output = [
+        "O Satelite Kepler-186f orbita uma estrela anã vermelha a 490 anos-luz da Terra",
+        "O governo do Brasil declarou independencia financeira total em 2025",  # fabricated
+    ]
+    partial_sources = {"https://exo.example.org/kepler186f": "Kepler-186f is a planet orbiting a red dwarf star at 490 light-years."}
+    r = rs.score_haystack(needles, partial_output, [], partial_sources)
+    results.append(("drv2: recall 1/3 quando agente perde agulhas", r.recall == 1 / 3))
+    results.append(("drv2: claim fabricada e detectada", r.fabrication_rate > 0))
+
+    # --- Case 3: VERIFIED label with a source that does NOT contain the claim
+    lying_output = ["O preco do Bytecoing caiu 22 por cento em 2024 por causa de regulacao"]
+    lying_sources = {"https://crypto.example.org/bytecoing-2024": "Page not found."}  # content mismatch
+    r = rs.score_haystack(needles, lying_output, lying_output, lying_sources)
+    results.append(("drv2: VERIFIED com fonte sem conteudo = violacao", r.verified_bad >= 1))
+
+    # --- Case 4: noise is not confused with a needle (no false positive on garbage)
+    noise_output = ["O clima em Marte esta agradavel esta semana, dizem os cientistas"]
+    r = rs.score_haystack(needles, noise_output, [], {})
+    results.append(("drv2: ruido puro = recall 0, nao fabrica a partir de nada", r.recall == 0.0 and len(r.fabricated) >= 1))
+
+    # --- Case 5: paraphrase is still found (order/synonym drift), distant claim is not
+    paraphrase = ["O Bytecoing caiu 22 por cento em 2024 devido a nova regulacao de criptomoedas"]
+    r = rs.score_haystack(needles, paraphrase, [], {})
+    results.append(("drv2: parafrase proxima conta como encontrada", r.recall == 1 / 3 and not r.fabricated))
+
+    return results
+
+
+# ----------------------------------------------------------------------------
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--suite", choices=["engine", "routing", "plugins", "stability", "guards", "all"], default="all")
+    ap.add_argument("--suite", choices=["engine", "routing", "plugins", "stability", "guards", "drv2", "all"], default="all")
     ap.add_argument("--baseline", action="store_true", help="print current state")
     args = ap.parse_args()
 
     results = []
-    suites = ["engine", "routing", "plugins", "stability", "guards"] if args.suite == "all" else [args.suite]
+    suites = ["engine", "routing", "plugins", "stability", "guards", "drv2"] if args.suite == "all" else [args.suite]
 
     for s in suites:
         if s == "engine":
@@ -387,6 +465,8 @@ def main():
             results += stability_checks()
         elif s == "guards":
             results += guard_checks()
+        elif s == "drv2":
+            results += drv2_checks()
 
     passed = sum(1 for _, ok in results if ok)
     failed = [(name, ok) for name, ok in results if not ok]

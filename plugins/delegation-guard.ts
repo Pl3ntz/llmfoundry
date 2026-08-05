@@ -73,7 +73,7 @@ const RESEARCH_SIGNALS = /\b(?:research|compare|landscape|market|competitor|indu
 // over the same topic), not misrouting a single task. Agent names there are
 // TOPICS, not the task target, so misroute rules must not fire.
 const AGENT_NAMES = [
-  "deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer",
+  "deep-researcher", "deep-researcher-v2", "ai-architect", "ai-evals-runner", "llm-security-reviewer",
   "reverse-engineer", "platform-engineer", "backend-architect", "api-contract-engineer",
   "database-engineer", "data-model-engineer", "red-team-agent", "security-defensive",
   "bug-bounty-hunter", "recon-agent", "report-agent", "triage-agent", "general", "explore",
