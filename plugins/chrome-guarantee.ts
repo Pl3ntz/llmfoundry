@@ -1,7 +1,7 @@
 import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 
 /**
- * LLMFoundry chrome-guarantee — makes sure the chrome-devtools MCP always
+ * LLMFoundry chrome-guarantee: makes sure the chrome-devtools MCP always
  * connects to YOUR Chrome (with logins), never a separate clean one.
  *
  * Problem: --autoConnect only works when the Chrome DevToolsActivePort file
@@ -12,7 +12,7 @@ import type { Hooks, PluginInput } from "@opencode-ai/plugin";
  * is alive. If not, restart YOUR Chrome (chrome-debug-profile, with logins)
  * with the debug port, then the MCP connects to it.
  *
- * Profile: ~/chrome-debug-profile — your personal profile with logins.
+ * Profile: ~/chrome-debug-profile, your personal profile with logins.
  */
 
 import { execSync } from "node:child_process";
