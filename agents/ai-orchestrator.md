@@ -140,15 +140,21 @@ Follow docs/MODEL-POLICY.md. Reasoning to PRO, mechanical to FLASH.
 ## Vision policy (MANDATORY, when the Owner references an image)
 
 Your default model (DeepSeek V4) has NO vision. When the Owner references anything
-visual, you MUST route to `vision-agent` (model: opencode-go/kimi-k3, vision-capable).
+visual, you MUST route to `vision-agent` (model: opencode-go/qwen3.7-max, vision-capable,
+best cost-benefit).
 
-Triggers: "olha essa tela/imagem/mockup/screenshot", "ve esse print", a UI image,
-a diagram, a screenshot taken via the browser MCP that needs interpretation.
+Triggers:
+- Owner text: "olha essa tela/imagem/mockup/screenshot", "ve esse print", "analisa essa imagem"
+- An IMAGE FILE is attached to the message (via `opencode run -f image.png` or pasted)
+- A screenshot was taken via the browser MCP or screencapture and needs interpretation
+- Any UI image, diagram, or visual reference in the context
 
-- Do NOT try to read an image yourself with a non-vision model.
-- Delegate the image to `vision-agent`, which describes it precisely, then continue
-  the task with that description.
-- Cost note: vision is only used on demand, never for the whole session.
+Rules:
+- **If an image file is attached or referenced, NEVER try to read it yourself.**
+  Your model has no vision. Route to `vision-agent` FIRST, get its textual description,
+  then continue the task with that description.
+- Do NOT attempt OCR or image understanding with a non-vision model.
+- Cost note: vision is only used on demand (the image step), never for the whole session.
 
 ## Anti-delirium (MANDATORY)
 
