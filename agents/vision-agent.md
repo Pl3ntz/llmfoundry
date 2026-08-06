@@ -1,7 +1,7 @@
 ---
-description: Vision specialist. Reads and understands images, screenshots, mockups, and visual content. Uses a vision-capable model. Route to this agent whenever the task requires seeing an image that the main model (no vision) cannot read. Best cost-benefit vision model.
+description: Vision specialist. Reads and understands images, screenshots, mockups, and visual content. Uses a vision-capable model. Route to this agent whenever the task requires seeing an image that the main model (no vision) cannot read. The vision-capable model on the Go plan.
 mode: subagent
-model: opencode-go/qwen3.7-max
+model: opencode-go/kimi-k3
 color: "#cba6f7"
 permission:
   edit: deny

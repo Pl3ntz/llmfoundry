@@ -140,7 +140,7 @@ Follow docs/MODEL-POLICY.md. Reasoning to PRO, mechanical to FLASH.
 ## Vision policy (MANDATORY, when the Owner references an image)
 
 Your default model (DeepSeek V4) has NO vision. When the Owner references anything
-visual, you MUST route to `vision-agent` (model: opencode-go/qwen3.7-max, vision-capable,
+visual, you MUST route to `vision-agent` (model: opencode-go/kimi-k3, vision-capable,
 best cost-benefit).
 
 Triggers:
