@@ -67,7 +67,6 @@
     ]
   },
   "plugin": [
-    "/Users/vplentz/dev/llmfoundry/plugins/chrome-guarantee.ts",
-    "/Users/vplentz/dev/llmfoundry/plugins/vision-relay.ts"
+    "/Users/vplentz/dev/llmfoundry/plugins/chrome-guarantee.ts"
   ]
 }
