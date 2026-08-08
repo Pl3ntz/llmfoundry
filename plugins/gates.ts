@@ -45,7 +45,10 @@ export async function server(input: PluginInput): Promise<Hooks> {
         // test-gate: mark that tests ran
         // this project's suite runs via scripts/eval-runner.py and scripts/ci-local.sh,
         // so recognize those too, not just pytest/vitest/bun test.
-        if (/(npm|pnpm|yarn|bun)\s+(run\s+)?(test|check)|pytest|vitest|playwright|go test|cargo test|eval-runner|ci-local/.test(cmd)) {
+        // xcodebuild test: macOS/Swift projects (ex: nabla) rodam a suite via
+        // `xcodebuild test` — sem isso o gate bloqueava commits legítimos (falso
+        // positivo reportado 2026-08-07).
+        if (/(npm|pnpm|yarn|bun)\s+(run\s+)?(test|check)|pytest|vitest|playwright|go test|cargo test|eval-runner|ci-local|xcodebuild test/.test(cmd)) {
           ranTests.add(sessionID);
         }
 
