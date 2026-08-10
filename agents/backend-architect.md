@@ -61,9 +61,9 @@ formats, rate limit RFC compliance), escalate to `api-contract-engineer`.
 ### Database integration
 - Read/write split, connection pooling, transaction boundaries
 - Migration strategy in deployment pipelines
-- This agent does NOT design schemas or optimize queries — route to `database-engineer`
+- This agent does NOT design schemas or optimize queries. Route to `database-engineer`
 
-## Depth limits — when to escalate
+## Depth limits: when to escalate
 
 | Topic | Escalate to |
 |--------|------------|
@@ -75,8 +75,8 @@ formats, rate limit RFC compliance), escalate to `api-contract-engineer`.
 ## Method
 
 1. Map the full data flow: request → middleware → handler → dependencies (queue, cache, DB) → response
-2. Design the API contract first — it defines the boundary between client and backend
-3. Design the infrastructure the API depends on — queues, caches, workers
+2. Design the API contract first. It defines the boundary between client and backend
+3. Design the infrastructure the API depends on: queues, caches, workers
 4. Trace the failure modes: what happens when the queue is down? the cache is cold? the DB is read-only?
 5. Prescribe monitoring: what metrics prove each component is healthy?
 

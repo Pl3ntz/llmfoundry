@@ -1,15 +1,15 @@
 import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 
 /**
- * LLMFoundry gates — execution guards. Enforcement lives outside the model.
+ * LLMFoundry gates: execution guards. Enforcement lives outside the model.
  * Rules the model merely reads are guidance; these hooks are controls.
  *
- * Gates (block by throwing — the documented veto mechanism):
+ * Gates (block by throwing, the documented veto mechanism):
  * - test-gate:  blocks `git commit` when the full test suite has not run this session
  * - env-guard:  blocks staging .env or secret files
  * - egress-guard: blocks outbound fetch/search carrying secrets or infra identifiers
  *
- * Every gate has an escape hatch (LF_GATES_OFF=1) — a gate that blocks everything
+ * Every gate has an escape hatch (LF_GATES_OFF=1). A gate that blocks everything
  * trains you to disable it.
  */
 
@@ -46,7 +46,7 @@ export async function server(input: PluginInput): Promise<Hooks> {
         // this project's suite runs via scripts/eval-runner.py and scripts/ci-local.sh,
         // so recognize those too, not just pytest/vitest/bun test.
         // xcodebuild test: macOS/Swift projects (ex: nabla) rodam a suite via
-        // `xcodebuild test` — sem isso o gate bloqueava commits legítimos (falso
+        // `xcodebuild test`. Sem isso o gate bloqueava commits legítimos (falso
         // positivo reportado 2026-08-07).
         if (/(npm|pnpm|yarn|bun)\s+(run\s+)?(test|check)|pytest|vitest|playwright|go test|cargo test|eval-runner|ci-local|xcodebuild test/.test(cmd)) {
           ranTests.add(sessionID);

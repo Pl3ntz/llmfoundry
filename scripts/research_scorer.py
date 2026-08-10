@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""research-scorer.py — deterministic recall/fabrication scorer for deep-researcher.
+"""research-scorer.py: deterministic recall/fabrication scorer for deep-researcher.
 
 Simulates a "synthetic haystack": a known corpus with planted needles (facts)
 hidden among noise, plus a candidate research output. Scores how many needles
@@ -138,7 +138,7 @@ def score_haystack(
     - found: needle whose canonical claim appears (fuzzy) in the agent's claims.
     - missed: needle not found.
     - fabricated: agent claim that does not match ANY needle's canonical claim
-      (i.e., an unsupported claim — a needle could be "planted" that is not in
+      (i.e., an unsupported claim. A needle could be "planted" that is not in
       the corpus, representing confabulation).
     - verified_bad: claim marked VERIFIED whose source content does NOT contain
       the claim text (fabrication hidden behind a VERIFIED label).

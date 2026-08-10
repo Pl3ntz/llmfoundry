@@ -1,7 +1,7 @@
 import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 
 /**
- * LLMFoundry publish-guard — the output quality gate.
+ * LLMFoundry publish-guard: the output quality gate.
  *
  * Problem: voice-guard and verify-guard only scan file output (write/edit).
  * Chat output (emails, posts, messages, analysis) went unprotected. This
@@ -18,7 +18,7 @@ import type { Hooks, PluginInput } from "@opencode-ai/plugin";
  *   anti-delirium: conjecture-as-grounding, missing confidence markers
  *   ai-engineering-standards: preamble/closing filler, hedging
  *
- * Distilled from 3 skill files to fit in <300 tokens — the model carries
+ * Distilled from 3 skill files to fit in <300 tokens. The model carries
  * the full skills in context; this is the enforcement trigger.
  */
 

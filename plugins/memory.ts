@@ -1,7 +1,7 @@
 import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 
 /**
- * LLMFoundry memory plugin — the runtime of the living feedback loop.
+ * LLMFoundry memory plugin: the runtime of the living feedback loop.
  *
  * FEED (encode): observes tool executions and captures structured signals:
  *   - bash failure output → gotcha
@@ -9,9 +9,9 @@ import type { Hooks, PluginInput } from "@opencode-ai/plugin";
  *
  * CONSUME (retrieve): injects the recall preamble into the system prompt via
  *   experimental.chat.system.transform, so the model sees relevant open
- *   findings + recurring gotchas before acting — like human recall.
+ *   findings + recurring gotchas before acting, like human recall.
  *
- * Local-only. Data lives in ~/.local/share/llmfoundry/memory/ — never versioned.
+ * Local-only. Data lives in ~/.local/share/llmfoundry/memory/, never versioned.
  */
 
 const MEMORY_BIN =

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""routing-runner.py — run the orchestrator routing golden-set against a live model.
+"""routing-runner.py: run the orchestrator routing golden-set against a live model.
 
 For each question in evals/orchestrator/golden-set.json, invokes
 `opencode run --model <model> --pure` with a condensed routing table and asks for a

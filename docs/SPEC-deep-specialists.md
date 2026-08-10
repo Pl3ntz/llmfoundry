@@ -1,6 +1,6 @@
-# Deep Specialists — SPEC
+# Deep Specialists: SPEC
 
-**Status:** ✅ Implementado (2026-08-03) — Fleet redesenhado: 14 agentes
+**Status:** ✅ Implementado (2026-08-03). Fleet redesenhado: 14 agentes
 **Autor:** vplentz
 **Data:** 2026-08-02 (spec), 2026-08-03 (implementação + redesign)
 **Complexidade:** Médio

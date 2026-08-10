@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""foundry-memory — local-only memory engine for LLMFoundry.
+"""foundry-memory: local-only memory engine for LLMFoundry.
 
 Living feedback loop: agents/skills/commands feed it (encode) and consume it
 (retrieve). Encode → Consolidate → Retrieve → Reconsolidate, like human memory.
@@ -22,7 +22,7 @@ PROJECTS_DIR = os.path.join(DB_DIR, "projects")
 EMBED_CACHE = os.path.join(os.environ.get("HOME", os.path.expanduser("~")), ".cache", "fastembed")
 
 # Optional semantic layer (local ONNX embeddings via fastembed). Falls back to
-# lexical-only (FTS5) if fastembed is not installed — graceful degradation.
+# lexical-only (FTS5) if fastembed is not installed. Graceful degradation.
 EMBED_MODEL = os.environ.get("FOUNDRY_EMBED_MODEL", "BAAI/bge-small-en-v1.5")
 _semantic = None
 _semantic_enabled = False
@@ -571,7 +571,7 @@ def promote(container, dry_run=False):
         os.makedirs(PROJECTS_DIR, exist_ok=True)
         gotchas_path = os.path.join(PROJECTS_DIR, container, "GOTCHAS.md")
         os.makedirs(os.path.dirname(gotchas_path), exist_ok=True)
-        lines = ["# GOTCHAS — local (never committed)", ""]
+        lines = ["# GOTCHAS: local (never committed)", ""]
         changed = 0
         for r in rows:
             lines.append(f"- **{r['normalized_pattern']}** (x{r['count']}, {r['category']})")

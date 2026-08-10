@@ -1,4 +1,4 @@
-# Security + Dev Team Agents & PDF Tooling — SPEC
+# Security + Dev Team Agents & PDF Tooling: SPEC
 
 **Status:** Aprovado para implementação
 **Autor:** vplentz
@@ -27,7 +27,7 @@
   (0.875 vs 0.735 do pymupdf), 100% local, MIT.
 - Tudo gratuito. Nada pago.
 
-## Escopo — Agentes (3)
+## Escopo: Agentes (3)
 
 | Agente | Mode | Papel | Roteia para |
 |--------|------|-------|-------------|
@@ -38,7 +38,7 @@
 Cada agente: `model: opencode-go/deepseek-v4-pro`, `edit: deny`, `bash: ask`,
 anti-delirium + human-voice, rotas para skills existentes.
 
-## Escopo — PDF tooling
+## Escopo: PDF tooling
 
 **pdf-inspector (MIT, gratuito, 5.3k stars):**
 - Ferramenta para extrair texto/Markdown de PDFs localmente (<200ms)
@@ -47,7 +47,7 @@ anti-delirium + human-voice, rotas para skills existentes.
 - Adicionar como skill `pdf-processing` no LLMFoundry (instrução de uso) + nota no README
 
 **firecrawl-mcp-server (MIT, gratuito, 7.1k stars):**
-- MCP opcional no `opencode.json` (comentado por padrão — requer FIRE_CRAWL_API_KEY)
+- MCP opcional no `opencode.json` (comentado por padrão; requer FIRE_CRAWL_API_KEY)
 - Usa a API firecrawl (pode ter custo de uso, mas o servidor MCP é MIT/gratuito)
 
 ## Fora de escopo
@@ -56,7 +56,7 @@ anti-delirium + human-voice, rotas para skills existentes.
 - NÃO duplicar conteúdo do `uphiago/recon-skills`
 - NÃO executar testes ofensivos em alvos não autorizados
 - NÃO usar nada pago (apiKey paga só se o usuário optar no firecrawl)
-- Fase 2: full-stack specialists (frontend/backend/database) — depois desta PR
+- Fase 2: full-stack specialists (frontend/backend/database), depois desta PR
 
 ## Critérios de sucesso
 

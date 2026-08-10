@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""gen-agents-md.py — generate a short AGENTS.md for a project from its imported memory.
+"""gen-agents-md.py: generate a short AGENTS.md for a project from its imported memory.
 
 Reads the LLMFoundry memory container for a project and writes a compact
 AGENTS.md into the project directory, summarizing the top memories as context.
