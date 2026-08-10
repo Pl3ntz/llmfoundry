@@ -153,12 +153,12 @@ não como guard de bloco (guard pega no vôo, eval mede no tempo).
 ## Pendências de backlog (deep-researcher)
 
 - [x] ~~`deep-researcher.md:4` usa modelo PAGO~~ — **RESOLVIDO** [VERIFIED, agents/deep-researcher.md:4]
-- [ ] Deep-researcher: sem teto de iterações ("No fixed cycle ceiling", deep-researcher.md:161)
-      → propor máx. 12 websearch + 8 webfetch por missão; estouro vira GAP.
-- [ ] Deep-researcher: ledger morre no fim da missão → persistir resumo na foundry-memory
-      (pergunta → claims → gaps → fontes); missão nova consulta "onde paramos".
-- [ ] Deep-researcher: superfície curta (só websearch + webfetch) → allow explícito de
-      chrome-devtools/playwright + curl GET somente-leitura em APIs públicas (regra OSINT estendida).
+- [x] ~~Sem teto de iterações~~ — **RESOLVIDO (2026-08-10)**: máx. 12 websearch + 8 webfetch,
+      estouro vira GAP com tag `[CEILING-FORCED]` (agents/deep-researcher.md ITERATE/CEILING)
+- [x] ~~Ledger morre no fim da missão~~ — **RESOLVIDO (2026-08-10)**: LEDGER PERSIST grava resumo
+      (pergunta → claims → gaps → fontes) na foundry-memory; missão nova consulta "onde paramos"
+- [x] ~~Superfície curta (só websearch + webfetch)~~ — **RESOLVIDO (2026-08-10)**: `curl GET`
+      somente-leitura em APIs públicas + chrome-devtools/playwright (OSINT estendido)
 
 ## Fato técnico verificado (referência)
 
