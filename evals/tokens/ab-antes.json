@@ -1,0 +1,31 @@
+{
+  "nome": "AB-antes-v0.3",
+  "gerado_em": "2026-08-10T13:10:00Z",
+  "modelo": "opencode/deepseek-v4-flash-free",
+  "protocolo": "golden-set 12 queries, 1 amostra cada, routing-runner.py",
+  "resultado_qualidade": {
+    "passed": "12/12",
+    "route_stable": "12/12",
+    "gate_rate_medio": 0.97,
+    "detalhes": {
+      "RS-1": "deep-researcher", "RS-2": "ai-architect", "RS-3": "ai-evals-runner",
+      "RS-4": "llm-security-reviewer", "RS-5": "direct", "RS-6": "interview",
+      "RS-7": "build", "RS-8": "deep-researcher", "RS-9": "llm-security-reviewer",
+      "RS-10": "ai-architect", "RS-11": "direct", "RS-12": "build+llm-security-reviewer"
+    }
+  },
+  "resultado_tokens": {
+    "metodo": "sessoes routing-eval-* no opencode.db (2h)",
+    "n_sessoes": 13,
+    "avg_input_por_sessao": 173,
+    "avg_output_por_sessao": 297,
+    "tot_input": 2243,
+    "tot_output": 3858,
+    "nota": "runner usa --pure com prompt condensado; nao representa o custo fixo de sessao normal"
+  },
+  "piso_fixo_por_turno": {
+    "antes": 18000,
+    "depois_estimado": 17000,
+    "nota": "AGENTS.md 1.4K->544 + skills locais 1.7K->1.48K; medidas por turno reais pendentes"
+  }
+}
