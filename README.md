@@ -264,6 +264,32 @@ LLMFoundry runs **100% on the free model** — zero cost, no quota limits, no ra
 loop. Mode rule: **ambiguity or stakes → PLAN first, clear + approved → BUILD**.
 See [docs/MODEL-POLICY.md](docs/MODEL-POLICY.md).
 
+## Token Economy (2026-08-10)
+
+Measured baseline from the opencode.db (660 sessions, `scripts/cost-snapshot.sh`):
+**325.7M input, 6.3M output (2%), 3.53B cache_read, $61.96 historical**. The bottleneck
+is INPUT + CACHE, not output. Optimizations adopted:
+
+1. **Fixed floor per turn** was ~18K tokens (AGENTS.md 1.4K + system prompt 2.9K +
+   175 skill descriptions ~11.6K) → reduced via lean AGENTS.md (544) and SkillReducer
+   on the 30 local skill descriptions (12% cut). The 145 global skills remain pending
+   (they affect other projects).
+2. **Cache-friendly ordering**: stable context first (AGENTS.md, system prompt,
+   invariants) — DeepSeek gives ~98% discount on cache hits; a stable prefix maximizes
+   hits in long sessions.
+3. **Cross-session reuse**: deep-researcher persists a ledger to foundry-memory
+   (question → claims → gaps → sources); a new mission queries "where we left off"
+   instead of re-searching (largest real economy).
+4. **Giant sessions are redesign, not threshold**: a 2,250-turn loop (98M input, 970M
+   cache) is a pipeline in disguise → subagents with isolated context, compaction at
+   70-80% of the window, never prose summaries.
+5. **Iteration cap**: deep-researcher max 12 websearch + 8 webfetch; overflow becomes
+   a GAP tagged `[CEILING-FORCED]`.
+6. **Measure before/after**: `scripts/cost-snapshot.sh` freezes baseline
+   (`evals/tokens/`); A/B with N≥10 sessions on the 12 golden-set queries, requiring
+   delta ≥0 in route stability and veracity (`verified_bad` counts). Economy without a
+   quality gate is invalid.
+
 ---
 
 ## Repository Structure
