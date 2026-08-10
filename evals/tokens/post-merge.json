@@ -1,0 +1,359 @@
+{
+  "gerado_em": "2026-08-10T12:15:48.451493+00:00",
+  "fonte": "/Users/vplentz/dev/llmfoundry-token-econ/evals/tokens/opencode-snapshot.db",
+  "total_historico": {
+    "sessoes": 670,
+    "input": 326884323,
+    "output": 6598402,
+    "reasoning": 2044075,
+    "cache_read": 3563423393,
+    "cache_write": 97919,
+    "custo_usd": 62.0346
+  },
+  "ultimos_14_dias": [
+    {
+      "dia": "2026-08-10",
+      "sessoes": 28,
+      "input": 1637656,
+      "output": 216678,
+      "cache_read": 32761088,
+      "custo": 0.1874
+    },
+    {
+      "dia": "2026-08-09",
+      "sessoes": 11,
+      "input": 16176451,
+      "output": 875642,
+      "cache_read": 96780800,
+      "custo": 0.0
+    },
+    {
+      "dia": "2026-08-08",
+      "sessoes": 174,
+      "input": 1961265,
+      "output": 54589,
+      "cache_read": 6476288,
+      "custo": 0.0
+    },
+    {
+      "dia": "2026-08-07",
+      "sessoes": 50,
+      "input": 2190754,
+      "output": 109182,
+      "cache_read": 20514944,
+      "custo": 0.0
+    },
+    {
+      "dia": "2026-08-06",
+      "sessoes": 39,
+      "input": 5427994,
+      "output": 383789,
+      "cache_read": 51385453,
+      "custo": 1.4589
+    },
+    {
+      "dia": "2026-08-05",
+      "sessoes": 144,
+      "input": 24485545,
+      "output": 775001,
+      "cache_read": 259459874,
+      "custo": 4.1786
+    },
+    {
+      "dia": "2026-08-04",
+      "sessoes": 20,
+      "input": 48473543,
+      "output": 869561,
+      "cache_read": 640072064,
+      "custo": 10.2438
+    },
+    {
+      "dia": "2026-08-03",
+      "sessoes": 95,
+      "input": 48407731,
+      "output": 1051115,
+      "cache_read": 275417423,
+      "custo": 8.1084
+    },
+    {
+      "dia": "2026-08-02",
+      "sessoes": 25,
+      "input": 126332590,
+      "output": 1294268,
+      "cache_read": 1248606099,
+      "custo": 25.6824
+    },
+    {
+      "dia": "2026-08-01",
+      "sessoes": 82,
+      "input": 51730557,
+      "output": 968063,
+      "cache_read": 931920992,
+      "custo": 12.1657
+    },
+    {
+      "dia": "2026-07-31",
+      "sessoes": 2,
+      "input": 60237,
+      "output": 514,
+      "cache_read": 28368,
+      "custo": 0.0094
+    }
+  ],
+  "por_agente_historico": [
+    {
+      "agent": "ai-orchestrator",
+      "sessoes": 356,
+      "avg_input": 847382.0,
+      "avg_output": 14792.0,
+      "avg_cache_read": 9610312.0,
+      "tot_input": 301667934,
+      "custo": 54.1291
+    },
+    {
+      "agent": "general",
+      "sessoes": 95,
+      "avg_input": 81683.0,
+      "avg_output": 5229.0,
+      "avg_cache_read": 668634.0,
+      "tot_input": 7759879,
+      "custo": 1.091
+    },
+    {
+      "agent": "deep-researcher",
+      "sessoes": 84,
+      "avg_input": 74347.0,
+      "avg_output": 3310.0,
+      "avg_cache_read": 440962.0,
+      "tot_input": 6245130,
+      "custo": 3.1821
+    },
+    {
+      "agent": "backend-architect",
+      "sessoes": 5,
+      "avg_input": 974719.0,
+      "avg_output": 69402.0,
+      "avg_cache_read": 3694438.0,
+      "tot_input": 4873597,
+      "custo": 0.0379
+    },
+    {
+      "agent": "ai-architect",
+      "sessoes": 41,
+      "avg_input": 45934.0,
+      "avg_output": 2367.0,
+      "avg_cache_read": 214091.0,
+      "tot_input": 1883288,
+      "custo": 0.8787
+    },
+    {
+      "agent": "llm-security-reviewer",
+      "sessoes": 18,
+      "avg_input": 74683.0,
+      "avg_output": 1598.0,
+      "avg_cache_read": 210745.0,
+      "tot_input": 1344287,
+      "custo": 0.6184
+    },
+    {
+      "agent": "deep-researcher-v2",
+      "sessoes": 19,
+      "avg_input": 45848.0,
+      "avg_output": 993.0,
+      "avg_cache_read": 251163.0,
+      "tot_input": 871105,
+      "custo": 0.4325
+    },
+    {
+      "agent": "build",
+      "sessoes": 20,
+      "avg_input": 42016.0,
+      "avg_output": 350.0,
+      "avg_cache_read": 32215.0,
+      "tot_input": 840314,
+      "custo": 0.6298
+    },
+    {
+      "agent": "ai-evals-runner",
+      "sessoes": 10,
+      "avg_input": 42631.0,
+      "avg_output": 1599.0,
+      "avg_cache_read": 123814.0,
+      "tot_input": 426312,
+      "custo": 0.0466
+    },
+    {
+      "agent": "platform-engineer",
+      "sessoes": 7,
+      "avg_input": 53265.0,
+      "avg_output": 2519.0,
+      "avg_cache_read": 121417.0,
+      "tot_input": 372857,
+      "custo": 0.0433
+    },
+    {
+      "agent": "database-engineer",
+      "sessoes": 1,
+      "avg_input": 223710.0,
+      "avg_output": 6691.0,
+      "avg_cache_read": 1375104.0,
+      "tot_input": 223710,
+      "custo": 0.1097
+    },
+    {
+      "agent": "security-defensive",
+      "sessoes": 5,
+      "avg_input": 27722.0,
+      "avg_output": 1495.0,
+      "avg_cache_read": 145792.0,
+      "tot_input": 138611,
+      "custo": 0.0718
+    },
+    {
+      "agent": "data-model-engineer",
+      "sessoes": 2,
+      "avg_input": 43989.0,
+      "avg_output": 921.0,
+      "avg_cache_read": 64704.0,
+      "tot_input": 87977,
+      "custo": 0.0413
+    },
+    {
+      "agent": "vision-agent",
+      "sessoes": 5,
+      "avg_input": 17124.0,
+      "avg_output": 520.0,
+      "avg_cache_read": 107341.0,
+      "tot_input": 85620,
+      "custo": 0.6876
+    },
+    {
+      "agent": "explore",
+      "sessoes": 2,
+      "avg_input": 31851.0,
+      "avg_output": 3423.0,
+      "avg_cache_read": 136576.0,
+      "tot_input": 63702,
+      "custo": 0.0349
+    }
+  ],
+  "por_agente_4_dias": [
+    {
+      "agent": "ai-orchestrator",
+      "sessoes": 221,
+      "avg_input": 81915.0,
+      "avg_output": 4475.0,
+      "avg_cache_read": 755292.0,
+      "tot_input": 18103226
+    },
+    {
+      "agent": "backend-architect",
+      "sessoes": 4,
+      "avg_input": 1198428.0,
+      "avg_output": 86140.0,
+      "avg_cache_read": 4606304.0,
+      "tot_input": 4793711
+    },
+    {
+      "agent": "general",
+      "sessoes": 20,
+      "avg_input": 149188.0,
+      "avg_output": 11793.0,
+      "avg_cache_read": 794400.0,
+      "tot_input": 2983755
+    },
+    {
+      "agent": "platform-engineer",
+      "sessoes": 3,
+      "avg_input": 93075.0,
+      "avg_output": 5340.0,
+      "avg_cache_read": 268032.0,
+      "tot_input": 279225
+    },
+    {
+      "agent": "deep-researcher",
+      "sessoes": 16,
+      "avg_input": 12180.0,
+      "avg_output": 602.0,
+      "avg_cache_read": 71640.0,
+      "tot_input": 194887
+    },
+    {
+      "agent": "ai-architect",
+      "sessoes": 10,
+      "avg_input": 18761.0,
+      "avg_output": 1574.0,
+      "avg_cache_read": 8960.0,
+      "tot_input": 187613
+    },
+    {
+      "agent": "ai-evals-runner",
+      "sessoes": 3,
+      "avg_input": 49913.0,
+      "avg_output": 3128.0,
+      "avg_cache_read": 118869.0,
+      "tot_input": 149738
+    },
+    {
+      "agent": "llm-security-reviewer",
+      "sessoes": 4,
+      "avg_input": 11523.0,
+      "avg_output": 208.0,
+      "avg_cache_read": 0.0,
+      "tot_input": 46093
+    },
+    {
+      "agent": "vision-agent",
+      "sessoes": 1,
+      "avg_input": 44337.0,
+      "avg_output": 1232.0,
+      "avg_cache_read": 40960.0,
+      "tot_input": 44337
+    },
+    {
+      "agent": "security-defensive",
+      "sessoes": 1,
+      "avg_input": 0.0,
+      "avg_output": 0.0,
+      "avg_cache_read": 0.0,
+      "tot_input": 0
+    }
+  ],
+  "outliers_top5": [
+    {
+      "sessao": "eager-falcon",
+      "criada": "2026-08-02 13:56:27",
+      "input": 98284314,
+      "cache_read": 970712576,
+      "output": 623725
+    },
+    {
+      "sessao": "calm-mountain",
+      "criada": "2026-08-04 11:24:01",
+      "input": 36284107,
+      "cache_read": 509988352,
+      "output": 588909
+    },
+    {
+      "sessao": "gentle-panda",
+      "criada": "2026-08-01 13:41:35",
+      "input": 35827837,
+      "cache_read": 826755550,
+      "output": 695844
+    },
+    {
+      "sessao": "witty-circuit",
+      "criada": "2026-08-03 17:50:18",
+      "input": 17038828,
+      "cache_read": 83466112,
+      "output": 200955
+    },
+    {
+      "sessao": "stellar-panda",
+      "criada": "2026-08-03 09:51:32",
+      "input": 15223581,
+      "cache_read": 61001344,
+      "output": 136046
+    }
+  ]
+}
