@@ -1,6 +1,6 @@
 ---
 name: ai-research
-description: Deep multi-source web research with cross-source CORRELATION, contradiction detection, and confidence-scored synthesis. Use for thorough research, landscape analysis, comparisons, and OSINT on public entities.
+description: "Deep multi-source web research with cross-source CORRELATION, contradiction detection, and confidence-scored synthesis. Use for thorough research, landscape analysis, comparisons, and OSINT on public entities."
 ---
 
 # AI Research: Deep Research with Correlation

@@ -1,6 +1,6 @@
 ---
 name: re-dynamic-analysis
-description: Reverse engineering dynamic analysis: run the binary under control, trace execution, breakpoints, hook functions with a debugger or Frida. Use to confirm static findings or observe runtime behavior.
+description: "Reverse engineering dynamic analysis: run the binary under control, trace execution, breakpoints, hook functions with a debugger or Frida. Use to confirm static findings or observe runtime behavior."
 ---
 
 # Dynamic Analysis

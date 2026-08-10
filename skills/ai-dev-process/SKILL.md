@@ -1,6 +1,6 @@
 ---
 name: ai-dev-process
-description: Mandatory development process for AI engineering work: SPEC, TDD, git worktree, atomic commit. Use before writing any code.
+description: "Mandatory development process for AI engineering work: SPEC, TDD, git worktree, atomic commit. Use before writing any code."
 ---
 
 # AI Dev Process

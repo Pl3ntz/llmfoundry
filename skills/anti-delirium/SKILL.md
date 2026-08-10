@@ -1,6 +1,6 @@
 ---
 name: anti-delirium
-description: Never state anything not verified against reality or a trusted source. Mandatory for every agent, skill, command. Every factual claim carries concrete proof or an honest confidence marker.
+description: "Never state anything not verified against reality or a trusted source. Mandatory for every agent, skill, command. Every factual claim carries concrete proof or an honest confidence marker."
 ---
 
 # Anti-Delirium: Prove It or Don't Say It

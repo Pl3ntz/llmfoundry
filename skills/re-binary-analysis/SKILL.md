@@ -1,6 +1,6 @@
 ---
 name: re-binary-analysis
-description: Reverse engineering binary analysis: identify file format, architecture, sections, imports, exports, strings, packing. Use when analyzing an ELF, PE, Mach-O, or firmware binary first time.
+description: "Reverse engineering binary analysis: identify file format, architecture, sections, imports, exports, strings, packing. Use when analyzing an ELF, PE, Mach-O, or firmware binary first time."
 ---
 
 # Binary Analysis

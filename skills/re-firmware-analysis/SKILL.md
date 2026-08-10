@@ -1,6 +1,6 @@
 ---
 name: re-firmware-analysis
-description: Reverse engineering firmware: extract filesystems, locate kernel, U-Boot, update logic with binwalk and manual analysis. Use when analyzing router, IoT, or embedded device firmware.
+description: "Reverse engineering firmware: extract filesystems, locate kernel, U-Boot, update logic with binwalk and manual analysis. Use when analyzing router, IoT, or embedded device firmware."
 ---
 
 # Firmware Analysis

@@ -1,6 +1,6 @@
 ---
 name: human-voice
-description: Write in a natural human voice that never looks AI-generated. Use on EVERY text/prose/doc/report/comment output. Removes AI tells: dashes, compound hyphens, AI vocabulary, rote transitions, template structure.
+description: "Write in a natural human voice that never looks AI-generated. Use on EVERY text/prose/doc/report/comment output. Removes AI tells: dashes, compound hyphens, AI vocabulary, rote transitions, template structure."
 ---
 
 # Human Voice: Never Look AI-Generated

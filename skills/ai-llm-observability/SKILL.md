@@ -1,6 +1,6 @@
 ---
 name: ai-llm-observability
-description: Observability for LLM applications: structured logging, tracing, token/cost tracking, RED metrics. Use when instrumenting or debugging LLM apps and agents.
+description: "Observability for LLM applications: structured logging, tracing, token/cost tracking, RED metrics. Use when instrumenting or debugging LLM apps and agents."
 ---
 
 # AI LLM Observability

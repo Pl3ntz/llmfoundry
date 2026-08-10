@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Extremely effective code review: five-axis review, severity labels, evidence discipline, actionable feedback. Use before merging any change.
+description: "Extremely effective code review: five-axis review, severity labels, evidence discipline, actionable feedback. Use before merging any change."
 ---
 
 # Code Review

@@ -1,6 +1,6 @@
 ---
 name: ai-evals
-description: Build and run evaluations for LLM prompts, agents, and RAG: golden sets, assertions, regression gates, CI integration. Use before changing any prompt or agent, and to prevent regressions.
+description: "Build and run evaluations for LLM prompts, agents, and RAG: golden sets, assertions, regression gates, CI integration. Use before changing any prompt or agent, and to prevent regressions."
 ---
 
 # AI Evals

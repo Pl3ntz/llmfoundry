@@ -1,6 +1,6 @@
 ---
 name: ai-orchestration
-description: Orchestration protocol for the AI Engineering Orchestrator: routing table, delegation protocol, context preamble, fan-in synthesis. Use when delegating to subagents or merging multi-agent results.
+description: "Orchestration protocol for the AI Engineering Orchestrator: routing table, delegation protocol, context preamble, fan-in synthesis. Use when delegating to subagents or merging multi-agent results."
 ---
 
 # AI Orchestration

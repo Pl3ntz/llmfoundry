@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Professional git practices: trunk-based development, atomic commits, branching, safe merging. Use when committing, branching, resolving conflicts, or reviewing history.
+description: "Professional git practices: trunk-based development, atomic commits, branching, safe merging. Use when committing, branching, resolving conflicts, or reviewing history."
 ---
 
 # Git Workflow

@@ -1,6 +1,6 @@
 ---
 name: ai-agent-patterns
-description: Architecture patterns for AI agents: tool-use loops, context management, subagents, agentic workflows, failure handling. Use when designing or building agentic systems.
+description: "Architecture patterns for AI agents: tool-use loops, context management, subagents, agentic workflows, failure handling. Use when designing or building agentic systems."
 ---
 
 # AI Agent Patterns
