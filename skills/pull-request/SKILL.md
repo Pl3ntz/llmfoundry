@@ -1,6 +1,6 @@
 ---
 name: pull-request
-description: Create effective pull requests, small reviewable diffs, clear descriptions, and healthy review loops. Use when opening or updating a PR, responding to review, or preparing a change for merge.
+description: Create effective pull requests: small reviewable diffs, clear descriptions, healthy review loops. Use when opening or updating a PR, responding to review, or preparing a change for merge.
 ---
 
 # Pull Request

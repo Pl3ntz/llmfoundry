@@ -1,6 +1,6 @@
 ---
 name: source-driven-development
-description: Ground every framework, library, and API decision in official documentation. Verify versions, cite sources, flag what's unverified. Use when using any framework/library/API where the model's memory may be stale or wrong.
+description: Ground every framework, library, and API decision in official documentation. Verify versions, cite sources, flag what's unverified. Use when using any framework/library/API where memory may be stale.
 ---
 
 # Source-Driven Development

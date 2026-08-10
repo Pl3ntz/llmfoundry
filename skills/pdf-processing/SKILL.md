@@ -1,6 +1,6 @@
 ---
 name: pdf-processing
-description: Process PDFs fast and locally with pdf-inspector, no OCR service needed. Use when extracting text, tables, or Markdown from PDFs, or when a document is scanned versus text-based. Best-in-class speed, MIT, free.
+description: Process PDFs fast and locally with pdf-inspector, no OCR service needed. Use when extracting text, tables, or Markdown from PDFs, or for scanned documents.
 ---
 
 # PDF Processing

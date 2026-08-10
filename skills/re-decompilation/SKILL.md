@@ -1,6 +1,6 @@
 ---
 name: re-decompilation
-description: Reverse engineering decompilation, use radare2 and Ghidra to recover logic from disassembly, rename symbols, and reconstruct functions with maximum precision. Use after binary analysis when recovering code logic.
+description: Reverse engineering decompilation with radare2 and Ghidra: recover logic from disassembly, rename symbols, reconstruct functions. Use after binary analysis when recovering code logic.
 ---
 
 # Decompilation

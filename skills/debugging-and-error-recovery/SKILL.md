@@ -1,6 +1,6 @@
 ---
 name: debugging-and-error-recovery
-description: Systematic 5-step debugging, reproduce, localize, reduce, fix, guard. Use when tests fail, builds break, behavior is unexpected, or a production issue arises.
+description: Systematic 5-step debugging: reproduce, localize, reduce, fix, guard. Use when tests fail, builds break, behavior is unexpected, or production issues arise.
 ---
 
 # Debugging and Error Recovery

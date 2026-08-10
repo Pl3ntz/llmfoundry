@@ -1,6 +1,6 @@
 ---
 name: ai-model-integration
-description: Integrate LLM providers (OpenAI, Anthropic, Google, DeepSeek, OpenAI-compatible), SDKs, streaming, structured output, retries, and fallbacks. Use when wiring models into an app.
+description: Integrate LLM providers (OpenAI, Anthropic, Google, DeepSeek, OpenAI-compatible): SDKs, streaming, structured output, retries, fallbacks. Use when wiring models into an app.
 ---
 
 # AI Model Integration
