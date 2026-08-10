@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# cost-snapshot.sh — congela baseline de uso de tokens do opencode.db
+# cost-snapshot.sh: congela baseline de uso de tokens do opencode.db
 # Uso: scripts/cost-snapshot.sh [--json PATH]
 # Saída: agregado por dia e por agente (tokens input/output/cache/custo), salvo em evals/tokens/
 set -euo pipefail
@@ -52,7 +52,7 @@ for r in q("""SELECT agent, COUNT(*), ROUND(AVG(tokens_input),0), ROUND(AVG(toke
     agents.append({"agent": r[0], "sessoes": r[1], "avg_input": r[2], "avg_output": r[3],
                    "avg_cache_read": r[4], "tot_input": r[5], "custo": round(r[6], 4)})
 
-# Por agente (últimos 4 dias — período free)
+# Por agente (últimos 4 dias, período free)
 recent = []
 for r in q("""SELECT agent, COUNT(*), ROUND(AVG(tokens_input),0), ROUND(AVG(tokens_output),0),
   ROUND(AVG(tokens_cache_read),0), COALESCE(SUM(tokens_input),0)

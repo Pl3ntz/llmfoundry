@@ -1,6 +1,6 @@
-# SPEC — Estrutura Orquestrador-Cêntrica (subagents 100% para o orquestrador)
+# SPEC: Estrutura Orquestrador-Cêntrica (subagents 100% para o orquestrador)
 
-> Status: **RASCUNHO PARA APROVAÇÃO v0.2** — atualizado 2026-08-10.
+> Status: **RASCUNHO PARA APROVAÇÃO v0.2**, atualizado 2026-08-10.
 > Dono: vitor. Nenhum arquivo de agent foi alterado ainda. Este doc é o ponto de partida
 > da mudança estrutural. Abrir sessão no llmfoundry e tocar daqui.
 
@@ -10,7 +10,7 @@ Toda mudança neste repo serve a um objetivo: **conseguir projetos que paguem em
 com qualidade de AI engineering que se vende sozinha**. Esta SPEC é um meio, não um fim:
 agentes orquestrador-cêntricos = saída uniforme e mensurável = entregas que impressionam
 cliente/recrutador = menos retrabalho por ambiguidade. Nada aqui pode virar "engenharia
-pela engenharia" — se um passo não reduz custo ou aumenta qualidade percebida, ele sai do
+pela engenharia". Se um passo não reduz custo ou aumenta qualidade percebida, ele sai do
 escopo.
 
 ## Contexto (o que decidimos)
@@ -53,7 +53,7 @@ continua sendo prosa. Elementos necessários:
    evidência (`file:line`, URL, excerpt), contradições, DECISION IMPACT.
 2. **Validadores por papel** (script determinístico): verificar o contrato
    automaticamente. O `verify-guard.ts` hoje só faz hedge-scan e já pula blocos
-   `### FINDINGS` (`plugins/verify-guard.ts:48`) — ele sabe que existe formato
+   `### FINDINGS` (`plugins/verify-guard.ts:48`). Ele sabe que existe formato
    estruturado mas não valida os campos. Estender para validar headers obrigatórios.
 3. **Evals por agent**: para cada papel, definir o que medir em cada missão.
 
@@ -66,10 +66,10 @@ Markdown com headers fixos já é robusto (deep-researcher entrega os 8 `###` ho
 JSON Schema fica reservado para casos onde parse é crítica (ex.: findings para
 ferramentas externas), decidido por papel, não por padrão.
 
-### Esquema de validação por papel (v0.3 — após debate com agents)
+### Esquema de validação por papel (v0.3, após debate com agents)
 
 **Regra transversal (v0.3, ajuste do debate)**: `DECISION IMPACT` é **condicionado**.
-O critério de decisão NÃO nasce no subagent — o orquestrador declara a decisão no
+O critério de decisão NÃO nasce no subagent. O orquestrador declara a decisão no
 `## Context` do spawn (ex.: "o Owner decide entre X e Y; sua pesquisa decide qual é
 mais barato"). O agent só preenche DECISION IMPACT se o critério foi fornecido. Se o
 orquestrador não sabe qual decisão a missão serve, a missão não deveria ter sido
@@ -99,7 +99,7 @@ lançada (resultado sem impacto de decisão = GAP de desenho de missão, ai-arch
 - [ ] `### AUDIT TRAIL` para decisões de design com justificativa (aqui sim, distinto)
 
 **orquestrador** (fan-in): continua no formato `ai-orchestration/SKILL.md:78-93`,
-sem mudança estrutural — ele já é o único tradutor.
+sem mudança estrutural. Ele já é o único tradutor.
 
 ## Evals por agent (o que medir)
 
@@ -168,12 +168,12 @@ promote com base em score estrutural sozinho.
 
 ## Pendências de backlog (deep-researcher)
 
-- [x] ~~`deep-researcher.md:4` usa modelo PAGO~~ — **RESOLVIDO** [VERIFIED, agents/deep-researcher.md:4]
-- [x] ~~Sem teto de iterações~~ — **RESOLVIDO (2026-08-10)**: máx. 12 websearch + 8 webfetch,
+- [x] ~~`deep-researcher.md:4` usa modelo PAGO~~. **RESOLVIDO** [VERIFIED, agents/deep-researcher.md:4]
+- [x] ~~Sem teto de iterações~~. **RESOLVIDO (2026-08-10)**: máx. 12 websearch + 8 webfetch,
       estouro vira GAP com tag `[CEILING-FORCED]` (agents/deep-researcher.md ITERATE/CEILING)
-- [x] ~~Ledger morre no fim da missão~~ — **RESOLVIDO (2026-08-10)**: LEDGER PERSIST grava resumo
+- [x] ~~Ledger morre no fim da missão~~. **RESOLVIDO (2026-08-10)**: LEDGER PERSIST grava resumo
       (pergunta → claims → gaps → fontes) na foundry-memory; missão nova consulta "onde paramos"
-- [x] ~~Superfície curta (só websearch + webfetch)~~ — **RESOLVIDO (2026-08-10)**: `curl GET`
+- [x] ~~Superfície curta (só websearch + webfetch)~~. **RESOLVIDO (2026-08-10)**: `curl GET`
       somente-leitura em APIs públicas + chrome-devtools/playwright (OSINT estendido)
 
 ## Fato técnico verificado (referência)

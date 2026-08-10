@@ -15,7 +15,7 @@ rate-limit errors**, which is the guarantee that always matters.
 
 No paid model is used anywhere. The opencode 1.18.10 installed here does **not** support
 native `fallbacks`/`cooldown_seconds` config (that PR landed later), so there is no
-fallback chain to configure — the fix is making the free model the *primary*, not a
+fallback chain to configure. The fix is making the free model the *primary*, not a
 fallback. See `docs/migration-notes.md` for the migration record.
 
 ## Why it matters
@@ -53,7 +53,7 @@ ceremony.
 
 Baseline medido do `~/.local/share/opencode/opencode.db` (660 sessões, `scripts/cost-snapshot.sh`):
 **325.7M tokens input, 6.3M output (2%), 3.53B cache_read, $61.96 histórico**. O gargalo é
-INPUT + CACHE, não output — qualquer otimização de tokens deve mirar input/cache.
+INPUT + CACHE, não output. Qualquer otimização de tokens deve mirar input/cache.
 
 Práticas adotadas (fazer mais com menos tokens, sem perder eficiência):
 
@@ -62,13 +62,13 @@ Práticas adotadas (fazer mais com menos tokens, sem perder eficiência):
    nas descrições dos 30 skills locais (12% corte). Os 145 skills globais ficam por
    SkillReducer em etapa separada (afetam outros projetos).
 2. **Cache-friendly ordering**: contexto estável (AGENTS.md, system prompt, regras
-   invariantes) deve ficar no PREFIXO do prompt — DeepSeek dá desconto de ~98% em cache
+   invariantes) deve ficar no PREFIXO do prompt. DeepSeek dá desconto de ~98% em cache
    hit; prefixo estável maximiza hits e reduz custo efetivo de cache_read em sessões longas.
 3. **Reuso entre sessões**: deep-researcher persiste ledger na foundry-memory
-   (pergunta → claims → gaps → fontes); missão nova consulta "onde paramos" — não
+   (pergunta → claims → gaps → fontes); missão nova consulta "onde paramos", não
    re-pesquisar o fechado (a maior economia real em valor absoluto).
 4. **Sessões gigantes são redesign, não threshold**: loop de 2.250 turns (98M input,
-   970M cache) é pipeline disfarçado — deve virar subagentes com contexto isolado
+   970M cache) é pipeline disfarçado. Deve virar subagentes com contexto isolado
    (só sumário volta) + compactação a 70-80% da janela, nunca resumo em prosa.
 5. **Teto de iterações**: deep-researcher max 12 websearch + 8 webfetch; estouro vira
    GAP com `[CEILING-FORCED]` (distingue truncado de inconclusivo).

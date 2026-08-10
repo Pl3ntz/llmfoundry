@@ -260,7 +260,7 @@ See [docs/MEMORY-SPEC.md](docs/MEMORY-SPEC.md).
 | Default | `opencode/deepseek-v4-flash-free` | $0 |
 | small_model | `opencode/deepseek-v4-flash-free` | $0 |
 
-LLMFoundry runs **100% on the free model** — zero cost, no quota limits, no rate-limit
+LLMFoundry runs **100% on the free model**: zero cost, no quota limits, no rate-limit
 loop. Mode rule: **ambiguity or stakes → PLAN first, clear + approved → BUILD**.
 See [docs/MODEL-POLICY.md](docs/MODEL-POLICY.md).
 
@@ -275,7 +275,7 @@ is INPUT + CACHE, not output. Optimizations adopted:
    on the 30 local skill descriptions (12% cut). The 145 global skills remain pending
    (they affect other projects).
 2. **Cache-friendly ordering**: stable context first (AGENTS.md, system prompt,
-   invariants) — DeepSeek gives ~98% discount on cache hits; a stable prefix maximizes
+   invariants). DeepSeek gives ~98% discount on cache hits; a stable prefix maximizes
    hits in long sessions.
 3. **Cross-session reuse**: deep-researcher persists a ledger to foundry-memory
    (question → claims → gaps → sources); a new mission queries "where we left off"
