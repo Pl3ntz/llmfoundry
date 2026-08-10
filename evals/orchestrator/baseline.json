@@ -1,40 +1,20 @@
 {
-  "version": 1,
-  "captured": "2026-08-01",
+  "version": 3,
+  "captured": "2026-08-07",
   "suite": "routing-runner",
-  "questions": 6,
-  "passed": 4,
-  "percent": 67,
-  "results": [
-    {
-      "id": "RS-1",
-      "expected": "deep-researcher",
-      "actual": "deep-researcher"
-    },
-    {
-      "id": "RS-2",
-      "expected": "ai-architect",
-      "actual": "interview"
-    },
-    {
-      "id": "RS-3",
-      "expected": "ai-evals-runner",
-      "actual": "ai-evals-runner"
-    },
-    {
-      "id": "RS-4",
-      "expected": "llm-security-reviewer",
-      "actual": "interview"
-    },
-    {
-      "id": "RS-5",
-      "expected": "direct",
-      "actual": "direct"
-    },
-    {
-      "id": "RS-6",
-      "expected": "interview",
-      "actual": "interview"
-    }
-  ]
+  "questions": 12,
+  "passed": 12,
+  "percent": 100,
+  "metric": "route-stable (policy)",
+  "model": "opencode/deepseek-v4-flash-free",
+  "samples_per_question": 2,
+  "note": "FASE 4 completa: batteria do golden-set contra o modelo free via scripts/routing-runner.py --samples 2. CRITERIO DE FALHA = ESTABILIDADE DE ROTA (deterministico): rota correta em TODAS as amostras. 12/12 rota estavel. GATES sao metrica separada (modelo varia): RS-9 (CVE hunting, interviewMe) oscilou gate_rate 0.6-1.0 entre rodadas; RS-12 (build+security) 0.8-0.9 pois o modelo emite llm-security-reviewer completo e interviewMe True nem sempre. Rota nunca errou em 5+ rodadas. RS-7 falsamente instavel no inicio era bug de harness (parse de JSON), corrigido.",
+  "gate_rate_observation": "RS-9 e RS-12 sao os unicos com gates abaixo de 1.0 — ambos pedem interviewMe true para seguranca. Variabilidade e do modelo, nao do runner.",
+  "previous": {
+    "version": 2,
+    "captured": "2026-08-07",
+    "questions": 12,
+    "passed": 12,
+    "percent": 100
+  }
 }

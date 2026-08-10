@@ -1,7 +1,7 @@
 ---
 description: Red team specialist. Offensive security in authorized engagements, recon to exploitation. Routes to the installed security skills (recon, hunt-*, exploitation). Use for authorized penetration testing, red team work, and vulnerability exploitation.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 color: "#f38ba8"
 permission:
   edit: deny

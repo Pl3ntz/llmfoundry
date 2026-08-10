@@ -1,7 +1,7 @@
 ---
 description: Data model engineer. Normalization, partitioning, keys, multi-tenancy, and schema evolution. Deep data modeling for systems where the schema is the foundation. Use when designing or evolving the data model.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 color: "#fab387"
 permission:
   edit: deny

@@ -1,7 +1,7 @@
 ---
 description: Reviews LLM applications for security, prompt injection, data exfiltration, SSRF via LLM tools, abuse control, OWASP LLM Top 10. Use before shipping or merging any LLM app, agent, or RAG system.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 color: "#f38ba8"
 permission:
   edit: deny

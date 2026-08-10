@@ -1,6 +1,6 @@
 ---
 description: Security review of an LLM app, agent, or RAG system before shipping
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 agent: llm-security-reviewer
 ---
 

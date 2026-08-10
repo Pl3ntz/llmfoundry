@@ -1,6 +1,6 @@
 ---
 description: Build and run evals for a prompt, agent, or LLM feature
-model: opencode-go/deepseek-v4-flash
+model: opencode/deepseek-v4-flash-free
 agent: ai-evals-runner
 ---
 

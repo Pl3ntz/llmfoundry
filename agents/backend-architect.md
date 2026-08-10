@@ -1,7 +1,7 @@
 ---
 description: "Backend architect. Full backend design: API contracts, middleware, background jobs, caching strategies, message queues, event-driven architecture, authentication patterns, database integration. The first agent for any backend question. Escalates to api-contract-engineer for deep API contract work."
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 color: "#f9e2af"
 permission:
   edit: deny

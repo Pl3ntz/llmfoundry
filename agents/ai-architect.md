@@ -1,7 +1,7 @@
 ---
 description: Architect for LLM systems, agents, RAG pipelines, evals, MCP servers. Designs with trade-offs, decision matrices, and anti-pattern awareness. Use when designing or reviewing the architecture of an AI application.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 color: "#a6e3a1"
 permission:
   edit: deny

@@ -1,8 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "default_agent": "ai-orchestrator",
-  "model": "opencode-go/deepseek-v4-pro",
-  "small_model": "opencode-go/deepseek-v4-flash",
+  "model": "opencode/deepseek-v4-flash-free",
+  "small_model": "opencode/deepseek-v4-flash-free",
   "permission": {
     "bash": "allow",
     "edit": "allow",

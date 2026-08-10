@@ -1,7 +1,7 @@
 ---
 description: API contract engineer. Deep FastAPI and Hono API design, contract-first, authentication boundaries, idempotency, streaming, error semantics, and request validation. Use when designing or reviewing APIs where the contract matters.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 color: "#f9e2af"
 permission:
   edit: deny

@@ -1,7 +1,7 @@
 ---
 description: Bug bounty hunter. Full pipeline from target recon to validated report, routed through the installed bug bounty skills. Use for authorized bug bounty hunting, scope mapping, vulnerability validation, and report writing.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 color: "#f9e2af"
 permission:
   edit: deny

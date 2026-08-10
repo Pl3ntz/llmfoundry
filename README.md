@@ -255,13 +255,14 @@ See [docs/MEMORY-SPEC.md](docs/MEMORY-SPEC.md).
 
 ## Model Policy
 
-| Role | Model | Requests/mo | Cost/MTok out |
-|------|-------|-------------|----------------|
-| Default | `opencode-go/deepseek-v4-pro` | 17,150 | $0.87 |
-| small_model | `opencode-go/deepseek-v4-flash` | 158,150 | $0.28 |
+| Role | Model | Cost |
+|------|-------|------|
+| Default | `opencode/deepseek-v4-flash-free` | $0 |
+| small_model | `opencode/deepseek-v4-flash-free` | $0 |
 
-Routing rule: **reasoning to PRO, mechanical to FLASH**. Mode rule: **ambiguity or stakes
-→ PLAN first, clear + approved → BUILD**. See [docs/MODEL-POLICY.md](docs/MODEL-POLICY.md).
+LLMFoundry runs **100% on the free model** — zero cost, no quota limits, no rate-limit
+loop. Mode rule: **ambiguity or stakes → PLAN first, clear + approved → BUILD**.
+See [docs/MODEL-POLICY.md](docs/MODEL-POLICY.md).
 
 ---
 

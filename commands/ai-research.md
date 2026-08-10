@@ -1,6 +1,6 @@
 ---
 description: Deep multi-source research with correlation and confidence scoring
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 agent: deep-researcher
 ---
 

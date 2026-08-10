@@ -4,19 +4,59 @@ import type { Hooks, PluginInput } from "@opencode-ai/plugin";
  * LLMFoundry delegation-guard — validates subagent spawns before they leave
  * the orchestrator.
  *
- * Catches the two most common delegation failures:
- * 1. Spawning without the 4 mandatory parts (Objective, Context, Output
- *    contract, Boundaries) — the subagent guesses and wastes tokens.
- * 2. Clear misrouting — e.g., a research task going to ai-architect, or
- *    an eval task going to deep-researcher.
+ * The 4 mandatory parts (Objective, Context, Output contract, Boundaries)
+ * are HARD-BLOCKED when missing — this catches genuine delegation mistakes.
+ * A well-formed prompt with the 4 parts is trusted: suspected misrouting by
+ * keyword is surfaced as a WARNING to the session, never thrown, so legitimate
+ * work cannot enter an infinite rewrite-retry loop.
  *
- * Blocks are recoverable: the spawn is rejected with an error message that
- * tells the orchestrator what to fix. The orchestrator rewrites and retries.
- *
- * Does NOT attempt to validate every possible route — routing decisions that
- * depend on task semantics (vs clear keyword mismatch) remain the model's
- * responsibility.
+ * CIRCUIT BREAKER: additionally guards against a delegation that keeps
+ * retrying the same target a its continues to fail. If N spawns hit the same
+ * (session, subagent_type) within a short window, the guard trips and blocks
+ * further spawns to that target for a cooldown (dead-letter) instead of
+ * letting the orchestrator loop. This is the safety net for "guard fails ->
+ * agent retries forever"; it breaks the loop at the source.
  */
+
+// Circuit-breaker tuning. Per (session, target): allow up to MAX_SPAWNS spawns
+// within TRIP_WINDOW_MS; if exceeded, trip and reject further spawns for
+// COOLDOWN_MS. Detective: a transient failure must reset after the window.
+const TRIP_WINDOW_MS = 60_000;
+const MAX_SPAWNS = 3;
+const COOLDOWN_MS = 120_000;
+
+// key: `${sessionID}:${targetAgent}` -> { attempts: number[], trippedUntil: number }
+const breakerState = new Map<
+  string,
+  { attempts: number[]; trippedUntil: number }
+>();
+
+function tripBreaker(sessionID: string, target: string): boolean {
+  const now = Date.now();
+  const key = `${sessionID}:${target}`;
+  let st = breakerState.get(key);
+  if (!st) {
+    st = { attempts: [], trippedUntil: 0 };
+    breakerState.set(key, st);
+  }
+
+  // If currently tripped, reject until cooldown expires.
+  if (now < st.trippedUntil) return true;
+
+  // Prune attempts older than the window, then count live ones.
+  const cutoff = now - TRIP_WINDOW_MS;
+  st.attempts = st.attempts.filter((t) => t >= cutoff);
+  st.attempts.push(now);
+
+  if (st.attempts.length > MAX_SPAWNS) {
+    // Trip: reject for the cooldown, reset the counter so a later legit
+    // spawn (after cooldown) starts fresh instead of tripping forever.
+    st.trippedUntil = now + COOLDOWN_MS;
+    st.attempts = [];
+    return true;
+  }
+  return false;
+}
 
 const MANDATORY_PARTS: [string, RegExp][] = [
   ["Objective", /##\s*Objective/i],
@@ -25,40 +65,38 @@ const MANDATORY_PARTS: [string, RegExp][] = [
   ["Boundaries", /##\s*Boundaries/i],
 ];
 
-// Clear misroutes: if prompt matches these patterns, it must NOT go to the listed agents.
-// Design principle: keywords are TOPICS (what the task is about), verbs are TASKS
-// (what to do). Only verbs should misroute. "agents", "MCP", "RAG" are topics that
-// legitimately appear in research prompts ("research AI agent frameworks"),
-// so they must never block a deep-researcher spawn.
-//
-// Every alternative here is wrapped in \b...\b (word boundaries). Without them,
-// a Portuguese verb like "reconhecer" contains "recon" and falsely triggers the
-// market-research rule, blocking legit design/security/evals spawns.
+// Suspected misroutes. WARNING-ONLY now: these never throw.
+// Rules require MULTIPLE strong signals to fire, to cut false positives on
+// ordinary topic words that legitimately appear in a well-formed prompt.
+// Every term is wrapped in \b...\b (word boundaries) so Portuguese verbs like
+// "reconhecer" do not falsely match "recon".
 const MISROUTE_RULES: [RegExp, string[]][] = [
+  // market/competitive research only fires when TWO+ market terms appear together.
   [
-    // market/competitive/landscape research does not go to architects, evals, security, RE
-    /\b(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon)\b/i,
+    /\b(?:market|competitor|industry|pricing|adoption)\b.*\b(?:market|competitor|industry|pricing|adoption)\b/i,
     ["ai-architect", "ai-evals-runner", "llm-security-reviewer", "reverse-engineer"],
   ],
   [
-    // a DESIGN/BUILD task (verb) does not go to evals or RE
-    // deep-researcher is NOT blocked here: a prompt may contain "architecture" or
-    // "design" as a topic while still being a research task.
-    /\b(?:design|architect(?:ure|ing|s)?|build|implement|system\s+design|spec\s+for)\b/i,
+    // a DESIGN/BUILD task (verb) never goes to evals or RE. High specificity.
+    /\b(?:design|build|implement|system\s+design)\b.*\b(?:deploy|ship|write\s+code|implement)\b/i,
     ["ai-evals-runner", "reverse-engineer"],
   ],
   [
-    // eval/evals/evaluation. \bevals?\b keeps "ai-evals-runner" (mentioned as a
-    // topic in a multi-agent prompt) from matching — handled by the debate gate.
-    /\b(?:eval(?:s|uation)?|golden\s+set|regression|baseline|assertion|prompt.*(?:change|update))\b/i,
+    // eval-related work only flags on the combination eval term + measurement term:
+    // a lone "evals" topic (e.g. "estudo de avaliação de um documento") must NOT
+    // fire; "eval task" + "assertion/score" is what actually means eval-routing.
+    /\b(?:evaluation|evals?|eval\s+run|golden\s+set)\b.*\b(?:assertion|benchmark|metric|pass\s+rate|score)\b/i,
     ["deep-researcher", "ai-architect", "llm-security-reviewer", "reverse-engineer"],
   ],
   [
-    /\b(?:security\s+review|prompt\s+injection|OWASP|LLM\s+(?:app\s+)?security)\b/i,
+    // LLM security review is a high-confidence route only on precise phrase match.
+    /\b(?:prompt\s+injection|OWASP|LLM\s+(?:app|security)\s+top\s+10)\b/i,
     ["deep-researcher", "ai-evals-runner", "reverse-engineer"],
   ],
   [
-    /\b(?:binary|firmware|malware|decompil\w*|disassembl\w*|ghidra|radare)\b/i,
+    // reverse-engineering requires the conjunction of a RE tool/domain term AND a
+    // RE object, so "the installed binary" alone no longer fires.
+    /\b(?:malware|firmware|ghidra|radare|decompil\w*|disassembl\w*|ida\s+pro)\b.*\b(?:malware|firmware|ghidra|radare|decompil\w*|disassembl\w*)\b/i,
     ["deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer"],
   ],
 ];
@@ -87,37 +125,47 @@ function distinctAgents(prompt: string): number {
 function validateDelegation(
   prompt: string,
   targetAgent: string,
-): string | null {
-  // Gate 1: mandatory parts
+): { status: "block" | "warn" | "pass"; message?: string } {
+  // Gate 1: mandatory parts — the real protection. Missing parts HARD-BLOCK.
   const missing: string[] = [];
   for (const [name, re] of MANDATORY_PARTS) {
     if (!re.test(prompt)) missing.push(name);
   }
   if (missing.length > 0) {
-    return `Delegation blocked: missing mandatory part${missing.length > 1 ? "s" : ""}: ${missing.join(", ")}. Rewrite with: ## Objective, ## Context, ## Output contract, ## Boundaries.`;
+    return {
+      status: "block",
+      message: `missing mandatory part${missing.length > 1 ? "s" : ""}: ${missing.join(", ")}. Rewrite with: ## Objective, ## Context, ## Output contract, ## Boundaries.`,
+    };
   }
 
   // Gate 2: transversal consultation. When the orchestrator names 2+ distinct
   // agents in one prompt it is gathering multiple views on the same topic, not
   // misrouting a single task. Trust the explicit mention.
   if (distinctAgents(prompt) >= 2) {
-    return null;
+    return { status: "pass" };
   }
 
   // Gate 3: research-first priority. A task that asks for research and is
   // routed to the researcher is correct, whatever its topic mentions.
   if (RESEARCH_SIGNALS.test(prompt) && targetAgent === "deep-researcher") {
-    return null;
+    return { status: "pass" };
   }
 
-  // Gate 4: clear misroutes
+  // Gate 4: suspected misroute — WARNING ONLY, never throws. The orchestrator's
+  // explicit routing decision (in a prompt that already satisfies Gate 1) is
+  // trusted over keyword heuristics that have produced false positives.
   for (const [re, blocked] of MISROUTE_RULES) {
     if (re.test(prompt) && blocked.includes(targetAgent)) {
-      return `Delegation blocked: prompt appears to be about "${re.source.replace(/[()]/g, "").replace(/\|\?/g, "").slice(0, 60)}..." but was routed to ${targetAgent}. This is likely a misroute. Check the routing table.`;
+      return {
+        status: "warn",
+        message:
+          `Suspected misroute to ${targetAgent}: prompt contains "${re.source.replace(/\\[.+?]/g, "(...)" ).replace(/[()]/g, " ").slice(0, 60)}...". ` +
+          `Confirm this is the intended target. This spawn will proceed.`,
+      };
     }
   }
 
-  return null; // pass
+  return { status: "pass" };
 }
 
 export async function server(_input: PluginInput): Promise<Hooks> {
@@ -130,9 +178,46 @@ export async function server(_input: PluginInput): Promise<Hooks> {
 
       if (!prompt || !target) return;
 
-      const reason = validateDelegation(prompt, target);
-      if (reason) {
-        throw new Error(`[delegation-guard] ${reason}`);
+      // Circuit breaker: if the orchestrator keeps spawning the same target in
+      // a short window, it is retrying a failing delegation. Trip -> hard
+      // dead-letter so the loop cannot continue. This runs BEFORE validation
+      // because a loop is the more severe failure.
+      if (tripBreaker(sessionID, target)) {
+        throw new Error(
+          `[delegation-guard] circuit breaker TRIPPED for ${target} (session ${sessionID}): ` +
+            `>${MAX_SPAWNS} spawns in ${TRIP_WINDOW_MS / 1000}s. This looks like a ` +
+            `repeated failing delegation, not independent work. Paused for ` +
+            `${COOLDOWN_MS / 1000}s. Change approach (different agent, smaller slice, ` +
+            `or escalate to the Owner) instead of retrying the same target.`,
+        );
+      }
+
+      const result = validateDelegation(prompt, target);
+      if (result.status === "block") {
+        // Only genuine mistakes (missing mandatory parts) hard-block.
+        throw new Error(`[delegation-guard] ${result.message}`);
+      }
+      if (result.status === "warn") {
+        // Suspected misroute: surface the warning to the session WITHOUT
+        // aborting the spawn, so legitimate work cannot enter a retry loop.
+        try {
+          const warnMsg = `[delegation-guard] ${result.message}`;
+          console.error(warnMsg);
+          await _input.client.session.prompt({
+            path: { id: sessionID },
+            body: {
+              parts: [
+                {
+                  type: "text",
+                  text: `Advisory (plugin note for context, not a directive): ${warnMsg}. Your spawn will proceed as routed.`,
+                } as { type: "text"; text: string },
+              ],
+            },
+          });
+        } catch {
+          // surfacing the advisory must never break the spawn
+          console.error(`[delegation-guard] advisory (could not surface): ${result.message}`);
+        }
       }
     },
   };

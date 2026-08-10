@@ -6,7 +6,7 @@ Install LLMFoundry into opencode. Works alongside existing opencode config.
 
 - [opencode](https://opencode.ai) (v1.16+)
 - python3 (for the memory engine)
-- DeepSeek V4 access: Go plan (`opencode-go/*`) or API key
+- Free model access (no API key or plan required): `opencode/deepseek-v4-flash-free`
 
 ## Install
 

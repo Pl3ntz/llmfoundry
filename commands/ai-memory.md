@@ -1,6 +1,6 @@
 ---
 description: Interact with the local memory, remember, search, recall, promote, stats
-model: opencode-go/deepseek-v4-flash
+model: opencode/deepseek-v4-flash-free
 agent: build
 ---
 

@@ -1,7 +1,7 @@
 ---
 description: Platform engineer. Infrastructure, DevOps, and operations. Terraform/OpenTofu/Pulumi, Docker/K8s, CI/CD pipelines, cloud providers (AWS/GCP/Azure), monitoring/observability, Linux server management, networking, FinOps, disaster recovery. The agent that turns a codebase into a running system.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 color: "#a6e3a1"
 permission:
   edit: deny

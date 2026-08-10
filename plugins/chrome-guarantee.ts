@@ -53,7 +53,10 @@ function ensureChromeDebug(): void {
     try {
       execSync(
         `"${process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"}" ` +
-          `--remote-debugging-port=${PORT} --user-data-dir="${PROFILE}" --restore-last-session >/dev/null 2>&1 &`,
+          `--remote-debugging-port=${PORT} --user-data-dir="${PROFILE}" --restore-last-session ` +
+          // Stop the on-device AI model (OptGuideOnDeviceModel, ~4GB/profile) from being
+          // re-downloaded every time. It powers local AI extras we do not use.
+          `--disable-features=OptimizationGuideModelDownloading >/dev/null 2>&1 &`,
         { shell: "/bin/bash" },
       );
       console.error(`[chrome-guarantee] Started your Chrome with debug port ${PORT} (logins).`);

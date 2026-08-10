@@ -194,21 +194,57 @@ def plugin_checks():
 
 import re as _re
 
-# mirror of delegation-guard.ts MISROUTE_RULES (word-boundaried + evals + debate gate)
+# mirror of delegation-guard.ts MISROUTE_RULES (combo-requiring, word-boundaried).
+# MUST match the plugin's current rules; update in the same commit as the plugin.
 _DG_MISROUTE = [
-    (_re.compile(r"\b(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon)\b", _re.I),
+    (_re.compile(r"\b(?:market|competitor|industry|pricing|adoption)\b.*\b(?:market|competitor|industry|pricing|adoption)\b", _re.I),
      ["ai-architect", "ai-evals-runner", "llm-security-reviewer", "reverse-engineer"]),
-    (_re.compile(r"\b(?:design|architect(?:ure|ing|s)?|build|implement|system\s+design|spec\s+for)\b", _re.I),
+    (_re.compile(r"\b(?:design|build|implement|system\s+design)\b.*\b(?:deploy|ship|write\s+code|implement)\b", _re.I),
      ["ai-evals-runner", "reverse-engineer"]),
-    (_re.compile(r"\b(?:eval(?:s|uation)?|golden\s+set|regression|baseline|assertion|prompt.*(?:change|update))\b", _re.I),
+    (_re.compile(r"\b(?:evaluation|evals?|eval\s+run|golden\s+set)\b.*\b(?:assertion|benchmark|metric|pass\s+rate|score)\b", _re.I),
      ["deep-researcher", "ai-architect", "llm-security-reviewer", "reverse-engineer"]),
-    (_re.compile(r"\b(?:security\s+review|prompt\s+injection|OWASP|LLM\s+(?:app\s+)?security)\b", _re.I),
+    (_re.compile(r"\b(?:prompt\s+injection|OWASP|LLM\s+(?:app|security)\s+top\s+10)\b", _re.I),
      ["deep-researcher", "ai-evals-runner", "reverse-engineer"]),
-    (_re.compile(r"\b(?:binary|firmware|malware|decompil\w*|disassembl\w*|ghidra|radare)\b", _re.I),
+    (_re.compile(r"\b(?:malware|firmware|ghidra|radare|decompil\w*|disassembl\w*|ida\s+pro)\b.*\b(?:malware|firmware|ghidra|radare|decompil\w*|disassembl\w*)\b", _re.I),
      ["deep-researcher", "ai-architect", "ai-evals-runner", "llm-security-reviewer"]),
 ]
 _DG_RESEARCH_SIGNALS = _re.compile(r"\b(?:research|compare|landscape|market|competitor|industry|OSINT|recon|pesquis\w*)\b", _re.I)
 _DG_AGENT_MENTION = _re.compile(r"\b(?:deep-researcher|ai-architect|ai-evals-runner|llm-security-reviewer|reverse-engineer|platform-engineer|backend-architect|api-contract-engineer|database-engineer|data-model-engineer|red-team-agent|security-defensive|bug-bounty-hunter|recon-agent|report-agent|triage-agent|general|explore)\b", _re.I)
+
+# mirror of delegation-guard.ts circuit breaker (pure logic).
+_DG_WINDOW = 60_000
+_DG_MAX = 3
+_DG_COOLDOWN = 120_000
+
+
+class _BreakerMirror:
+    """Deterministic mirror of the plugin's breaker, wall-clock driven via explicit
+    now stamps so the suite can test trip/cooldown/isolate without sleeping."""
+
+    def __init__(self):
+        self._st: dict[str, dict] = {}
+
+    def trip(self, session: str, target: str, now: int) -> bool:
+        key = f"{session}:{target}"
+        st = self._st.get(key)
+        if not st:
+            st = {"attempts": [], "trip_until": 0}
+            self._st[key] = st
+        if now < st["trip_until"]:
+            return True
+        cutoff = now - _DG_WINDOW
+        st["attempts"] = [t for t in st["attempts"] if t >= cutoff]
+        st["attempts"].append(now)
+        if len(st["attempts"]) > _DG_MAX:
+            st["trip_until"] = now + _DG_COOLDOWN
+            st["attempts"] = []
+            return True
+        return False
+
+
+# mirror of research-guard.ts
+_RG_RESEARCH = _re.compile(r"\b(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon|vs\.?\.?\s+alternatives?)\b", _re.I)
+_RG_DOC_TERMS = _re.compile(r"\b(?:docs?|documentation|api|guide|tutorial|reference|getting\s+started|setup|install|config|example|how\s+to|library|framework|sdk|syntax|error|changelog|release|npm|pypi|crates)\b", _re.I)
 
 # mirror of research-guard.ts
 _RG_RESEARCH = _re.compile(r"\b(?:market|competitor|landscape|industry|pricing|adoption|OSINT|recon|vs\.?\.?\s+alternatives?)\b", _re.I)
@@ -243,13 +279,18 @@ def guard_checks():
     ok = all(_dg_blocked(p, "deep-researcher") is None for p in research_topics)
     results.append(("delegation: research com topicos tecnicos NAO bloqueado p/ deep-researcher", ok))
 
-    # real misroutes are still blocked
+    # real misroutes are still blocked (with the combo-of-two strong-signal rule)
     results.append(("delegation: market research NAO vai p/ ai-architect",
-                    _dg_blocked("market research de CRMs para 2026", "ai-architect") is not None))
+                    _dg_blocked("market research de CRMs para 2026 preco e competitividade da industry",
+                                "ai-architect") is not None))
+    results.append(("delegation: 1 termo de mercado sozinho NAO bloqueia (cut false positive)",
+                    _dg_blocked("analise de mercado para o roadmap", "ai-architect") is None))
     results.append(("delegation: task de design NAO vai p/ ai-evals-runner",
-                    _dg_blocked("Design a RAG system with reranking", "ai-evals-runner") is not None))
+                    _dg_blocked("Design a RAG system and write the deploy code to ship it",
+                                "ai-evals-runner") is not None))
     results.append(("delegation: eval task NAO vai p/ deep-researcher",
-                    _dg_blocked("Build a golden set for the prompt change", "deep-researcher") is not None))
+                    _dg_blocked("Build evals for the prompt change with an assertion metric and pass rate",
+                                "deep-researcher") is not None))
 
     # word-boundary regression: pt verb "reconhecer" must NOT trigger market rule
     debate_prompt = (
@@ -276,13 +317,10 @@ def guard_checks():
     results.append(("delegation: debate com 5 agentes NAO bloqueado p/ llm-security-reviewer",
                     _dg_blocked(multi_agent_prompt, "llm-security-reviewer") is None))
 
-    # 'evals' (plural) is still an eval task -> deep-researcher blocked
-    results.append(("delegation: 'Build evals...' NAO vai p/ deep-researcher",
-                    _dg_blocked("Build evals for the prompt change", "deep-researcher") is not None))
     # single-agent mention does NOT unlock misroute gates
     results.append(("delegation: mencao de 1 agente ainda bloqueia market research p/ ai-architect",
-                    _dg_blocked("market research de CRMs (consulte ai-architect)", "ai-architect") is not None))
-
+                    _dg_blocked("market research de CRMs e competitor landscape (consulte ai-architect)",
+                                "ai-architect") is not None))
     # research-guard: doc lookups (query-only websearch) are NOT research
     doc_queries = [
         {"query": "compare bun vs node install docs"},
@@ -302,6 +340,40 @@ def guard_checks():
               {"query": "market pricing of vector databases"}]
     ok = all(_RG_RESEARCH.search(q["query"]) for q in market)
     results.append(("research: pesquisa de mercado/landscape e detectada", ok))
+
+    # circuit breaker (mirror): trips after MAX+1 spawns in the window, isolates
+    # by (session, target), cooldowns, and resets after cooldown.
+    br = _BreakerMirror()
+    t = 1_000_000
+    br.trip("s1", "ae", t); br.trip("s1", "ae", t + 1); br.trip("s1", "ae", t + 2)
+    ok = br.trip("s1", "ae", t + 3) is True  # 4th spawn trips
+    results.append(("breaker: 4o spawn no mesmo alvo TRIPA", ok))
+    ok = br.trip("s1", "ae", t + 4) is True  # still in cooldown
+    results.append(("breaker: durante cooldown continua bloqueado", ok))
+    br2 = _BreakerMirror()
+    br2.trip("s1", "ae", 0); br2.trip("s1", "ae", 1); br2.trip("s1", "ae", 2)
+    ok = br2.trip("s1", "azzurri", 3) is False  # different target unaffected
+    results.append(("breaker: target diferente em mesma sessao NAO bloqueado", ok))
+    br3 = _BreakerMirror()
+    br3.trip("s1", "ae", 0)
+    ok = br3.trip("s9", "ae", 1) is False  # different session unaffected
+    results.append(("breaker: session diferente NAO bloqueado", ok))
+    br4 = _BreakerMirror()
+    br4.trip("s1", "ae", 0); br4.trip("s1", "ae", 1); br4.trip("s1", "ae", 2)
+    br4.trip("s1", "ae", 3)
+    ok = br4.trip("s1", "ae", 3 + 120_001) is False  # after cooldown, reset
+    results.append(("breaker: apos cooldown contador reseta e permite novo spawn", ok))
+
+    # adversarial / boundary: well-formed prompts with tricky wording must NOT
+    # be blocked (the guard trusts structure, not content keywords)
+    adv_cases = [
+        ("## Objective\nx\n## Context\nrelatorio sobre binary options trading (NAO reverse engineering)\n## Output contract\ny\n## Boundaries\nz", "deep-researcher"),
+        ("## Objective\nx\n## Context\ninstalled binary at /usr/local/bin/git nao e malware\n## Output contract\ny\n## Boundaries\nz", "ai-architect"),
+        ("## Objective\nx\n## Context\nbaseline de performance do servico (nao eval)\n## Output contract\ny\n## Boundaries\nz", "backend-architect"),
+        ("## Objective\nx\n## Context\nprecisa reconhecer padroes de acesso (verbo, nao recon)\n## Output contract\ny\n## Boundaries\nz", "llm-security-reviewer"),
+    ]
+    ok = all(_dg_blocked(p, tgt) is None for p, tgt in adv_cases)
+    results.append(("delegation: adversarial/topico verdadeiro NAO bloqueado (forma > conteudo)", ok))
 
     return results
 
@@ -445,10 +517,44 @@ def drv2_checks():
 
 # ----------------------------------------------------------------------------
 
+def live_routing_checks(model, samples):
+    """Run the live model routing battery (evals/orchestrator/golden-set.json) and
+    map each question to a PASS/FAIL check on ROUTE STABILITY (not gate rate —
+    gates are subject to model variability and reported as a metric only)."""
+    results = []
+    runner = os.path.join(ROOT, "scripts", "routing-runner.py")
+    try:
+        proc = subprocess.run(
+            [sys.executable, runner, "--model", model, "--samples", str(samples), "--json"],
+            capture_output=True, text=True, timeout=1500,
+        )
+    except subprocess.TimeoutExpired:
+        return [("live-routing: TIMEOUT (%s)" % model, False)]
+    if proc.returncode != 0 and not proc.stdout.strip():
+        return [("live-routing: runner error rc=%s" % proc.returncode, False)]
+    try:
+        data = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return [("live-routing: runner non-JSON output", False)]
+    for r in data.get("results", []):
+        qid = r.get("id", "?")
+        if r.get("error"):
+            results.append((f"live-routing {qid}: model produced no parseable JSON", False))
+        else:
+            route_stable = r.get("route_stable") is True
+            label = f"live-routing {qid}: route={r.get('actual_route')} stable={route_stable} gates={r.get('gate_rate')}"
+            results.append((label, route_stable))
+    if not data.get("results"):
+        results.append(("live-routing: no results from runner", False))
+    return results
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--suite", choices=["engine", "routing", "plugins", "stability", "guards", "drv2", "all"], default="all")
+    ap.add_argument("--suite", choices=["engine", "routing", "plugins", "stability", "guards", "drv2", "live-routing", "all"], default="all")
     ap.add_argument("--baseline", action="store_true", help="print current state")
+    ap.add_argument("--model", default="opencode/deepseek-v4-flash-free", help="model for live-routing")
+    ap.add_argument("--samples", type=int, default=2, help="samples per question for live-routing")
     args = ap.parse_args()
 
     results = []
@@ -467,6 +573,8 @@ def main():
             results += guard_checks()
         elif s == "drv2":
             results += drv2_checks()
+        elif s == "live-routing":
+            results += live_routing_checks(args.model, args.samples)
 
     passed = sum(1 for _, ok in results if ok)
     failed = [(name, ok) for name, ok in results if not ok]

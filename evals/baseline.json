@@ -1,9 +1,9 @@
 {
-  "version": 1,
-  "captured": "2026-08-05",
+  "version": 2,
+  "captured": "2026-08-07",
   "suite": "eval-runner.py",
-  "checks": 60,
-  "passed": 60,
+  "checks": 66,
+  "passed": 66,
   "percent": 100,
-  "note": "The number to beat. Any change that drops below this fails the regression gate. Includes recall memories+facts checks. Regenerated 2026-08-05: runner now has 6 suites (engine, routing, plugins, stability, guards, drv2)."
+  "note": "The number to beat. Any change that drops below this fails the regression gate. Includes recall memories+facts checks. Regenerated 2026-08-07 after delegation-guard changes: circuit breaker (5 new checks), misroute rules updated to combo-of-two-signals + evals? term, adversarial/topic-true cases added. Guards suite now 20 checks (was 14)."
 }

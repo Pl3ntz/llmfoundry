@@ -1,6 +1,6 @@
 ---
 description: See and understand a visual, an image file, a screenshot, or the current screen. Routes to the vision-agent (vision model) which describes it in text for DeepSeek to act on.
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 agent: ai-orchestrator
 ---
 

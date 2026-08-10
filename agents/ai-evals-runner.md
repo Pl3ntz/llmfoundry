@@ -1,7 +1,7 @@
 ---
 description: Builds and runs evals for prompts, agents, and RAG, golden sets, assertions, regression gates, stability runs. Use when writing or changing a prompt/agent, or to validate an LLM feature.
 mode: subagent
-model: opencode-go/deepseek-v4-flash
+model: opencode/deepseek-v4-flash-free
 color: "#f9e2af"
 permission:
   edit: allow

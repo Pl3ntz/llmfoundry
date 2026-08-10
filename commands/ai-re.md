@@ -1,6 +1,6 @@
 ---
 description: Reverse engineer a binary, firmware, or sample with maximum precision
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 agent: reverse-engineer
 ---
 

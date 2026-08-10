@@ -1,7 +1,7 @@
 ---
 description: Deep multi-source research agent with CLAIM LEDGER, VERIFIED confidence tier, pattern correlation, authority-by-volume detection, and depth-on-signal iteration. Use for thorough research, landscape analysis, comparisons, and passive OSINT on organizations.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 color: "#a6e3a1"
 permission:
   edit: deny

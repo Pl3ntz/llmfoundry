@@ -1,7 +1,7 @@
 ---
 description: Security defensive specialist. Audit, hardening, remediation, and defensive posture. Prescribes fixes for vulnerabilities found by security-offensive. Use for security audits, hardening guides, secure configurations, and audit preparation.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 color: "#89b4fa"
 permission:
   edit: deny

@@ -30,14 +30,14 @@ git commit -m "feat: ..."
 ## Adding an agent
 
 1. Create `agents/<name>.md`
-2. Frontmatter: `description`, `mode: subagent`, `model: opencode-go/*`, `permission`
+2. Frontmatter: `description`, `mode: subagent`, `model: opencode/deepseek-v4-flash-free`, `permission`
 3. Include: operating rules, output contract, memory loop (feed the memory)
 4. Register in `SKILLS.md`
 
 ## Adding a command
 
 1. Create `commands/<name>.md`
-2. Frontmatter: `description`, `model: opencode-go/*`, optional `agent`
+2. Frontmatter: `description`, `model: opencode/deepseek-v4-flash-free`, optional `agent`
 3. Add to README commands list
 
 ## Adding an eval
@@ -58,7 +58,8 @@ python3 -c "import json,glob;[json.load(open(f)) for f in glob.glob('evals/**/*.
 
 ## Rules
 
-- Model IDs are always `opencode-go/*` (never `opencode/` Zen, never expensive models).
+- Model IDs are always `opencode/deepseek-v4-flash-free` (never `opencode-go/*`,
+  never paid/expensive models — the free-only policy).
 - No secrets, PII, or business rules in any versioned file, memory is local-only.
 - Conventional commits: `feat:|fix:|refactor:|docs:|test:|chore:|perf:|ci:`.
 

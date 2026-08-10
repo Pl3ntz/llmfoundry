@@ -1,6 +1,6 @@
 ---
 description: Build with the mandatory process of SPEC, worktree, TDD, verify, atomic commit
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 agent: build
 ---
 

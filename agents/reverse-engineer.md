@@ -1,7 +1,7 @@
 ---
 description: Reverse engineering specialist. Binary analysis, decompilation, algorithm recovery, dynamic analysis, malware and firmware triage with maximum precision. Use when analyzing any binary, firmware, or potentially malicious sample.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 color: "#fab387"
 permission:
   edit: deny

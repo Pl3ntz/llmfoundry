@@ -1,7 +1,7 @@
 ---
 description: Database engineer, full PostgreSQL stack. Schema design, indexes, execution plans (EXPLAIN), RLS, migrations, outbox patterns, query optimization, connection pooling, backup strategy, multi-tenant design. Use for any database problem — from schema to slow queries.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
 color: "#89b4fa"
 permission:
   edit: deny
