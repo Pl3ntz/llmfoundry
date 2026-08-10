@@ -13,13 +13,6 @@
 </p>
 
 <p align="center">
-  <img src="assets/hero.gif" alt="LLMFoundry in action: the eval runner passing 60/60 checks, recorded with VHS">
-</p>
-<p align="center">
-  <em>Real session, real output. Recorded with <a href="https://github.com/charmbracelet/vhs">VHS</a>.</em>
-</p>
-
-<p align="center">
   <a href="https://github.com/Pl3ntz/llmfoundry/releases"><img alt="Release" src="https://img.shields.io/github/v/release/Pl3ntz/llmfoundry"></a>
   <a href="https://github.com/Pl3ntz/llmfoundry"><img alt="GitHub" src="https://img.shields.io/github/stars/Pl3ntz/llmfoundry?style=social"></a>
   <a href="https://github.com/Pl3ntz/llmfoundry/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-lightgrey.svg"></a>
