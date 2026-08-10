@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ab-score.py — re-score ALL existing A/B evidence with the fixed matcher.
+"""ab-score.py: re-score ALL existing A/B evidence with the fixed matcher.
 
 Reads evals/ab-v1-v2/raw/*/*/*.json (already saved), scores recall with a
 prefix-tolerant matcher, checks URL liveness, counts VERIFIED claims.

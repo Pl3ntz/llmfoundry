@@ -5,7 +5,7 @@ de pedido) e o **uso de gates** (interviewMe, spec, scopeSplit).
 
 ## Golden set
 
-`golden-set.json` — 12 perguntas congeladas (não mudar sem razão, bump `version`).
+`golden-set.json`: 12 perguntas congeladas (não mudar sem razão, bump `version`).
 Cada caso tem:
 
 - `prompt`: o pedido do Owner
@@ -33,7 +33,7 @@ python3 scripts/routing-runner.py --question RS-1
 python3 scripts/routing-runner.py --dry-run
 ```
 
-O runner usa `opencode run -m opencode/deepseek-v4-flash-free --pure` — o `--pure`
+O runner usa `opencode run -m opencode/deepseek-v4-flash-free --pure`. O `--pure`
 desliga plugins para medir o modelo, não o guard chain. Extrai o JSON de resposta dos
 eventos do server e pontua com a mesma régua do `routing-score.py` (rota 0.6,
 gates 0.4, pass >= 0.7).
@@ -42,7 +42,7 @@ gates 0.4, pass >= 0.7).
 
 O `live-routing` do `eval-runner.py` falha apenas se a **ROTA for instável**: a rota
 escolhida pelo modelo tem de ser a esperada em TODAS as amostras. Isso é a política
-determinística. **Gates (interviewMe, spec, scopeSplit) são métrica separada** —
+determinística. **Gates (interviewMe, spec, scopeSplit) são métrica separada**.
 sujeitos a variabilidade do modelo (ex: RS-9 CVE-hunting oscila interviewMe entre
 amostras), e não devem falhar o suite sozinhos.
 
@@ -55,6 +55,6 @@ amostras), e não devem falhar o suite sozinhos.
 | 2026-08-07 | live-routing (eval-runner) | 12 | 12 | 100% | deepseek-v4-flash-free | route-stable |
 
 Conclusão prática: em bateria fria (sem contexto), o modelo free roteia de forma
-estável 12/12 — não há degradação de roteamento em relação ao modelo anterior. Os
+estável 12/12. Não há degradação de roteamento em relação ao modelo anterior. Os
 únicos pontos de atenção são gates de entrevista em perguntas de segurança (RS-9,
 RS-12), que variam entre rodadas. Manter `baseline.json` como registro de regressão.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""import-claude-code.py — import Claude Code memories into LLMFoundry memory.
+"""import-claude-code.py: import Claude Code memories into LLMFoundry memory.
 
 Imports the curated memory files from a Claude Code project (~/.claude/projects/
 <project>/memory/*.md) into the local LLMFoundry memory engine.

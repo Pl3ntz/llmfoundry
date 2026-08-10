@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""scan-exposed-keys.py — passive scan for HIGH-SEVERITY exposed API keys.
+"""scan-exposed-keys.py: passive scan for HIGH-SEVERITY exposed API keys.
 
 Finds public repos that commit real secrets in .env/config files: AWS AKIA,
 Stripe sk_live, Firebase AIza, OpenAI sk-. Filters out documentation noise

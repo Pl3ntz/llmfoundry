@@ -49,7 +49,7 @@ fi
 
 # 3. JSONs validos (opencode.json + evals)
 # evals/ab-v1-v2/raw/ é evidência JSONL do A/B (um evento JSON por linha),
-# não fixture JSON único — excluído do check.
+# não fixture JSON único; excluído do check.
 if python3 - <<'EOF'
 import json, glob, sys
 files = ['opencode.json'] + glob.glob('evals/**/*.json', recursive=True)

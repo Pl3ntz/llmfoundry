@@ -1,11 +1,11 @@
 import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 
 /**
- * LLMFoundry research-guard — enforces the research delegation policy.
+ * LLMFoundry research-guard: enforces the research delegation policy.
  *
  * The orchestrator must delegate internet research to the deep-researcher
  * subagent. Direct webfetch/websearch calls from the ORCHESTRATOR bypass
- * source triangulation, confidence scoring, and correlation — the entire
+ * source triangulation, confidence scoring, and correlation. The entire
  * research quality stack.
  *
  * This guard fires a recoverable warning ONLY when the research-looking call
@@ -14,7 +14,7 @@ import type { Hooks, PluginInput } from "@opencode-ai/plugin";
  * research without ever being nagged. Context7 and doc lookups pass silently.
  *
  * If LF_RESEARCH_STRICT=1 is set, the guard BLOCKS (throws) instead of
- * warning — useful in CI or when you want hard enforcement.
+ * warning. Useful in CI or when you want hard enforcement.
  */
 
 const STRICT = process.env.LF_RESEARCH_STRICT === "1";
@@ -57,12 +57,12 @@ export async function server(input: PluginInput): Promise<Hooks> {
       if (tool !== "webfetch" && tool !== "websearch") return;
       const args = (output.args ?? {}) as Record<string, unknown>;
 
-      // Documentation lookups are fine — only flag general research
+      // Documentation lookups are fine. Only flag general research
       if (isDocLookup(args)) return;
       if (!looksLikeResearch(args)) return;
 
       // Subagents (deep-researcher) run in child sessions (parentID set).
-      // Their research is the whole point of the policy — never nag them.
+      // Their research is the whole point of the policy. Never nag them.
       // Only a root session (the orchestrator fetching directly) is warned.
       let isChildSession = false;
       try {

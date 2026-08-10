@@ -1,7 +1,7 @@
 import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 
 /**
- * LLMFoundry voice-guard — blocks output that reads like AI-generated text.
+ * LLMFoundry voice-guard: blocks output that reads like AI-generated text.
  *
  * Enforcement lives outside the model (same philosophy as gates.ts): rules the
  * model merely reads are guidance; this hook is a control.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# chrome-check.sh — helper for the chrome-devtools MCP standard.
+# chrome-check.sh: helper for the chrome-devtools MCP standard.
 #
 # The chrome-devtools MCP uses --autoConnect to attach to YOUR running Chrome
 # (with your logins). This script does NOT open a debug Chrome with user-data-dir

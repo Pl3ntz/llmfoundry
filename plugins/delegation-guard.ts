@@ -1,11 +1,11 @@
 import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 
 /**
- * LLMFoundry delegation-guard — validates subagent spawns before they leave
+ * LLMFoundry delegation-guard: validates subagent spawns before they leave
  * the orchestrator.
  *
  * The 4 mandatory parts (Objective, Context, Output contract, Boundaries)
- * are HARD-BLOCKED when missing — this catches genuine delegation mistakes.
+ * are HARD-BLOCKED when missing. This catches genuine delegation mistakes.
  * A well-formed prompt with the 4 parts is trusted: suspected misrouting by
  * keyword is surfaced as a WARNING to the session, never thrown, so legitimate
  * work cannot enter an infinite rewrite-retry loop.
@@ -126,7 +126,7 @@ function validateDelegation(
   prompt: string,
   targetAgent: string,
 ): { status: "block" | "warn" | "pass"; message?: string } {
-  // Gate 1: mandatory parts — the real protection. Missing parts HARD-BLOCK.
+  // Gate 1: mandatory parts, the real protection. Missing parts HARD-BLOCK.
   const missing: string[] = [];
   for (const [name, re] of MANDATORY_PARTS) {
     if (!re.test(prompt)) missing.push(name);
@@ -151,7 +151,7 @@ function validateDelegation(
     return { status: "pass" };
   }
 
-  // Gate 4: suspected misroute — WARNING ONLY, never throws. The orchestrator's
+  // Gate 4: suspected misroute. WARNING ONLY, never throws. The orchestrator's
   // explicit routing decision (in a prompt that already satisfies Gate 1) is
   // trusted over keyword heuristics that have produced false positives.
   for (const [re, blocked] of MISROUTE_RULES) {

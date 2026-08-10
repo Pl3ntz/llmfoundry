@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""eval-runner.py — unified eval runner for LLMFoundry.
+"""eval-runner.py: unified eval runner for LLMFoundry.
 
 Runs deterministic checks against golden sets and reports pass/fail with
 baseline comparison. No LLM required for the memory/engine checks; the
@@ -379,7 +379,7 @@ def guard_checks():
 
 
 # ----------------------------------------------------------------------------
-# Stability checks (K=5) — deterministic, no model, no Chrome.
+# Stability checks (K=5). Deterministic, no model, no Chrome.
 
 K_RUNS = 5
 
@@ -519,7 +519,7 @@ def drv2_checks():
 
 def live_routing_checks(model, samples):
     """Run the live model routing battery (evals/orchestrator/golden-set.json) and
-    map each question to a PASS/FAIL check on ROUTE STABILITY (not gate rate —
+    map each question to a PASS/FAIL check on ROUTE STABILITY (not gate rate,
     gates are subject to model variability and reported as a metric only)."""
     results = []
     runner = os.path.join(ROOT, "scripts", "routing-runner.py")

@@ -1,7 +1,7 @@
 import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 
 /**
- * LLMFoundry verify-guard — flags output that asserts facts without evidence
+ * LLMFoundry verify-guard: flags output that asserts facts without evidence
  * (delirium). Enforcement lives outside the model.
  *
  * Scans tool OUTPUT for:
@@ -41,7 +41,7 @@ export async function server(input: PluginInput): Promise<Hooks> {
     "tool.execute.after": async ({ tool, callID, args }, output) => {
       if (tool === "write" || tool === "edit") {
         const filePath = (args?.filePath ?? args?.path ?? "") as string;
-        // Only prose/documentation files — code files legitimately have different grammar
+        // Only prose/documentation files. Code files legitimately have different grammar
         if (!/\.(md|txt|mdx)$/.test(filePath)) return;
         const content = (output.output || "") as string;
         // Skip structured findings blocks (they carry explicit severity + evidence)

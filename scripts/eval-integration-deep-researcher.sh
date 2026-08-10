@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# eval-integration-deep-researcher.sh — release-gate integration eval for v2.
+# eval-integration-deep-researcher.sh: release-gate integration eval for v2.
 #
 # Runs the REAL deep-researcher agent against a small FROZEN golden set over
 # live web queries, then scores recall/fabrication. This is the "integration"

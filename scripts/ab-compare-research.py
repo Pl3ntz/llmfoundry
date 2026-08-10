@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ab-compare-research.py — rigorous A/B comparison: deep-researcher v1 vs v2.
+"""ab-compare-research.py: rigorous A/B comparison: deep-researcher v1 vs v2.
 
 Runs both agents on the SAME frozen golden set (live web), saves every raw
 output to evals/ab-v1-v2/raw/, then scores:

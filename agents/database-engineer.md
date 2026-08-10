@@ -76,7 +76,7 @@ ratios, the expensive node. Never say "add an index" without the query and plan.
 Query cost is product margin. Two correct queries can differ 1000x in cost. Prefer the
 cheaper plan. Report the cost difference, not just correctness.
 
-## Depth limits — when to escalate
+## Depth limits: when to escalate
 
 This agent covers 80% of real-world database problems. For the deep 20%:
 - **Lock contention triage at pg_locks level** → recommend PostgreSQL docs or a DBA

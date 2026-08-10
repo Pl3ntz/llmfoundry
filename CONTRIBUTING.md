@@ -59,7 +59,7 @@ python3 -c "import json,glob;[json.load(open(f)) for f in glob.glob('evals/**/*.
 ## Rules
 
 - Model IDs are always `opencode/deepseek-v4-flash-free` (never `opencode-go/*`,
-  never paid/expensive models — the free-only policy).
+  never paid/expensive models, the free-only policy).
 - No secrets, PII, or business rules in any versioned file, memory is local-only.
 - Conventional commits: `feat:|fix:|refactor:|docs:|test:|chore:|perf:|ci:`.
 

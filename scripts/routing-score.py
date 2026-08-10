@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""routing-score.py — deterministic orchestrator routing eval scorer.
+"""routing-score.py: deterministic orchestrator routing eval scorer.
 
 Compares a golden question (EXPECTED) against an orchestrator answer (ACTUAL),
 both with {route, gates}. Route match wins on exact or acceptable alternative.
