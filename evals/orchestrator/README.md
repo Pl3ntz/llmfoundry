@@ -53,8 +53,13 @@ amostras), e não devem falhar o suite sozinhos.
 | 2026-08-01 | routing-runner | 6 | 4 | 67% | (anterior) | composite |
 | 2026-08-07 | routing-runner | 12 | 12 | 100% | deepseek-v4-flash-free | route-stable |
 | 2026-08-07 | live-routing (eval-runner) | 12 | 12 | 100% | deepseek-v4-flash-free | route-stable |
+| 2026-08-10 | routing-runner (AB-antes, pré-merge PR #14) | 12 | 12 | 100% | deepseek-v4-flash-free | route-stable |
+| 2026-08-10 | routing-runner (pós-merge PR #14) | 12 | 12 | 100% | deepseek-v4-flash-free | route-stable |
 
 Conclusão prática: em bateria fria (sem contexto), o modelo free roteia de forma
-estável 12/12. Não há degradação de roteamento em relação ao modelo anterior. Os
-únicos pontos de atenção são gates de entrevista em perguntas de segurança (RS-9,
-RS-12), que variam entre rodadas. Manter `baseline.json` como registro de regressão.
+estável 12/12. Não há degradação de roteamento em relação ao modelo anterior, nem
+após o PR #14 (token economy: AGENTS.md enxuto, skills comprimidos, teto 12+8 do
+deep-researcher). Os únicos pontos de atenção são gates de entrevista em perguntas
+de segurança (RS-9, RS-12), que variam entre rodadas. Manter `baseline.json` como
+registro de regressão e `evals/tokens/ab-antes.json` como ponto de comparação de
+tokens do protocolo A/B.
