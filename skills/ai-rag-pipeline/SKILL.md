@@ -1,6 +1,6 @@
 ---
 name: ai-rag-pipeline
-description: Build and evaluate RAG systems, embedding, chunking, retrieval, reranking, and RAG evaluation. Use when designing retrieval-augmented generation for LLM apps.
+description: "Build and evaluate RAG systems: embedding, chunking, retrieval, reranking, RAG evaluation. Use when designing retrieval-augmented generation for LLM apps."
 ---
 
 # AI RAG Pipeline

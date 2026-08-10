@@ -1,6 +1,6 @@
 ---
 name: ai-agent-safety
-description: Safety controls for AI agents, sandboxing, tool permissions, allowlists, input/output boundaries, and fail-closed defaults. Use when building agents that execute code, access data, or act on the world.
+description: "Safety controls for AI agents: sandboxing, tool permissions, allowlists, input/output boundaries, fail-closed defaults. Use when building agents that execute code, access data, or act on the world."
 ---
 
 # AI Agent Safety

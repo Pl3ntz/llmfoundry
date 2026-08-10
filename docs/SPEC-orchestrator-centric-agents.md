@@ -1,6 +1,6 @@
-# SPEC — Estrutura Orquestrador-Cêntrica (subagents 100% para o orquestrador)
+# SPEC: Estrutura Orquestrador-Cêntrica (subagents 100% para o orquestrador)
 
-> Status: **RASCUNHO PARA APROVAÇÃO v0.2** — atualizado 2026-08-10.
+> Status: **RASCUNHO PARA APROVAÇÃO v0.2**, atualizado 2026-08-10.
 > Dono: vitor. Nenhum arquivo de agent foi alterado ainda. Este doc é o ponto de partida
 > da mudança estrutural. Abrir sessão no llmfoundry e tocar daqui.
 
@@ -10,7 +10,7 @@ Toda mudança neste repo serve a um objetivo: **conseguir projetos que paguem em
 com qualidade de AI engineering que se vende sozinha**. Esta SPEC é um meio, não um fim:
 agentes orquestrador-cêntricos = saída uniforme e mensurável = entregas que impressionam
 cliente/recrutador = menos retrabalho por ambiguidade. Nada aqui pode virar "engenharia
-pela engenharia" — se um passo não reduz custo ou aumenta qualidade percebida, ele sai do
+pela engenharia". Se um passo não reduz custo ou aumenta qualidade percebida, ele sai do
 escopo.
 
 ## Contexto (o que decidimos)
@@ -53,7 +53,7 @@ continua sendo prosa. Elementos necessários:
    evidência (`file:line`, URL, excerpt), contradições, DECISION IMPACT.
 2. **Validadores por papel** (script determinístico): verificar o contrato
    automaticamente. O `verify-guard.ts` hoje só faz hedge-scan e já pula blocos
-   `### FINDINGS` (`plugins/verify-guard.ts:48`) — ele sabe que existe formato
+   `### FINDINGS` (`plugins/verify-guard.ts:48`). Ele sabe que existe formato
    estruturado mas não valida os campos. Estender para validar headers obrigatórios.
 3. **Evals por agent**: para cada papel, definir o que medir em cada missão.
 
@@ -66,38 +66,54 @@ Markdown com headers fixos já é robusto (deep-researcher entrega os 8 `###` ho
 JSON Schema fica reservado para casos onde parse é crítica (ex.: findings para
 ferramentas externas), decidido por papel, não por padrão.
 
-### Esquema de validação por papel (v0.2, 2 pilotos)
+### Esquema de validação por papel (v0.3, após debate com agents)
+
+**Regra transversal (v0.3, ajuste do debate)**: `DECISION IMPACT` é **condicionado**.
+O critério de decisão NÃO nasce no subagent. O orquestrador declara a decisão no
+`## Context` do spawn (ex.: "o Owner decide entre X e Y; sua pesquisa decide qual é
+mais barato"). O agent só preenche DECISION IMPACT se o critério foi fornecido. Se o
+orquestrador não sabe qual decisão a missão serve, a missão não deveria ter sido
+lançada (resultado sem impacto de decisão = GAP de desenho de missão, ai-architect).
+
+**Validação por resolução de referência, não presença** (ai-architect + ai-evals-runner):
+- cada claim cruza com FINDINGS e SOURCES (`[n]` resolve em SOURCES)
+- DECISION IMPACT deve referenciar uma linha de FINDINGS (mesmo padrão `[n]`)
+- aderência ao contrato é condição necessária, não suficiente: nenhum promote com
+  score estrutural sozinho; veracidade (`verified_bad`) manda (ai-evals-runner)
 
 **deep-researcher** (contrato atual em `agents/deep-researcher.md:172-201`):
 - [ ] Obrigatório: `### FINDINGS`, `### GAPS`, `### NEXT STEP`, `### SOURCES`
 - [ ] Cada FINDING começa com `[VERIFIED|HIGH|MEDIUM|LOW|UNVERIFIED]`
 - [ ] Pelo menos 1 SOURCE indexada por FINDING (referência `[n]` resolve em SOURCES)
 - [ ] Corpo <800 tokens excluindo SOURCES
-- [ ] NOVO: `### DECISION IMPACT` (2-3 linhas, o que muda na decisão do Owner)
-- [ ] NOVO: `### AUDIT TRAIL` (fontes + excerpts, para auditoria sob demanda)
+- [ ] `### DECISION IMPACT` somente se o critério de decisão foi fornecido no Context
+- [ ] `### AUDIT TRAIL` redundante com SOURCES em 90% (deep-researcher) → manter SOURCES
+      como âncora; AUDIT TRAIL só para cadeia de proveniência sob demanda (query que
+      levou a cada fonte), ativado por comando explícito do orquestrador
 
 **ai-architect** (contrato atual em `agents/ai-architect.md:67-85`):
 - [ ] Obrigatório: `### DECISION SUMMARY`, `### ARCHITECTURE`, `### TRADE-OFFS`,
       `### FAILURE MODES`, `### EVAL PLAN`
 - [ ] TRADE-OFFS com ≥2 opções comparadas (tabela ou lista)
-- [ ] NOVO: `### DECISION IMPACT`
-- [ ] NOVO: `### AUDIT TRAIL` (decisões de design com justificativa)
+- [ ] `### DECISION IMPACT` somente se o critério de decisão foi fornecido no Context
+- [ ] `### AUDIT TRAIL` para decisões de design com justificativa (aqui sim, distinto)
 
 **orquestrador** (fan-in): continua no formato `ai-orchestration/SKILL.md:78-93`,
-sem mudança estrutural — ele já é o único tradutor.
+sem mudança estrutural. Ele já é o único tradutor.
 
 ## Evals por agent (o que medir)
 
 | Papel | Métrica | Passa quando |
 |---|---|---|
-| deep-researcher | Aderência ao contrato | 8 headers presentes, toda FINDING com fonte indexada, DECISION IMPACT presente, <800 tokens |
-| deep-researcher | Veracidade | Amostra de claims VERIFIED: citação verbatim confere com a fonte |
-| ai-architect | Aderência ao contrato | 5 headers + DECISION IMPACT + AUDIT TRAIL, TRADE-OFFS ≥2 opções |
+| deep-researcher | Aderência ao contrato | 8 headers presentes, toda FINDING com fonte indexada, DECISION IMPACT condicionado, <800 tokens |
+| deep-researcher | Veracidade | Amostra de claims VERIFIED: citação verbatim confere (`verified_bad` conta) |
+| ai-architect | Aderência ao contrato | 5 headers + DECISION IMPACT condicionado + AUDIT TRAIL, TRADE-OFFS ≥2 opções |
 | orquestrador | Estabilidade de rota | Golden-set 12/12 (já existe: `evals/orchestrator/golden-set.json`, `scripts/routing-runner.py`) |
 
 Implementação: extender `scripts/eval-runner.py` ou novo `scripts/contract-score.py` que
-parseia o output de uma missão e devolve score de aderência. Roda como eval por agent,
-não como guard de bloco (guard pega no vôo, eval mede no tempo).
+parseia o output de uma missão e devolve score de aderência + veracidade. Roda como eval
+por agent, não como guard de bloco (guard pega no vôo, eval mede no tempo). Nenhum
+promote com base em score estrutural sozinho.
 
 ## Onde a economia de tokens realmente aparece
 
@@ -152,13 +168,13 @@ não como guard de bloco (guard pega no vôo, eval mede no tempo).
 
 ## Pendências de backlog (deep-researcher)
 
-- [x] ~~`deep-researcher.md:4` usa modelo PAGO~~ — **RESOLVIDO** [VERIFIED, agents/deep-researcher.md:4]
-- [ ] Deep-researcher: sem teto de iterações ("No fixed cycle ceiling", deep-researcher.md:161)
-      → propor máx. 12 websearch + 8 webfetch por missão; estouro vira GAP.
-- [ ] Deep-researcher: ledger morre no fim da missão → persistir resumo na foundry-memory
-      (pergunta → claims → gaps → fontes); missão nova consulta "onde paramos".
-- [ ] Deep-researcher: superfície curta (só websearch + webfetch) → allow explícito de
-      chrome-devtools/playwright + curl GET somente-leitura em APIs públicas (regra OSINT estendida).
+- [x] ~~`deep-researcher.md:4` usa modelo PAGO~~. **RESOLVIDO** [VERIFIED, agents/deep-researcher.md:4]
+- [x] ~~Sem teto de iterações~~. **RESOLVIDO (2026-08-10)**: máx. 12 websearch + 8 webfetch,
+      estouro vira GAP com tag `[CEILING-FORCED]` (agents/deep-researcher.md ITERATE/CEILING)
+- [x] ~~Ledger morre no fim da missão~~. **RESOLVIDO (2026-08-10)**: LEDGER PERSIST grava resumo
+      (pergunta → claims → gaps → fontes) na foundry-memory; missão nova consulta "onde paramos"
+- [x] ~~Superfície curta (só websearch + webfetch)~~. **RESOLVIDO (2026-08-10)**: `curl GET`
+      somente-leitura em APIs públicas + chrome-devtools/playwright (OSINT estendido)
 
 ## Fato técnico verificado (referência)
 

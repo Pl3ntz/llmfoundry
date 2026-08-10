@@ -1,6 +1,6 @@
 ---
 name: ai-prompt-engineering
-description: Design, iterate, and evaluate system prompts, few-shot examples, tool descriptions, and structured output. Use when writing or improving prompts for LLM apps, agents, or evals.
+description: "Design, iterate, and evaluate system prompts, few-shot examples, tool descriptions, structured output. Use when writing or improving prompts for LLM apps, agents, or evals."
 ---
 
 # AI Prompt Engineering

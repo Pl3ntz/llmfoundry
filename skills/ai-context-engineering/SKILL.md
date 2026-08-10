@@ -1,6 +1,6 @@
 ---
 name: ai-context-engineering
-description: Manage LLM context windows, packing, pruning, compaction, summarization, and context budgets. Use when building prompts, agents, or any app with a context limit.
+description: "Manage LLM context windows: packing, pruning, compaction, summarization, context budgets. Use when building prompts, agents, or any app with a context limit."
 ---
 
 # AI Context Engineering

@@ -1,6 +1,6 @@
 ---
 name: ai-engineering-standards
-description: Engineering standards and output discipline for AI engineering work. Use at the start of every task and whenever writing code, prompts, evals, or docs. Enforces verifiable output, evidence discipline, anti-hedging, and senior-level formatting.
+description: "Engineering standards and output discipline for AI engineering work. Use at the start of every task and when writing code, prompts, evals, or docs. Enforces verifiable output, evidence discipline, anti-hedging, senior formatting."
 ---
 
 # AI Engineering Standards

@@ -1,6 +1,6 @@
 ---
 name: re-algorithm-recovery
-description: Reverse engineering algorithm recovery, detect and reconstruct crypto, checksums, serial validation, and custom algorithms from binary logic with proof. Use after decompilation when a function computes something important.
+description: "Reverse engineering algorithm recovery: detect and reconstruct crypto, checksums, serial validation, custom algorithms from binary logic with proof. Use after decompilation when a function computes something important."
 ---
 
 # Algorithm Recovery

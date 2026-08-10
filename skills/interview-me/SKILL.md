@@ -1,6 +1,6 @@
 ---
 name: interview-me
-description: Extract requirements one question at a time until ~95% confidence in what the user wants. Use when a request is underspecified, ambiguous, or high-stakes. Ask one question, wait for the answer, then the next.
+description: "Extract requirements one question at a time until ~95% confidence in what the user wants. Use when a request is underspecified, ambiguous, or high-stakes."
 ---
 
 # Interview Me

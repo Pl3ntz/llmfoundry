@@ -1,6 +1,6 @@
 ---
 name: doubt-driven-development
-description: Adversarial review of in-flight decisions with fresh context, CLAIM, EXTRACT, DOUBT, RECONCILE. Use for high-stakes work, unfamiliar code, or when a confident output is cheaper to verify now than debug later.
+description: "Adversarial review of in-flight decisions with fresh context: CLAIM, EXTRACT, DOUBT, RECONCILE. Use for high-stakes work, unfamiliar code, or when verification is cheaper than debugging later."
 ---
 
 # Doubt-Driven Development

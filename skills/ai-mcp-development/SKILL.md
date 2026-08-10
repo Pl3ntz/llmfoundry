@@ -1,6 +1,6 @@
 ---
 name: ai-mcp-development
-description: Build Model Context Protocol (MCP) servers and clients, stdio/HTTP transport, tools, resources, prompts, and auth. Use when creating or integrating MCP servers for agents.
+description: "Build Model Context Protocol (MCP) servers and clients: stdio/HTTP transport, tools, resources, prompts, auth. Use when creating or integrating MCP servers for agents."
 ---
 
 # AI MCP Development

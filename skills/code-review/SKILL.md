@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Extremely effective code review. Use before merging any change. Five-axis review, severity labels, evidence discipline, and feedback that authors can act on. Turn reviews into the quality gate that catches what tests miss.
+description: "Extremely effective code review: five-axis review, severity labels, evidence discipline, actionable feedback. Use before merging any change."
 ---
 
 # Code Review
