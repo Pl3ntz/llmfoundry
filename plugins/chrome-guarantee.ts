@@ -4,15 +4,22 @@ import type { Hooks, PluginInput } from "@opencode-ai/plugin";
  * LLMFoundry chrome-guarantee: makes sure the chrome-devtools MCP always
  * connects to YOUR Chrome (with logins), never a separate clean one.
  *
- * Problem: --autoConnect only works when the Chrome DevToolsActivePort file
- * exists. If Chrome is not running with remote debugging, the MCP falls back
- * to launching a clean Chrome (no logins).
+ * Uses a DEDICATED debug profile (~/chrome-debug-profile) so it never
+ * interferes with your normal Chrome / other opencode sessions.
  *
- * Guarantee: before any browser tool is used, check that the debug endpoint
- * is alive. If not, restart YOUR Chrome (chrome-debug-profile, with logins)
- * with the debug port, then the MCP connects to it.
+ * Robust fix for the "orphan DevToolsActivePort" bug: when the debug endpoint
+ * file exists but the CDP server on that port is DEAD (a zombie process holds
+ * the port but the JSON endpoint does not respond), the old code considered it
+ * alive (because curl exits 0 even on an empty response). This made the MCP
+ * connect to a dead browser and fail with "could not connect".
  *
- * Profile: ~/chrome-debug-profile, your personal profile with logins.
+ * The fix:
+ *   1. isDebugAlive() actually checks that /json/version RETURNS content
+ *      (not just that the process exits 0).
+ *   2. If the endpoint is orphaned, we remove the DevToolsActivePort file
+ *      (NOT the process) so the next autoConnect starts clean.
+ *   3. We never kill your Chrome and never start a second one if one alive
+ *      debug chrome already exists — this avoids breaking other sessions.
  */
 
 import { execSync } from "node:child_process";
@@ -24,45 +31,121 @@ const PROFILE = path.join(os.homedir(), "chrome-debug-profile");
 const PORT = 9222;
 const DEBUG_PORT_FILE = path.join(PROFILE, "DevToolsActivePort");
 
-function isDebugAlive(): boolean {
-  // The DevToolsActivePort file must exist AND the port must respond.
-  if (!fs.existsSync(DEBUG_PORT_FILE)) return false;
+function debugPortFromFile(): number | null {
+  if (!fs.existsSync(DEBUG_PORT_FILE)) return null;
   try {
-    const port = Number(fs.readFileSync(DEBUG_PORT_FILE, "utf8").split("\n")[0]);
-    execSync(`curl -s --max-time 2 http://127.0.0.1:${port}/json/version`, { stdio: "ignore" });
-    return true;
+    const first = fs.readFileSync(DEBUG_PORT_FILE, "utf8").split("\n")[0].trim();
+    const port = Number(first);
+    return Number.isInteger(port) && port > 0 && port <= 65535 ? port : null;
+  } catch {
+    return null;
+  }
+}
+
+function cdpAlive(port: number): boolean {
+  // CDP is alive only if the JSON endpoint ACTUALLY returns content.
+  try {
+    const out = execSync(
+      `curl -s --max-time 2 http://127.0.0.1:${port}/json/version`,
+      { encoding: "utf8" },
+    ).trim();
+    return out.length > 0 && out.includes("Browser");
+  } catch {
+    return false;
+  }
+}
+
+function isDebugAlive(): boolean {
+  const port = debugPortFromFile();
+  if (port === null) return false;
+  return cdpAlive(port);
+}
+
+function removeOrphanPortFile(): void {
+  // A zombie process may hold the port, but the CDP endpoint is dead.
+  // Remove the stale DevToolsActivePort so autoConnect starts clean next time.
+  try {
+    if (fs.existsSync(DEBUG_PORT_FILE)) {
+      fs.unlinkSync(DEBUG_PORT_FILE);
+      console.error("[chrome-guarantee] Removed orphan DevToolsActivePort (CDP dead).");
+    }
+  } catch (e) {
+    console.error("[chrome-guarantee] Could not remove orphan port file:", String(e));
+  }
+}
+
+function profileChromeRunning(): boolean {
+  // Is a Chrome using our debug-profile already running? (distinguish from your
+  // normal Chrome by the user-data-dir flag.)
+  try {
+    const out = execSync(
+      "ps ax -o command=", { encoding: "utf8" },
+    );
+    return out.includes("--remote-debugging-port") && out.includes("chrome-debug-profile");
   } catch {
     return false;
   }
 }
 
 function ensureChromeDebug(): void {
+  // 1. Already alive? nothing to do.
   if (isDebugAlive()) return;
+
+  // 2. Port file exists but CDP dead -> orphan. Clean it so we don't fight it.
+  if (debugPortFromFile() !== null) {
+    removeOrphanPortFile();
+  }
+
+  // 3. Debug-profile Chrome running but WITHOUT a working debug port: it was
+  //    started in some session without the flag (orphan). We cannot kill it
+  //    (owner may be using it / house rule), and starting a second one would
+  //    fight for the port. Clean the stale port file so nothing points to a
+  //    dead endpoint, and surface a clear instruction to restart just the
+  //    DEBUG profile (separate from the normal Chrome, so operations continue).
   try {
-    // Chrome already running without debug? We cannot restart it from here
-    // without losing the user's windows, so log clearly instead.
-    execSync("pgrep -x 'Google Chrome'", { stdio: "ignore" });
-    console.error(
-      "[chrome-guarantee] Chrome is running but WITHOUT the debug port. " +
-        "Quit Chrome once, then the plugin will start it with the debug port " +
-        "on the next launch. Until then the MCP may open a clean Chrome.",
-    );
-    return;
-  } catch {
-    // No Chrome running. Start YOUR Chrome (with logins) + debug port.
-    try {
-      execSync(
-        `"${process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"}" ` +
-          `--remote-debugging-port=${PORT} --user-data-dir="${PROFILE}" --restore-last-session ` +
-          // Stop the on-device AI model (OptGuideOnDeviceModel, ~4GB/profile) from being
-          // re-downloaded every time. It powers local AI extras we do not use.
-          `--disable-features=OptimizationGuideModelDownloading >/dev/null 2>&1 &`,
-        { shell: "/bin/bash" },
+    const out = execSync("ps ax -o command=", { encoding: "utf8" });
+    const debugChrome = out.includes("chrome-debug-profile");
+    const alive = isDebugAlive();
+    if (debugChrome && !alive) {
+      removeOrphanPortFile();
+      console.error(
+        "[chrome-guarantee] Debug-profile Chrome is running but WITHOUT a live debug port. " +
+          "Quit just that profile once (it is separate from your normal Chrome), " +
+          "and this plugin will restart it with the debug port on the next browser tool. " +
+          "Your normal Chrome is untouched.",
       );
-      console.error(`[chrome-guarantee] Started your Chrome with debug port ${PORT} (logins).`);
-    } catch (e) {
-      console.error("[chrome-guarantee] Failed to start Chrome:", String(e));
+      return; // don't start a duplicate while the debug-profile Chrome exists
     }
+  } catch {
+    /* ignore */
+  }
+
+  // 4. No debug-profile Chrome alive with CDP: start it clean.
+  if (profileChromeRunning()) return; // another session already started it
+  try {
+    execSync(
+      `"${process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"}" ` +
+        `--remote-debugging-port=${PORT} --user-data-dir="${PROFILE}" --restore-last-session ` +
+        `--disable-features=OptimizationGuideModelDownloading >/dev/null 2>&1 &`,
+      { shell: "/bin/bash" },
+    );
+    // Give it a moment to write DevToolsActivePort.
+    try {
+      execSync("sleep 3", { stdio: "ignore" });
+    } catch {
+      /* ignore */
+    }
+    // If after this it's still not alive, surface clearly.
+    if (!isDebugAlive()) {
+      console.error(
+        `[chrome-guarantee] Started debug profile but CDP still not alive on ${PORT}. ` +
+          "Check ~/chrome-debug-profile/DevToolsActivePort.",
+      );
+    } else {
+      console.error(`[chrome-guarantee] Chrome debug profile active on port ${PORT} (logins).`);
+    }
+  } catch (e) {
+    console.error("[chrome-guarantee] Failed to start Chrome:", String(e));
   }
 }
 
