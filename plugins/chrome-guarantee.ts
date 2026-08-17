@@ -1,18 +1,20 @@
 import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 
 /**
- * LLMFoundry chrome-guarantee: makes sure the chrome-devtools MCP always
- * connects to YOUR Chrome (with logins), never a separate clean one.
+ * LLMFoundry chrome-guarantee: makes sure the chrome-devtools MCP connects to
+ * YOUR Chrome (the one with your logins, tabs, extensions), opening a NEW TAB
+ * inside your existing window — never a separate clean window/instance.
  *
- * Problem: --autoConnect only works when the Chrome DevToolsActivePort file
- * exists. If Chrome is not running with remote debugging, the MCP falls back
- * to launching a clean Chrome (no logins).
+ * Strategy (mirrors Claude Code): the MCP runs with `--autoConnect`, which
+ * reads Chrome's `DevToolsActivePort` from the DEFAULT user data dir and
+ * connects via WebSocket to the already-running Chrome. Chrome 144+ exposes
+ * this endpoint when "Discover network targets" / remote debugging is enabled
+ * via chrome://inspect/#remote-debugging — NO terminal flag needed.
  *
- * Guarantee: before any browser tool is used, check that the debug endpoint
- * is alive. If not, restart YOUR Chrome (chrome-debug-profile, with logins)
- * with the debug port, then the MCP connects to it.
- *
- * Profile: ~/chrome-debug-profile, your personal profile with logins.
+ * The plugin's job is ONLY to verify the endpoint is reachable before the
+ * browser tool runs, and to surface a clear instruction if it is not. It
+ * never kills Chrome and never starts a duplicate instance (owner opens
+ * Chrome normally from the dock; asking for terminal flags is a non-goal).
  */
 
 import { execSync } from "node:child_process";
@@ -20,57 +22,94 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
-const PROFILE = path.join(os.homedir(), "chrome-debug-profile");
-const PORT = 9222;
-const DEBUG_PORT_FILE = path.join(PROFILE, "DevToolsActivePort");
+const PORT_FILE = path.join(
+  os.homedir(),
+  "Library/Application Support/Google/Chrome/DevToolsActivePort",
+);
 
-function isDebugAlive(): boolean {
-  // The DevToolsActivePort file must exist AND the port must respond.
-  if (!fs.existsSync(DEBUG_PORT_FILE)) return false;
+function debugPortFromFile(): number | null {
+  if (!fs.existsSync(PORT_FILE)) return null;
   try {
-    const port = Number(fs.readFileSync(DEBUG_PORT_FILE, "utf8").split("\n")[0]);
-    execSync(`curl -s --max-time 2 http://127.0.0.1:${port}/json/version`, { stdio: "ignore" });
-    return true;
+    const first = fs.readFileSync(PORT_FILE, "utf8").split("\n")[0].trim();
+    const port = Number(first);
+    return Number.isInteger(port) && port > 0 && port <= 65535 ? port : null;
   } catch {
-    return false;
+    return null;
   }
 }
 
-function ensureChromeDebug(): void {
-  if (isDebugAlive()) return;
+function debugPathFromFile(): string | null {
+  if (!fs.existsSync(PORT_FILE)) return null;
   try {
-    // Chrome already running without debug? We cannot restart it from here
-    // without losing the user's windows, so log clearly instead.
-    execSync("pgrep -x 'Google Chrome'", { stdio: "ignore" });
-    console.error(
-      "[chrome-guarantee] Chrome is running but WITHOUT the debug port. " +
-        "Quit Chrome once, then the plugin will start it with the debug port " +
-        "on the next launch. Until then the MCP may open a clean Chrome.",
-    );
-    return;
+    const lines = fs.readFileSync(PORT_FILE, "utf8").split("\n").map((l) => l.trim()).filter(Boolean);
+    return lines.length >= 2 ? lines[1] : null;
   } catch {
-    // No Chrome running. Start YOUR Chrome (with logins) + debug port.
-    try {
-      execSync(
-        `"${process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"}" ` +
-          `--remote-debugging-port=${PORT} --user-data-dir="${PROFILE}" --restore-last-session ` +
-          // Stop the on-device AI model (OptGuideOnDeviceModel, ~4GB/profile) from being
-          // re-downloaded every time. It powers local AI extras we do not use.
-          `--disable-features=OptimizationGuideModelDownloading >/dev/null 2>&1 &`,
-        { shell: "/bin/bash" },
-      );
-      console.error(`[chrome-guarantee] Started your Chrome with debug port ${PORT} (logins).`);
-    } catch (e) {
-      console.error("[chrome-guarantee] Failed to start Chrome:", String(e));
-    }
+    return null;
   }
+}
+
+async function cdpViaWsAliveAsync(port: number, wsPath: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const net = require("node:net");
+    const crypto = require("node:crypto");
+    const sock = net.connect(port, "127.0.0.1");
+    const timer = setTimeout(() => { try { sock.destroy(); } catch {} resolve(false); }, 5000);
+    sock.on("connect", () => {
+      const key = crypto.randomBytes(16).toString("base64");
+      sock.write(
+        `GET ${wsPath} HTTP/1.1\r\nHost: 127.0.0.1:${port}\r\n` +
+          "Upgrade: websocket\r\nConnection: Upgrade\r\n" +
+          `Sec-WebSocket-Key: ${key}\r\nSec-WebSocket-Version: 13\r\n\r\n`,
+      );
+    });
+    let data = "";
+    sock.on("data", (c: Buffer) => {
+      data += c.toString();
+      if (data.includes("101")) {
+        clearTimeout(timer);
+        try { sock.destroy(); } catch {}
+        resolve(true);
+      }
+    });
+    sock.on("error", () => { clearTimeout(timer); resolve(false); });
+    sock.on("timeout", () => { clearTimeout(timer); resolve(false); });
+    sock.setTimeout(5000);
+  });
+}
+
+async function isDebugAlive(): Promise<boolean> {
+  const port = debugPortFromFile();
+  const wsPath = debugPathFromFile();
+  if (port === null || wsPath === null) return false;
+  return cdpViaWsAliveAsync(port, wsPath);
+}
+
+async function ensureChromeDebug(): Promise<void> {
+  // 1. Seu Chrome ja expoe o endpoint WebSocket (DevToolsActivePort)? Nada a
+  //    fazer: o MCP (--autoConnect) conecta sozinho na sua janela.
+  if (await isDebugAlive()) return;
+
+  // 2. Endpoint indisponível: NUNCA matamos seu Chrome e NUNCA iniciamos uma
+  //    instancia separada. O Chrome 144+ precisa apenas de remote debugging
+  //    habilitado via chrome://inspect — instrucao clara, zero terminal.
+  const hasPortFile = fs.existsSync(PORT_FILE);
+  console.error(
+    "[chrome-guarantee] Nao achei o WebSocket de debug do seu Chrome aberto. " +
+      "Para eu trabalhar na MESMA janela (abas novas dentro dela), " +
+      "abra a pagina chrome://inspect/#remote-debugging no seu Chrome e " +
+      "ative o remote debugging (Chrome 144+, uma vez). " +
+      (hasPortFile
+        ? "O arquivo DevToolsActivePort existe mas o WebSocket nao respondeu; " +
+          "confirme que o seu Chrome esta aberto."
+        : "Nao existe DevToolsActivePort no profile padrao."),
+  );
 }
 
 export async function server(input: PluginInput): Promise<Hooks> {
   return {
     "tool.execute.before": async ({ tool }) => {
       if (tool === "chrome-devtools" || tool === "browser_navigate" || tool === "browser_*") {
-        ensureChromeDebug();
+        await ensureChromeDebug();
       }
     },
   };
