@@ -28,7 +28,10 @@ import * as os from "node:os";
 import * as path from "node:path";
 
 const PROFILE = path.join(os.homedir(), "chrome-debug-profile");
-const PORT = 9222;
+// Porta 9223 (NAO 9222): o Chrome normal pode segurar o socket IPv4 da 9222
+// como zombie (porta escuta mas CDP morto). Usar 9223 isola o debug-profile e
+// evita conflito com o seu Chrome de operacoes.
+const PORT = 9223;
 const DEBUG_PORT_FILE = path.join(PROFILE, "DevToolsActivePort");
 
 function debugPortFromFile(): number | null {
@@ -56,9 +59,12 @@ function cdpAlive(port: number): boolean {
 }
 
 function isDebugAlive(): boolean {
-  const port = debugPortFromFile();
-  if (port === null) return false;
-  return cdpAlive(port);
+  // Checa o CDP NA PORTA FIXA (9223, a mesma que o MCP usa via browserUrl).
+  // NAO depende do arquivo DevToolsActivePort: com --browserUrl o arquivo pode
+  // nem existir, mas se o Chrome debug ja esta aberto e respondendo, devemos
+  // REUTILIZAR (nao iniciar de novo). È exatamente o comportamento pedido:
+  // primeiro ve se ja esta aberto, so abre novo se nao estiver.
+  return cdpAlive(PORT);
 }
 
 function removeOrphanPortFile(): void {
